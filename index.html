@@ -195,6 +195,21 @@
   ol.disc span{color:var(--dim);font-size:15px;line-height:1.6}
 
   /* ── funding, stated once ─────────────────────────────────── */
+  /* The offer. Placed after the argument and before the address, because a
+     reader who is not yet convinced has no use for either. */
+  .audit{
+    display:block;background:linear-gradient(152deg,#16202f,#0d1218);
+    border:1px solid #2d3a4d;border-radius:15px;padding:32px 34px;
+    transition:border-color .16s ease,transform .16s ease;
+  }
+  .audit:hover{border-color:#43536b;transform:translateY(-1px);text-decoration:none}
+  .audit-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
+           color:var(--accent);font-weight:640;margin-bottom:14px}
+  .audit-t{display:block;font-size:29px;line-height:1.2;letter-spacing:-.028em;
+           font-weight:640;color:var(--ink)}
+  .audit-d{display:block;margin-top:15px;color:var(--dim);font-size:15.5px;max-width:590px}
+  .audit-go{display:block;margin-top:20px;color:var(--accent);font-size:14.5px;font-weight:560}
+
   .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28px}
   .addr{
     font-family:var(--mono);font-size:12.5px;color:var(--dim);
@@ -415,6 +430,21 @@ What is B's worst-case response time?</pre>
           rather than asserted.</span>
       </li>
     </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Work</h2>
+    <a class="audit" href="https://github.com/DYResearch/.github/blob/main/profile/AUDIT.md" rel="noopener">
+      <span class="audit-k">Schedulability audit</span>
+      <span class="audit-t">You send a task set.<br>I return the analysis, signed.</span>
+      <span class="audit-d">Every iteration of the recurrence written out, a
+        verdict per task, and the margin before the first deadline is missed.
+        The tool is open and free — what is paid for is someone naming the
+        assumptions the set rests on and standing behind the result.</span>
+      <span class="audit-go">What it covers, what it does not, and a worked example →</span>
+    </a>
   </div>
 </section>
 
