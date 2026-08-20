@@ -32,9 +32,17 @@
 
 <style>
   :root{
-    --bg:#08090c; --panel:#0e1116; --line:#1c2129; --line2:#262d38;
-    --ink:#f4f6f9; --dim:#98a2b3; --faint:#7d8899;
-    --accent:#5b8def; --ok:#3ecf8e; --warn:#e8b04b; --bad:#e8637c;
+    --bg:#06070b;
+    /* Surfaces and rules are translucent rather than solid. A solid panel on a
+       dark background reads as a box drawn on top; a translucent one reads as
+       a surface lit from behind, and the difference is most of what separates
+       a page that looks designed from one that looks assembled. */
+    --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.055);
+    --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.14);
+    --ink:#f2f5fb; --dim:#9aa3b8; --faint:#7f8a9e;
+    --accent:#2dd4ff; --violet:#a78bfa; --ok:#34d399; --warn:#fbbf24; --bad:#fb7185;
+    --shadow:0 20px 60px -28px rgba(0,0,0,.85);
+    --shadow-lift:0 28px 70px -30px rgba(0,0,0,.9);
     --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -48,6 +56,32 @@
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
   .wrap{max-width:840px;margin:0 auto;padding:0 24px}
+
+  /* A bar that stays. Without one, a reader deep in the repositories has no
+     way back that does not involve scrolling, and the blur keeps the text
+     under it legible instead of hiding it behind a solid strip. */
+  .topbar{
+    position:sticky;top:0;z-index:20;height:58px;
+    background:rgba(6,7,11,.72);backdrop-filter:saturate(180%) blur(14px);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
+  .topbar .mark{margin-right:auto}
+  .mark{color:var(--ink);font-weight:640;font-size:15px;letter-spacing:-.015em}
+  .mark:hover{text-decoration:none}
+  .mark .dy{
+    font-family:var(--mono);font-size:12px;color:var(--accent);
+    border:1px solid var(--line2);border-radius:6px;padding:3px 6px;margin-right:9px;
+  }
+  /* Margin, not gap. Flexbox `gap` is unsupported in older WebKit, and the
+     links render touching — which looks like a bug rather than a style. */
+  .navlinks{font-size:13.5px}
+  .navlinks a{margin-left:22px}
+  .navlinks a:first-child{margin-left:0}
+  .navlinks a{color:var(--faint);display:inline-block}
+  .navlinks a:hover{color:var(--ink);text-decoration:none}
+  @media(max-width:620px){.navlinks a:not(:last-child){display:none}}
   section{padding:76px 0;border-top:1px solid var(--line)}
   section:first-of-type{border-top:0}
 
@@ -75,7 +109,7 @@
     border:1px solid #2a3546;border-radius:14px;padding:26px 28px;
     position:relative;overflow:hidden;font-size:16.5px;
     transition:border-color .16s ease,transform .16s ease;
-  }
+  box-shadow:var(--shadow-lift);}
   .start-main::after{
     content:"";position:absolute;top:0;left:0;right:0;height:1px;
     background:linear-gradient(90deg,transparent,var(--accent) 34%,#8f7ae6 72%,transparent);
@@ -84,7 +118,7 @@
   .start-main:hover{border-color:#3d4c63;transform:translateY(-1px);text-decoration:none}
   .start-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
            color:var(--accent);font-weight:640;margin-bottom:11px}
-  .start-t{display:block;font-family:var(--mono);font-size:31px;font-weight:640;
+  .start-t{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:31px;font-weight:640;
            color:var(--ink);letter-spacing:-.02em;line-height:1.1}
   .start-d{display:block;margin-top:11px;color:var(--dim);font-size:15px;max-width:520px}
   .start-side{margin-top:12px;font-size:0}
@@ -123,13 +157,13 @@
   .demo{
     background:linear-gradient(168deg,#0f141c,#0b0e13);
     border:1px solid var(--line2);border-radius:14px;padding:26px 28px;margin:8px 0 24px;
-  }
+  box-shadow:var(--shadow);}
   .demo pre{font-family:var(--mono);font-size:13.5px;line-height:1.9;color:var(--dim);
             overflow-x:auto;margin-bottom:18px}
   .demo pre b{color:var(--ink);font-weight:500}
   .verdict{display:flex;gap:26px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
   .verdict div{flex:1;min-width:190px}
-  .verdict .n{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.02em}
+  .verdict .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:27px;font-weight:600;letter-spacing:-.02em}
   .verdict .n.wrong{color:var(--bad)} .verdict .n.right{color:var(--ok)}
   .verdict .w{font-size:13.5px;color:var(--faint);margin-top:6px;line-height:1.5}
 
@@ -169,7 +203,7 @@
     display:block;background:var(--panel);border:1px solid var(--line);
     border-radius:13px;padding:24px 26px;margin-bottom:14px;
     transition:border-color .16s ease,transform .16s ease;
-  }
+  box-shadow:0 12px 40px -30px rgba(0,0,0,.9);}
   .repo:hover{border-color:var(--line2);transform:translateY(-1px);text-decoration:none}
   .repo .top{display:block;margin-bottom:11px}
   .repo .name{margin-right:11px}
@@ -201,7 +235,7 @@
     display:block;background:linear-gradient(152deg,#16202f,#0d1218);
     border:1px solid #2d3a4d;border-radius:15px;padding:32px 34px;
     transition:border-color .16s ease,transform .16s ease;
-  }
+  box-shadow:var(--shadow-lift);}
   .audit:hover{border-color:#43536b;transform:translateY(-1px);text-decoration:none}
   .audit-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
            color:var(--accent);font-weight:640;margin-bottom:14px}
@@ -210,7 +244,7 @@
   .audit-d{display:block;margin-top:15px;color:var(--dim);font-size:15.5px;max-width:590px}
   .audit-go{display:block;margin-top:20px;color:var(--accent);font-size:14.5px;font-weight:560}
 
-  .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28px}
+  .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28pxbox-shadow:var(--shadow);}
   .addr{
     font-family:var(--mono);font-size:12.5px;color:var(--dim);
     background:#0a0d12;border:1px solid var(--line);border-radius:9px;
@@ -249,9 +283,20 @@
 </head>
 <body>
 
+<nav class="topbar">
+  <div class="wrap">
+    <a class="mark" href="#top"><span class="dy">DY</span>DY&nbsp;Research</a>
+    <span class="navlinks">
+      <a href="#work">The failure</a>
+      <a href="#repos">Repositories</a>
+      <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
+    </span>
+  </div>
+</nav>
+
 <a class="skip" href="#work">Skip to the work</a>
 
-<header>
+<header id="top">
   <div class="wrap">
     <div class="eyebrow">DY Research</div>
     <h1>Timing analysis with<br>the arithmetic <em>shown.</em></h1>
@@ -351,7 +396,7 @@ What is B's worst-case response time?</pre>
 </section>
 
 <section>
-  <div class="wrap">
+  <div class="wrap" id="repos">
     <h2>Repositories</h2>
 
     <a class="repo" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
@@ -497,4 +542,3 @@ What is B's worst-case response time?</pre>
 
 </body>
 </html>
-
