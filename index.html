@@ -55,7 +55,12 @@
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-  .wrap{max-width:840px;margin:0 auto;padding:0 24px}
+  /* The container widens with the screen; the prose does not. A measure of
+     840px is right for a paragraph and wrong for a page — at 1440 it leaves a
+     narrow strip with empty margins, which reads as an unfinished layout
+     rather than as restraint. */
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+  .lede,.demo p,section>.wrap>p{max-width:680px}
 
   /* A bar that stays. Without one, a reader deep in the repositories has no
      way back that does not involve scrolling, and the blur keeps the text
@@ -86,7 +91,7 @@
   section:first-of-type{border-top:0}
 
   /* ── masthead ─────────────────────────────────────────────── */
-  header{padding:96px 0 12px;position:relative;overflow:hidden}
+  header{padding:clamp(56px,7vh,96px) 0 24px;position:relative;overflow:hidden}
   header::after{
     content:"";position:absolute;inset:0;pointer-events:none;
     background:radial-gradient(90% 70% at 12% 0%,rgba(91,141,239,.10),transparent 60%);
@@ -95,15 +100,25 @@
     font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
     color:var(--accent);font-weight:600;margin-bottom:22px;
   }
-  h1{font-size:clamp(38px,7vw,60px);line-height:1.03;letter-spacing:-.035em;font-weight:660}
+  h1{font-size:clamp(40px,6.2vw,78px);line-height:1;letter-spacing:-.04em;font-weight:660;max-width:15ch}
   h1 em{font-style:normal;color:var(--dim)}
-  .lede{margin-top:26px;font-size:19.5px;line-height:1.55;color:var(--dim);max-width:660px}
+  .lede{margin-top:28px;font-size:clamp(18px,1.5vw,21px);line-height:1.55;color:var(--dim);max-width:640px}
   .lede b{color:var(--ink);font-weight:560}
 
   /* The banner. A visitor who has just read a claim about arithmetic needs one
      obvious next action, and the honest one is "check it yourself" rather than
      "learn more". */
-  .start{margin-top:38px;font-size:0}
+  .start{margin-top:44px;font-size:0}
+  @media(min-width:1000px){
+    /* Above a thousand pixels the hero becomes two columns: the claim on the
+       left, the way to check it on the right. Below, they stack — a two-column
+       hero on a phone is two half-width columns nobody can read. */
+    .hero-grid{display:table;width:100%;table-layout:fixed;border-spacing:44px 0;margin-left:-44px;padding-top:34px}
+    .hero-grid>div{display:table-cell;vertical-align:top}
+    .hero-grid .left{width:52%}
+    .start{margin-top:0}
+    h1{max-width:none}
+  }
   .start-main{
     display:block;background:linear-gradient(150deg,#141d2e,#0d1219);
     border:1px solid #2a3546;border-radius:14px;padding:26px 28px;
@@ -244,6 +259,27 @@
   .audit-d{display:block;margin-top:15px;color:var(--dim);font-size:15.5px;max-width:590px}
   .audit-go{display:block;margin-top:20px;color:var(--accent);font-size:14.5px;font-weight:560}
 
+  .fund-t{font-size:clamp(24px,2.4vw,31px);line-height:1.2;letter-spacing:-.028em;
+          font-weight:640;margin-bottom:14px}
+  .fund-rows{margin:26px 0 4px;font-size:0}
+  .fund-rows>div{
+    display:inline-block;vertical-align:top;width:100%;font-size:15px;
+    padding:16px 0;border-top:1px solid var(--line);
+  }
+  .fund-rows b{display:block;color:var(--ink);font-weight:570;margin-bottom:5px;font-size:14.5px}
+  .fund-rows span{color:var(--dim);line-height:1.55}
+  @media(min-width:820px){
+    .fund-rows>div{width:31.5%;margin-right:2.7%;vertical-align:top}
+    .fund-rows>div:last-child{margin-right:0}
+  }
+  .fund-cta{
+    display:inline-block;margin-top:22px;
+    background:var(--ink);color:#07080b;font-weight:620;font-size:15px;
+    padding:13px 24px;border-radius:10px;
+    transition:transform .16s ease,box-shadow .16s ease;
+  }
+  .fund-cta:hover{transform:translateY(-1px);text-decoration:none;box-shadow:0 12px 30px -14px rgba(255,255,255,.3)}
+  .fund-note{margin-top:16px;font-size:14px;color:var(--faint)}
   .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28pxbox-shadow:var(--shadow);}
   .addr{
     font-family:var(--mono);font-size:12.5px;color:var(--dim);
@@ -298,6 +334,8 @@
 
 <header id="top">
   <div class="wrap">
+    <div class="hero-grid">
+      <div class="left">
     <div class="eyebrow">DY Research</div>
     <h1>Timing analysis with<br>the arithmetic <em>shown.</em></h1>
     <p class="lede">Safety-critical systems are certified on numbers that
@@ -305,8 +343,9 @@
       them are closed, licensed per seat, and disagree with each other in the
       last decimal. This is work on the part where the arithmetic decides the
       answer.</p>
-
-    <div class="start">
+      </div>
+      <div>
+<div class="start">
       <a class="start-main" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
         <span class="start-k">Start here</span>
         <span class="start-t">dy-wcet</span>
@@ -320,6 +359,8 @@
         <a class="start-alt" href="https://github.com/AxonOS-org" rel="noopener">
           <b>AxonOS</b><span>Where these problems arrived first</span>
         </a>
+      </div>
+    </div>
       </div>
     </div>
   </div>
@@ -480,26 +521,34 @@ What is B's worst-case response time?</pre>
 
 <section>
   <div class="wrap">
-    <h2>Work</h2>
-    <a class="audit" href="https://github.com/DYResearch/.github/blob/main/profile/AUDIT.md" rel="noopener">
-      <span class="audit-k">Schedulability audit</span>
-      <span class="audit-t">You send a task set.<br>I return the analysis, signed.</span>
-      <span class="audit-d">Every iteration of the recurrence written out, a
-        verdict per task, and the margin before the first deadline is missed.
-        The tool is open and free — what is paid for is someone naming the
-        assumptions the set rests on and standing behind the result.</span>
-      <span class="audit-go">What it covers, what it does not, and a worked example →</span>
-    </a>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Support the work</h2>
+    <h2>Engage</h2>
     <div class="fund">
-      <p>Crypto only. Everything here is Apache-2.0 OR MIT and stays that way
-        whether anyone sends anything or not.</p>
-      <div class="addr"><span class="c">Dogecoin</span><span class="v">DMwHAhqVNWf7dyEznukxCufNS5rjuP5MTp</span><button type="button" aria-label="Copy the Dogecoin address">Copy</button></div>
+      <h3 class="fund-t">A schedulability audit, invoiced.</h3>
+      <p>Send a task set. You get back the response time of every task with each
+        iteration of the recurrence written out, the verdict per task, and the
+        margin before the first deadline is missed — signed, with the tool
+        version and a hash of the input.</p>
+
+      <div class="fund-rows">
+        <div><b>What it costs</b><span>Quoted per set, invoiced in EUR or USD.
+          Bank transfer. No subscription and no seat licence.</span></div>
+        <div><b>What you send</b><span>C, T, D and blocking per task, in any
+          legible format. Anonymised if you prefer — the analysis does not need
+          to know what the tasks do.</span></div>
+        <div><b>What you do not pay for</b><span>The tool. It is
+          <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">open and
+          free</a>, and for debugging it is the right answer. What is paid for
+          is someone naming the assumptions your set rests on and standing
+          behind the result.</span></div>
+      </div>
+
+      <a class="fund-cta" href="mailto:connect@axonos.org?subject=Schedulability%20audit">
+        connect@axonos.org →
+      </a>
+      <p class="fund-note"><a href="https://github.com/DYResearch/.github/blob/main/profile/AUDIT.md" rel="noopener">What
+        it covers, what it does not, and a worked example →</a></p>
+      <p class="fund-note">If the analysis will not tell you anything useful, I
+        will say so and there is nothing to pay for.</p>
     </div>
   </div>
 </section>
