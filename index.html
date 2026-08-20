@@ -66,6 +66,39 @@
   .lede{margin-top:26px;font-size:19.5px;line-height:1.55;color:var(--dim);max-width:660px}
   .lede b{color:var(--ink);font-weight:560}
 
+  /* The banner. A visitor who has just read a claim about arithmetic needs one
+     obvious next action, and the honest one is "check it yourself" rather than
+     "learn more". */
+  .start{margin-top:38px;font-size:0}
+  .start-main{
+    display:block;background:linear-gradient(150deg,#141d2e,#0d1219);
+    border:1px solid #2a3546;border-radius:14px;padding:26px 28px;
+    position:relative;overflow:hidden;font-size:16.5px;
+    transition:border-color .16s ease,transform .16s ease;
+  }
+  .start-main::after{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent) 34%,#8f7ae6 72%,transparent);
+    opacity:.7;
+  }
+  .start-main:hover{border-color:#3d4c63;transform:translateY(-1px);text-decoration:none}
+  .start-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
+           color:var(--accent);font-weight:640;margin-bottom:11px}
+  .start-t{display:block;font-family:var(--mono);font-size:31px;font-weight:640;
+           color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+  .start-d{display:block;margin-top:11px;color:var(--dim);font-size:15px;max-width:520px}
+  .start-side{margin-top:12px;font-size:0}
+  .start-alt{display:inline-block;vertical-align:top;width:100%;font-size:14.5px;
+             background:var(--panel);border:1px solid var(--line);border-radius:11px;
+             padding:15px 18px;margin-bottom:10px;transition:border-color .16s ease}
+  .start-alt:hover{border-color:var(--line2);text-decoration:none}
+  .start-alt b{display:block;color:var(--ink);font-weight:570;margin-bottom:3px}
+  .start-alt span{color:var(--faint);font-size:13.5px}
+  @media(min-width:640px){
+    .start-alt{width:calc(50% - 5px)}
+    .start-alt:first-child{margin-right:10px}
+  }
+
   h2{font-size:12px;letter-spacing:.19em;text-transform:uppercase;color:var(--faint);
      font-weight:640;margin-bottom:28px}
   h3{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:620;margin-bottom:12px}
@@ -212,6 +245,23 @@
       them are closed, licensed per seat, and disagree with each other in the
       last decimal. This is work on the part where the arithmetic decides the
       answer.</p>
+
+    <div class="start">
+      <a class="start-main" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
+        <span class="start-k">Start here</span>
+        <span class="start-t">dy-wcet</span>
+        <span class="start-d">Clone it, run <code>cargo test</code>, and read the
+          twelve tests. The one that matters takes thirty seconds to check.</span>
+      </a>
+      <div class="start-side">
+        <a class="start-alt" href="https://github.com/DYResearch" rel="noopener">
+          <b>All repositories</b><span>github.com/DYResearch</span>
+        </a>
+        <a class="start-alt" href="https://github.com/AxonOS-org" rel="noopener">
+          <b>AxonOS</b><span>Where these problems arrived first</span>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -374,11 +424,8 @@ What is B's worst-case response time?</pre>
     <div class="fund">
       <p>Crypto only. Everything here is Apache-2.0 OR MIT and stays that way
         whether anyone sends anything or not.</p>
-      <div class="addr"><span class="c">Bitcoin</span><span class="v">bc1q9huz0dwfrl45ecuc7luehjyy9nhr6ehjm043tt</span><button type="button" aria-label="Copy the Bitcoin address">Copy</button></div>
-      <div class="addr"><span class="c">Ethereum <i>· and any EVM chain: Arbitrum, Optimism, Base, Polygon</i></span><span class="v">0xdB99b6d0b909A4F3b3E39F243E0aD3b1BcFC93D8</span><button type="button" aria-label="Copy the Ethereum address">Copy</button></div>
-      <div class="addr"><span class="c">Solana</span><span class="v">ECtTWUWdYWmX2AjzSK5okSQMympbBLtXMXKZFA67Fm29</span><button type="button" aria-label="Copy the Solana address">Copy</button></div
+      <div class="addr"><span class="c">Dogecoin</span><span class="v">DMwHAhqVNWf7dyEznukxCufNS5rjuP5MTp</span><button type="button" aria-label="Copy the Dogecoin address">Copy</button></div>
     </div>
-  </div>
   </div>
 </section>
 
@@ -420,3 +467,4 @@ What is B's worst-case response time?</pre>
 
 </body>
 </html>
+
