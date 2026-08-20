@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  DY Research — https://dyresearch.github.io
+
+  SPDX-License-Identifier: Apache-2.0 OR MIT
+  Copyright (c) 2026 Denis Yermakou <connect@axonos.org>
+
+  One file. No framework, no build step, no third-party script, no analytics,
+  no fonts fetched from anywhere. A page about deterministic systems that
+  pulled in four CDNs would be arguing against itself.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DY Research — real-time analysis with the arithmetic shown</title>
+<meta name="description" content="Schedulability and timing analysis in integer arithmetic. Reproducible bit for bit, refuses rather than rounds, and states what it does not know.">
+<meta name="author" content="Denis Yermakou">
+<link rel="canonical" href="https://dyresearch.github.io/">
+<meta name="theme-color" content="#08090c">
+<!-- An SVG favicon inline: no extra request, and no missing-icon 404 in the
+     log of a site that argues for not depending on things. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090c'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%235b8def' text-anchor='middle'%3EDY%3C/text%3E%3C/svg%3E">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="DY Research">
+<meta property="og:description" content="Real-time timing analysis in integer arithmetic. Two implementations agree bit for bit, or one of them is wrong.">
+<meta property="og:url" content="https://dyresearch.github.io/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DY Research">
+<meta name="twitter:description" content="Two tasks, one number, and most implementations get it wrong. Timing analysis in integer arithmetic.">
+
+<style>
+  :root{
+    --bg:#08090c; --panel:#0e1116; --line:#1c2129; --line2:#262d38;
+    --ink:#f4f6f9; --dim:#98a2b3; --faint:#7d8899;
+    --accent:#5b8def; --ok:#3ecf8e; --warn:#e8b04b; --bad:#e8637c;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font:400 16.5px/1.65 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-.005em;
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+  .wrap{max-width:840px;margin:0 auto;padding:0 24px}
+  section{padding:76px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+
+  /* ── masthead ─────────────────────────────────────────────── */
+  header{padding:96px 0 12px;position:relative;overflow:hidden}
+  header::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(90% 70% at 12% 0%,rgba(91,141,239,.10),transparent 60%);
+  }
+  .eyebrow{
+    font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin-bottom:22px;
+  }
+  h1{font-size:clamp(38px,7vw,60px);line-height:1.03;letter-spacing:-.035em;font-weight:660}
+  h1 em{font-style:normal;color:var(--dim)}
+  .lede{margin-top:26px;font-size:19.5px;line-height:1.55;color:var(--dim);max-width:660px}
+  .lede b{color:var(--ink);font-weight:560}
+
+  h2{font-size:12px;letter-spacing:.19em;text-transform:uppercase;color:var(--faint);
+     font-weight:640;margin-bottom:28px}
+  h3{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:620;margin-bottom:12px}
+  p{margin-bottom:17px;color:var(--dim)}
+  p:last-child{margin-bottom:0}
+  p b,li b{color:var(--ink);font-weight:560}
+  a{color:var(--accent);text-decoration:none}
+  /* Keyboard focus, visible. Without this a keyboard user tabs through the
+     page with no idea where they are — the browser's default outline is
+     invisible against a background this dark. */
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+  /* Skip link. Screen-reader and keyboard users otherwise walk the whole
+     masthead before reaching anything they can act on. */
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);
+        padding:10px 16px;border-radius:0 0 8px 0;font-weight:600;font-size:14px;z-index:9}
+  .skip:focus{left:0;text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.9em;color:var(--ink);
+       background:#141922;padding:1.5px 6px;border-radius:4px;border:1px solid var(--line2)}
+
+  /* ── the failure that opens the argument ──────────────────── */
+  .demo{
+    background:linear-gradient(168deg,#0f141c,#0b0e13);
+    border:1px solid var(--line2);border-radius:14px;padding:26px 28px;margin:8px 0 24px;
+  }
+  .demo pre{font-family:var(--mono);font-size:13.5px;line-height:1.9;color:var(--dim);
+            overflow-x:auto;margin-bottom:18px}
+  .demo pre b{color:var(--ink);font-weight:500}
+  .verdict{display:flex;gap:26px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
+  .verdict div{flex:1;min-width:190px}
+  .verdict .n{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.02em}
+  .verdict .n.wrong{color:var(--bad)} .verdict .n.right{color:var(--ok)}
+  .verdict .w{font-size:13.5px;color:var(--faint);margin-top:6px;line-height:1.5}
+
+  /* ── stakes ───────────────────────────────────────────────── */
+  /* Two columns without CSS Grid.
+     wkhtmltoimage and older WebKit ignore `grid` entirely and stack every
+     cell, which turns this section into a single column twice as tall as it
+     should be. inline-block renders identically everywhere, including the
+     modern engines. */
+  .stakes{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:0;background:var(--panel)}
+  .stakes div{
+    background:var(--panel);padding:22px 24px;font-size:16.5px;
+    display:inline-block;vertical-align:top;width:100%;
+  }
+  /* The cells in a row must be the same height or the background shows
+     through under the shorter one. Stretching them is what grid would have
+     done; without it the fill has to be explicit. */
+  /* Separators are cell borders, not a background showing through gaps.
+     With a background the shorter cell in a row leaves a visible strip
+     underneath it in engines that do not stretch inline-blocks — which is
+     every engine older than CSS Grid. */
+  .stakes div{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stakes div:nth-child(2n){border-right:0}
+  .stakes div:nth-last-child(-n+2){border-bottom:0}
+  @supports (display:grid){
+    .stakes{display:grid;grid-template-columns:1fr;background:var(--panel)}
+    .stakes div{width:auto;margin:0!important}
+    @media(min-width:640px){.stakes{grid-template-columns:1fr 1fr}}
+  }
+  .stakes .k{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);
+             font-weight:620;margin-bottom:10px;line-height:1.4}
+  .stakes p{font-size:15px;margin:0}
+  @media(min-width:640px){.stakes div{width:50%}}
+
+  /* ── repositories ─────────────────────────────────────────── */
+  .repo{
+    display:block;background:var(--panel);border:1px solid var(--line);
+    border-radius:13px;padding:24px 26px;margin-bottom:14px;
+    transition:border-color .16s ease,transform .16s ease;
+  }
+  .repo:hover{border-color:var(--line2);transform:translateY(-1px);text-decoration:none}
+  .repo .top{display:block;margin-bottom:11px}
+  .repo .name{margin-right:11px}
+  .repo .name{font-family:var(--mono);font-size:16.5px;color:var(--ink);font-weight:600}
+  .repo .tag{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:640;
+             padding:3px 9px;border-radius:20px;border:1px solid}
+  .tag.live{color:var(--ok);border-color:rgba(62,207,142,.34);background:rgba(62,207,142,.09)}
+  .tag.next{color:var(--warn);border-color:rgba(232,176,75,.32);background:rgba(232,176,75,.08)}
+  .tag.plan{color:var(--faint);border-color:var(--line2)}
+  .repo p{font-size:15px;margin:0;color:var(--dim)}
+  .repo .why{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
+             font-size:14px;color:var(--faint)}
+
+  /* ── discipline list ──────────────────────────────────────── */
+  ol.disc{list-style:none;counter-reset:d}
+  ol.disc li{counter-increment:d;padding:20px 0 20px 52px;position:relative;border-bottom:1px solid var(--line)}
+  ol.disc li:last-child{border-bottom:0;padding-bottom:0}
+  ol.disc li::before{
+    content:counter(d,decimal-leading-zero);position:absolute;left:0;top:20px;
+    font-family:var(--mono);font-size:12.5px;color:var(--accent);font-weight:600;
+  }
+  ol.disc strong{display:block;color:var(--ink);font-weight:590;margin-bottom:5px;font-size:16.5px}
+  ol.disc span{color:var(--dim);font-size:15px;line-height:1.6}
+
+  /* ── funding, stated once ─────────────────────────────────── */
+  .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28px}
+  .addr{
+    font-family:var(--mono);font-size:12.5px;color:var(--dim);
+    background:#0a0d12;border:1px solid var(--line);border-radius:9px;
+    padding:13px 15px;margin-top:14px;word-break:break-all;user-select:all;
+  }
+  /* The chain, named. One EVM address works on every EVM chain, and money
+     sent on a chain nobody watches sits there unseen — which is not a loss
+     but is indistinguishable from one. */
+  .addr .c i{font-style:normal;text-transform:none;letter-spacing:0;color:#5c6675}
+  .addr .c{color:var(--faint);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+           display:block;margin-bottom:6px;user-select:none}
+  .addr{position:relative;padding-right:78px}
+  .addr button{
+    position:absolute;top:11px;right:11px;
+    background:var(--panel);border:1px solid var(--line2);color:var(--dim);
+    font:inherit;font-size:11px;padding:5px 11px;border-radius:6px;cursor:pointer;
+    transition:color .15s,border-color .15s;
+  }
+  .addr button:hover{color:var(--ink);border-color:var(--accent)}
+  .addr button[data-done]{color:var(--ok);border-color:rgba(62,207,142,.4)}
+  @media(max-width:520px){
+    /* On a narrow screen the button over a wrapping address covers a line of
+       it. Below the address instead, where it covers nothing. */
+    .addr{padding-right:15px;padding-bottom:44px}
+    .addr button{top:auto;bottom:11px;right:auto;left:15px}
+  }
+
+  footer{padding:44px 0 64px;border-top:1px solid var(--line);color:var(--faint);font-size:14px}
+  footer a{color:var(--dim)}
+  footer .r{margin-top:10px;font-size:13px}
+  /* A class, not an inline style. A strict Content-Security-Policy with
+     style-src 'self' drops inline attributes silently, and this line would
+     render unstyled on a served page while looking correct as a local file. */
+  footer .fname{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#work">Skip to the work</a>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">DY Research</div>
+    <h1>Timing analysis with<br>the arithmetic <em>shown.</em></h1>
+    <p class="lede">Safety-critical systems are certified on numbers that
+      <b>nobody outside the vendor can reproduce.</b> The tools that produce
+      them are closed, licensed per seat, and disagree with each other in the
+      last decimal. This is work on the part where the arithmetic decides the
+      answer.</p>
+  </div>
+</header>
+
+<section id="work">
+  <div class="wrap">
+    <h2>The failure, in four lines</h2>
+    <h3>Two tasks. One number. Most implementations get it wrong.</h3>
+    <div class="demo">
+<pre><b>task A</b>  100 µs every  400 µs   ← higher priority
+<b>task B</b>  200 µs every 1000 µs
+
+What is B's worst-case response time?</pre>
+      <div class="verdict">
+        <div>
+          <div class="n wrong">400 µs</div>
+          <div class="w">Counting preemptions across B's <b>period</b>: two
+            activations of A fit inside 1000 µs, so 200 + 2×100.</div>
+        </div>
+        <div>
+          <div class="n right">300 µs</div>
+          <div class="w">Counting across B's <b>response window</b>, which is
+            what the recurrence actually says. At R = 200 one activation fits,
+            giving 300; at R = 300 still one, so 300 is the fixed point.</div>
+        </div>
+      </div>
+    </div>
+    <p>Here the mistake is conservative and the system merely looks worse than
+      it is. Change the periods and it inverts: the wrong method reports a
+      deadline met that is missed on hardware. <b>Both answers are plausible,
+      neither is flagged, and a test written by the same person who wrote the
+      bug passes.</b></p>
+    <p>That is the shape of every defect this work is about. Not crashes —
+      numbers that are quietly wrong in the direction that flatters the
+      result.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Why now</h2>
+    <div class="stakes">
+      <div>
+        <div class="k">Brain–computer interfaces</div>
+        <p>Devices are moving from laboratories to people. A decoder that
+          misses its window does not drop a frame — it moves a limb late, or
+          does not move it. The field has excellent signal processing and
+          almost no formal timing discipline, and regulators are beginning to
+          ask for one.</p>
+      </div>
+      <div>
+        <div class="k">Everything else that must not stop</div>
+        <p>DO-178C, IEC 61508 and ISO 26262 all require evidence that deadlines
+          are met. The evidence is generated by proprietary tools, priced per
+          seat, whose internals no auditor can inspect. The standard asks for
+          proof and the industry supplies a receipt.</p>
+      </div>
+      <div>
+        <div class="k">The reproducibility gap</div>
+        <p>A bound computed in floating point has last bits that depend on the
+          compiler and the optimisation level. Two teams running the same
+          analysis on the same task set get different numbers and cannot tell
+          who is right. This is normal, and it should not be.</p>
+      </div>
+      <div>
+        <div class="k">Nobody is fixing it openly</div>
+        <p>The analysis has been public since 1986. The implementations are
+          not. There is no open tool an engineer can read end to end, run on
+          their own set, and hand to a reviewer who can run it too.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Repositories</h2>
+
+    <a class="repo" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
+      <div class="top"><span class="name">dy-wcet</span><span class="tag live">available</span></div>
+      <p>Worst-case response time for fixed-priority task sets. Integer
+        arithmetic throughout, checked operations, and an explicit
+        unschedulable result where an over-utilised set has no bound —
+        rather than the last value before the loop gave up.</p>
+      <div class="why">Twelve tests, including the 300-versus-400 case above.
+        <code>no_std</code>, zero dependencies, unsafe forbidden.</div>
+    </a>
+
+    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+      <div class="top"><span class="name">dy-certify</span><span class="tag next">in progress</span></div>
+      <p>A signed schedulability certificate: the task set, the derivation step
+        by step, the tool version, and a hash. An auditor re-runs it and gets
+        the same bytes, or the certificate is void.</p>
+      <div class="why">The thing standards actually require and closed tools
+        cannot provide — because reproducing their result means trusting their
+        binary.</div>
+    </a>
+
+    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+      <div class="top"><span class="name">dy-blocking</span><span class="tag plan">planned</span></div>
+      <p>Priority-inheritance and priority-ceiling blocking terms, derived from
+        a resource graph instead of estimated. Today the blocking term is an
+        input to every analysis and usually a guess.</p>
+      <div class="why">The weakest number in most timing arguments, and the one
+        nobody checks.</div>
+    </a>
+
+    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+      <div class="top"><span class="name">dy-trace</span><span class="tag plan">planned</span></div>
+      <p>Turns an instrumented trace into execution-time inputs with their
+        confidence stated — so an analysis says whether its inputs were
+        measured or assumed.</p>
+      <div class="why">A bound computed from a spreadsheet is arithmetic about
+        a guess, and nothing currently forces that to be visible.</div>
+    </a>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How this is built</h2>
+    <ol class="disc">
+      <li>
+        <strong>Integers where the result matters</strong>
+        <span>Same input, same bits, any machine, any compiler. Two
+          implementations agree exactly or one of them is wrong — a property no
+          floating-point tool can offer and no test can pin.</span>
+      </li>
+      <li>
+        <strong>Refusal over approximation</strong>
+        <span>When a computation has no answer it returns that, not the last
+          value before the iteration was capped. An infinite response time
+          fails every deadline comparison it is put into, which is the safe
+          direction to be wrong in.</span>
+      </li>
+      <li>
+        <strong>Checked arithmetic as a rule</strong>
+        <span>Overflow is reported. A wrapping add in a schedulability test
+          converts a real failure into an apparent success, and that is the one
+          direction an arithmetic error must never go.</span>
+      </li>
+      <li>
+        <strong>Limits stated in the code, not the marketing</strong>
+        <span>None of this measures anything. It computes bounds from execution
+          times somebody else established, and each crate says so in its own
+          documentation rather than leaving a reader to discover it.</span>
+      </li>
+      <li>
+        <strong>No dependencies where none are needed</strong>
+        <span>A crate that computes a bound should not pull in a runtime to do
+          it. <code>no_std</code>, verified against a bare-metal target in CI
+          rather than asserted.</span>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Support the work</h2>
+    <div class="fund">
+      <p>Crypto only. Everything here is Apache-2.0 OR MIT and stays that way
+        whether anyone sends anything or not.</p>
+      <div class="addr"><span class="c">Bitcoin</span><span class="v">bc1q9huz0dwfrl45ecuc7luehjyy9nhr6ehjm043tt</span><button type="button" aria-label="Copy the Bitcoin address">Copy</button></div>
+      <div class="addr"><span class="c">Ethereum <i>· and any EVM chain: Arbitrum, Optimism, Base, Polygon</i></span><span class="v">0xdB99b6d0b909A4F3b3E39F243E0aD3b1BcFC93D8</span><button type="button" aria-label="Copy the Ethereum address">Copy</button></div>
+      <div class="addr"><span class="c">Solana</span><span class="v">ECtTWUWdYWmX2AjzSK5okSQMympbBLtXMXKZFA67Fm29</span><button type="button" aria-label="Copy the Solana address">Copy</button></div
+    </div>
+  </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b class="fname">DY Research</b> — Denis Yermakou<br>
+    <a href="https://github.com/DYResearch" rel="noopener">github.com/DYResearch</a> ·
+    <a href="mailto:connect@axonos.org">connect@axonos.org</a> ·
+    <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>
+    <div class="r">Apache-2.0 OR MIT. © 2026 Denis Yermakou.</div>
+  </div>
+</footer>
+
+<script>
+// Copy, because selecting a monospace string with a thumb drops a character
+// and an address with a dropped character is money that arrives nowhere.
+//
+// No dependency, no analytics, and it degrades to selectable text where the
+// clipboard API is unavailable — the addresses carry user-select:all for
+// exactly that case.
+(function () {
+  "use strict";
+  document.querySelectorAll(".addr button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var v = b.parentNode.querySelector(".v");
+      if (!v || !navigator.clipboard) return;
+      navigator.clipboard.writeText(v.textContent.trim()).then(function () {
+        b.textContent = "Copied";
+        b.setAttribute("data-done", "");
+        setTimeout(function () {
+          b.textContent = "Copy";
+          b.removeAttribute("data-done");
+        }, 1600);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
