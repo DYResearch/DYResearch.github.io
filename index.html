@@ -26,7 +26,13 @@
 <meta property="og:title" content="DY Research">
 <meta property="og:description" content="Real-time timing analysis in integer arithmetic. Two implementations agree bit for bit, or one of them is wrong.">
 <meta property="og:url" content="https://dyresearch.github.io/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://dyresearch.github.io/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Timing analysis with the arithmetic shown. R = 300, a fixed point, where the obvious answer is 400.">
+  <meta property="og:site_name" content="DY Research">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://dyresearch.github.io/og.png">
 <meta name="twitter:title" content="DY Research">
 <meta name="twitter:description" content="Two tasks, one number, and most implementations get it wrong. Timing analysis in integer arithmetic.">
 
@@ -86,8 +92,24 @@
   .navlinks a:first-child{margin-left:0}
   .navlinks a{color:var(--faint);display:inline-block}
   .navlinks a:hover{color:var(--ink);text-decoration:none}
-  @media(max-width:620px){.navlinks a:not(:last-child){display:none}}
-  section{padding:76px 0;border-top:1px solid var(--line)}
+  /* Hiding every link but the last left a phone reader with one destination.
+     A strip that scrolls sideways keeps all of them reachable. */
+  @media(max-width:760px){
+    .topbar .wrap{padding-right:0}
+    .navlinks{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
+      scrollbar-width:none;max-width:62vw;padding-right:20px;
+      -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
+      mask-image:linear-gradient(90deg,#000 82%,transparent)}
+    .navlinks::-webkit-scrollbar{display:none}
+    .navlinks a{margin-left:16px}
+  }
+  /* A way back to the offer from anywhere on the page. */
+  .navcta{margin-left:22px;padding:6px 13px;border:1px solid #2b4258;border-radius:99px;
+    background:rgba(45,212,255,.08);color:var(--ink)!important;font-weight:560}
+  .navcta:hover{border-color:var(--accent);text-decoration:none}
+  /* The topbar is sticky and 58px tall, so an anchor jump used to land the
+     heading underneath it. */
+  section{padding:76px 0;border-top:1px solid var(--line);scroll-margin-top:74px}
   section:first-of-type{border-top:0}
 
   /* ── masthead ─────────────────────────────────────────────── */
@@ -450,6 +472,7 @@
       <a href="#how">How</a>
       <a href="#who">Who</a>
       <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
+      <a class="navcta" href="#engage">Engage</a>
     </span>
   </div>
 </nav>
@@ -830,7 +853,7 @@ What is B's worst-case response time?</pre>
         an open hard-real-time layer for brain–computer interfaces.</p>
       <div class="wl">
         <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/denis-yermakou" rel="noopener">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
         <a href="mailto:connect@axonos.org">Email</a>
       </div>
     </div>
