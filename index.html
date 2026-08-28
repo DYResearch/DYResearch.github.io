@@ -251,7 +251,7 @@
     transition:border-color .18s ease,transform .18s ease,background .18s ease}
   .proof>a:hover{border-color:var(--line2);background:var(--panel2);
     transform:translateY(-1px);text-decoration:none}
-  @media(min-width:900px){.proof>a{width:calc(33.333% - 12px)}}
+  @media(min-width:900px){.proof>a{width:calc(50% - 12px)}}
   .proof .pk{display:block;font-family:var(--mono);font-size:10.5px;
     letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
   .proof .pt{display:block;color:var(--ink);font-weight:570;font-size:15.5px;
@@ -443,6 +443,18 @@
     transition:color .15s,border-color .15s;
   }
   .addr button:hover{color:var(--ink);border-color:var(--accent)}
+
+  /* Touch devices keep :hover after a tap, so a card stays lifted and
+     highlighted until something else is tapped — it reads as "selected"
+     when nothing is. Pointer-capable devices are unaffected. */
+  @media (hover:none){
+    .start-main:hover,.cta:hover,.repo:hover,.audit:hover,
+    .fund-cta:hover,.proof>a:hover{transform:none;box-shadow:none}
+    .start-main:hover,.cta:hover,.cta.first:hover,.start-alt:hover,
+    .repo:hover,.audit:hover,.navcta:hover{border-color:var(--line)}
+    .proof>a:hover{border-color:var(--line);background:var(--panel)}
+    .proof>a:hover .pl{color:var(--faint)}
+  }
   .addr button[data-done]{color:var(--ok);border-color:rgba(62,207,142,.4)}
   @media(max-width:520px){
     /* On a narrow screen the button over a wrapping address covers a line of
@@ -689,15 +701,6 @@ What is B's worst-case response time?</pre>
           attempt at that comparison was too easy to be worth anything, which the write-up
           says before it says anything else.</span>
         <span class="pl">See the derivation →</span>
-      </a>
-
-      <a href="https://github.com/DYResearch/dy-wcet/blob/main/BOUNTY.md" rel="noopener">
-        <span class="pk">Standing bounty</span>
-        <span class="pt">A pool for the first wrong number</span>
-        <span class="pd">Open to anyone who can produce a task set where the analysis
-          returns a bound the recurrence does not support. Unclaimed so far, which measures
-          how many people have looked as much as it measures anything else.</span>
-        <span class="pl">Read the rules →</span>
       </a>
 
     </div>
