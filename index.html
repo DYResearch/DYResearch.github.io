@@ -95,7 +95,7 @@
   /* Hiding every link but the last left a phone reader with one destination.
      A strip that scrolls sideways keeps all of them reachable. */
   @media(max-width:760px){
-    .topbar .wrap{padding-right:0}
+    .topbar .wrap{padding-right:0;gap:14px}
     .navlinks{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
       scrollbar-width:none;max-width:62vw;padding-right:20px;
       -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
@@ -423,7 +423,6 @@
   }
   .fund-cta:hover{transform:translateY(-1px);text-decoration:none;box-shadow:0 12px 30px -14px rgba(255,255,255,.3)}
   .fund-note{margin-top:16px;font-size:14px;color:var(--faint)}
-  .fund{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:28pxbox-shadow:var(--shadow);}
   .addr{
     font-family:var(--mono);font-size:12.5px;color:var(--dim);
     background:#0a0d12;border:1px solid var(--line);border-radius:9px;
@@ -509,7 +508,7 @@
         <span class="start-k">Start here</span>
         <span class="start-t">dy-wcet</span>
         <span class="start-d">Clone it, run <code>cargo test</code>, and read the
-          twelve tests. The one that matters takes thirty seconds to check.</span>
+          forty-nine tests. The one that matters takes thirty seconds to check.</span>
       </a>
       <div class="start-side">
         <a class="start-alt" href="https://github.com/DYResearch" rel="noopener">
@@ -605,11 +604,11 @@ What is B's worst-case response time?</pre>
         arithmetic throughout, checked operations, and an explicit
         unschedulable result where an over-utilised set has no bound —
         rather than the last value before the loop gave up.</p>
-      <div class="why">Twelve tests, including the 300-versus-400 case above.
-        <code>no_std</code>, zero dependencies, unsafe forbidden.</div>
+      <div class="why">Forty-nine tests and five Kani proofs, including the
+        300-versus-400 case above. <code>no_std</code>, zero dependencies, unsafe forbidden.</div>
     </a>
 
-    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+    <a class="repo" href="https://github.com/DYResearch/dy-certify" rel="noopener">
       <div class="top"><span class="name">dy-certify</span><span class="tag next">in progress</span></div>
       <p>A signed schedulability certificate: the task set, the derivation step
         by step, the tool version, and a hash. An auditor re-runs it and gets
@@ -619,7 +618,7 @@ What is B's worst-case response time?</pre>
         binary.</div>
     </a>
 
-    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+    <a class="repo" href="https://github.com/DYResearch/dy-blocking" rel="noopener">
       <div class="top"><span class="name">dy-blocking</span><span class="tag plan">planned</span></div>
       <p>Priority-inheritance and priority-ceiling blocking terms, derived from
         a resource graph instead of estimated. Today the blocking term is an
@@ -628,7 +627,7 @@ What is B's worst-case response time?</pre>
         nobody checks.</div>
     </a>
 
-    <a class="repo" href="https://github.com/DYResearch" rel="noopener">
+    <a class="repo" href="https://github.com/DYResearch/dy-trace" rel="noopener">
       <div class="top"><span class="name">dy-trace</span><span class="tag plan">planned</span></div>
       <p>Turns an instrumented trace into execution-time inputs with their
         confidence stated — so an analysis says whether its inputs were
