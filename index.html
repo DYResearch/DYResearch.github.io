@@ -26,7 +26,7 @@
 <meta property="og:title" content="DY Research">
 <meta property="og:description" content="Real-time timing analysis in integer arithmetic. Two implementations agree bit for bit, or one of them is wrong.">
 <meta property="og:url" content="https://dyresearch.github.io/">
-<meta property="og:image" content="https://dyresearch.github.io/og.png">
+  <meta property="og:image" content="https://dyresearch.github.io/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Timing analysis with the arithmetic shown. R = 300, a fixed point, where the obvious answer is 400.">
@@ -404,62 +404,17 @@
 
   .fund-t{font-size:clamp(24px,2.4vw,31px);line-height:1.2;letter-spacing:-.028em;
           font-weight:640;margin-bottom:14px}
-  .fund-rows{margin:26px 0 4px;font-size:0}
-  .fund-rows>div{
-    display:inline-block;vertical-align:top;width:100%;font-size:15px;
-    padding:16px 0;border-top:1px solid var(--line);
-  }
-  .fund-rows b{display:block;color:var(--ink);font-weight:570;margin-bottom:5px;font-size:14.5px}
-  .fund-rows span{color:var(--dim);line-height:1.55}
-  @media(min-width:820px){
-    .fund-rows>div{width:31.5%;margin-right:2.7%;vertical-align:top}
-    .fund-rows>div:last-child{margin-right:0}
-  }
-  .fund-cta{
-    display:inline-block;margin-top:22px;
-    background:var(--ink);color:#07080b;font-weight:620;font-size:15px;
-    padding:13px 24px;border-radius:10px;
-    transition:transform .16s ease,box-shadow .16s ease;
-  }
-  .fund-cta:hover{transform:translateY(-1px);text-decoration:none;box-shadow:0 12px 30px -14px rgba(255,255,255,.3)}
   .fund-note{margin-top:16px;font-size:14px;color:var(--faint)}
-  .addr{
-    font-family:var(--mono);font-size:12.5px;color:var(--dim);
-    background:#0a0d12;border:1px solid var(--line);border-radius:9px;
-    padding:13px 15px;margin-top:14px;word-break:break-all;user-select:all;
-  }
-  /* The chain, named. One EVM address works on every EVM chain, and money
-     sent on a chain nobody watches sits there unseen — which is not a loss
-     but is indistinguishable from one. */
-  .addr .c i{font-style:normal;text-transform:none;letter-spacing:0;color:#5c6675}
-  .addr .c{color:var(--faint);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-           display:block;margin-bottom:6px;user-select:none}
-  .addr{position:relative;padding-right:78px}
-  .addr button{
-    position:absolute;top:11px;right:11px;
-    background:var(--panel);border:1px solid var(--line2);color:var(--dim);
-    font:inherit;font-size:11px;padding:5px 11px;border-radius:6px;cursor:pointer;
-    transition:color .15s,border-color .15s;
-  }
-  .addr button:hover{color:var(--ink);border-color:var(--accent)}
-
   /* Touch devices keep :hover after a tap, so a card stays lifted and
      highlighted until something else is tapped — it reads as "selected"
      when nothing is. Pointer-capable devices are unaffected. */
   @media (hover:none){
     .start-main:hover,.cta:hover,.repo:hover,.audit:hover,
-    .fund-cta:hover,.proof>a:hover{transform:none;box-shadow:none}
+    .proof>a:hover{transform:none;box-shadow:none}
     .start-main:hover,.cta:hover,.cta.first:hover,.start-alt:hover,
     .repo:hover,.audit:hover,.navcta:hover{border-color:var(--line)}
     .proof>a:hover{border-color:var(--line);background:var(--panel)}
     .proof>a:hover .pl{color:var(--faint)}
-  }
-  .addr button[data-done]{color:var(--ok);border-color:rgba(62,207,142,.4)}
-  @media(max-width:520px){
-    /* On a narrow screen the button over a wrapping address covers a line of
-       it. Below the address instead, where it covers nothing. */
-    .addr{padding-right:15px;padding-bottom:44px}
-    .addr button{top:auto;bottom:11px;right:auto;left:15px}
   }
 
   footer{padding:44px 0 64px;border-top:1px solid var(--line);color:var(--faint);font-size:14px}
@@ -871,32 +826,6 @@ What is B's worst-case response time?</pre>
     <div class="r">Apache-2.0 OR MIT. © 2026 Denis Yermakou.</div>
   </div>
 </footer>
-
-<script>
-// Copy, because selecting a monospace string with a thumb drops a character
-// and an address with a dropped character is money that arrives nowhere.
-//
-// No dependency, no analytics, and it degrades to selectable text where the
-// clipboard API is unavailable — the addresses carry user-select:all for
-// exactly that case.
-(function () {
-  "use strict";
-  document.querySelectorAll(".addr button").forEach(function (b) {
-    b.addEventListener("click", function () {
-      var v = b.parentNode.querySelector(".v");
-      if (!v || !navigator.clipboard) return;
-      navigator.clipboard.writeText(v.textContent.trim()).then(function () {
-        b.textContent = "Copied";
-        b.setAttribute("data-done", "");
-        setTimeout(function () {
-          b.textContent = "Copy";
-          b.removeAttribute("data-done");
-        }, 1600);
-      });
-    });
-  });
-})();
-</script>
 
 </body>
 </html>
