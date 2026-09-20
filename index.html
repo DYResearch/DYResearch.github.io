@@ -235,6 +235,11 @@
     width:calc(100% - 12px);margin:0 0 12px 12px;padding:22px 24px;font-size:15px;
     background:var(--panel);border:1px solid var(--line);border-radius:14px}
   @media(min-width:900px){.steps>div{width:calc(33.333% - 12px)}}
+  @supports (display:flex){
+    .steps{display:flex;flex-wrap:wrap;gap:12px;margin-left:0}
+    .steps>div{width:auto;flex:1 1 100%;margin:0}
+    @media(min-width:900px){.steps>div{flex:1 1 0;min-width:0;width:auto}}
+  }
   .steps>div::before{content:counter(s,decimal-leading-zero);display:block;
     font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--accent);
     margin-bottom:12px}
@@ -257,11 +262,16 @@
   .proof .pt{display:block;color:var(--ink);font-weight:570;font-size:15.5px;
     letter-spacing:-.01em;margin-bottom:9px}
   .proof .pd{display:block;color:var(--dim);font-size:14px;line-height:1.6}
-  .proof .pl{display:block;margin-top:14px;color:var(--faint);font-size:13px;
+  .proof .pl{display:block;margin-top:14px;padding-top:0;color:var(--faint);font-size:13px;
     font-family:var(--mono)}
   .proof>a:hover .pl{color:var(--accent)}
 
   /* ── price tiers ─────────────────────────────────────────────── */
+  /* Inline-block gives each card its own height, so the divider and the line
+     under it landed at three different levels — the cards read as leaning.
+     Flex stretches them to the tallest and pins the footer to the bottom.
+     Base stays inline-block for the same reason .stakes below does: an engine
+     without flex still gets three readable cards rather than one column. */
   .tiers{font-size:0;margin-left:-12px}
   .tier{
     display:inline-block;vertical-align:top;width:calc(100% - 12px);
@@ -269,6 +279,16 @@
     background:var(--panel);border:1px solid var(--line);border-radius:14px}
   .tier.lead{border-color:#26384c;background:var(--panel2)}
   @media(min-width:900px){.tier{width:calc(33.333% - 12px)}}
+  @supports (display:flex){
+    .tiers{display:flex;flex-wrap:wrap;gap:12px;margin-left:0;font-size:inherit}
+    .tier{display:flex;flex-direction:column;width:auto;flex:1 1 100%;margin:0}
+    @media(min-width:900px){
+      .tier{flex:1 1 0;min-width:0;width:auto}
+      /* the descriptions run two and three lines; reserving the taller one
+         starts every bullet list at the same height */
+      .tier .tw{min-height:4.9em}
+    }
+  }
   .tier .tk{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
     color:var(--faint);margin-bottom:14px}
   .tier.lead .tk{color:var(--accent)}
@@ -283,6 +303,10 @@
     font-family:var(--mono);font-size:11px;top:1px}
   .tier .tt{display:block;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
     font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.06em}
+  @supports (display:flex){
+    .tier ul{flex:1 1 auto}
+    .tier .tt{margin-top:auto}
+  }
 
   /* ── the refusal block ───────────────────────────────────────── */
   .notsold{margin-top:26px;padding:22px 24px;border:1px solid var(--line);
@@ -434,7 +458,6 @@
     <span class="navlinks">
       <a href="#work">The failure</a>
       <a href="#proof">Checked</a>
-      <a href="#engage">Engage</a>
       <a href="#how">How</a>
       <a href="#who">Who</a>
       <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
@@ -510,7 +533,24 @@ What is B's worst-case response time?</pre>
     <p>That is the shape of every defect this work is about. Not crashes —
       numbers that are quietly wrong in the direction that flatters the
       result.</p>
-  </div>
+  
+    <div class="notsold" style="border-left-color:var(--accent)">
+      <b>The same set passes every utilisation check</b>
+      <p>Total utilisation here is <span class="mono">0.7167</span>. The Liu and Layland
+        bound for two tasks is <span class="mono">0.8284</span>. The set sits comfortably
+        under the classical bound and still misses its deadline by 70&nbsp;µs — because the
+        bound assumes a deadline equal to the period, and this one does not have that.</p>
+      <p>The theorem is not wrong. It is answering a question nobody asked. A utilisation
+        figure is the cheapest number in real-time analysis to compute and the easiest to
+        misapply, and the tool declines to apply it here rather than returning the
+        flattering answer:</p>
+      <p class="mono" style="font-size:13px;line-height:1.9;color:var(--dim)">
+        set.utilisation_ppm() &nbsp;→&nbsp; Some(716_666)<br>
+        TaskSet::liu_layland_bound_ppm(2) &nbsp;→&nbsp; 828_427<br>
+        set.passes_utilisation_bound() &nbsp;→&nbsp; <b style="color:var(--ink)">false</b>
+      </p>
+    </div>
+</div>
 </section>
 
 <section>
@@ -647,6 +687,17 @@ What is B's worst-case response time?</pre>
         <span class="pl">Read the analysis →</span>
       </a>
 
+      <a href="https://github.com/DYResearch/dy-wcet/blob/main/CHANGELOG.md" rel="noopener">
+        <span class="pk">The time it went wrong</span>
+        <span class="pt">557 confident wrong answers, published</span>
+        <span class="pd">Until 2.0.0 this analysis was unsound where a deadline exceeds its
+          period, and it erred in the flattering direction. A generated search over 400,000
+          task sets found 14,185 under-reported response times and 557 sets returned as
+          meeting deadlines they miss. The witness, the corrected derivation and the wrong
+          version are all still in the repository.</span>
+        <span class="pl">Read the entry →</span>
+      </a>
+
       <a href="https://github.com/DYResearch/dy-wcet/blob/main/docs/CROSSCHECK.md" rel="noopener">
         <span class="pk">Cross-check</span>
         <span class="pt">Two implementations, one answer</span>
@@ -669,6 +720,29 @@ What is B's worst-case response time?</pre>
       response time of every task with each iteration of the recurrence written out, the
       verdict per task, and the margin before the first deadline is missed — with the tool
       version and a hash of the input, so the result can be reproduced without me.</p>
+
+    <div class="cols" style="display:flex;gap:9mm;flex-wrap:wrap;margin-bottom:22px">
+      <div style="flex:1 1 300px">
+        <h3 class="fund-t" style="font-size:16px;margin-bottom:10px">Worth an audit</h3>
+        <ul style="list-style:none;margin:0;padding:0">
+          <li>A deadline miss that will not reproduce under a debugger</li>
+          <li>A timing claim you have to defend to a customer, an auditor or a certifier</li>
+          <li>A task set where adding one feature changed behaviour you cannot explain</li>
+          <li>Numbers from a benchmark being used as if they were bounds</li>
+          <li>An analysis you inherited and nobody left the assumptions for</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 300px">
+        <h3 class="fund-t" style="font-size:16px;margin-bottom:10px">Not worth it yet</h3>
+        <ul style="list-style:none;margin:0;padding:0">
+          <li>You have no execution-time figures at all — measure first, this analyses what you measured</li>
+          <li>The problem is throughput rather than a deadline</li>
+          <li>You want a general code review</li>
+          <li>Multicore interference is the suspected cause — that is a different analysis</li>
+          <li>You need a certificate. Nobody here issues one</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="prio">
       <span class="pk">When it will not wait</span>
@@ -693,7 +767,7 @@ What is B's worst-case response time?</pre>
 
       <div class="tier lead">
         <span class="tk">Schedulability audit</span>
-        <span class="tp">$2,400</span>
+        <span class="tp">$3,000</span>
         <span class="tw">One task set, or one reproducible timing problem, traced end to
           end.</span>
         <ul>
@@ -748,12 +822,17 @@ What is B's worst-case response time?</pre>
         named, and the arithmetic shown so you can check it yourself.</p>
     </div>
 
+    <p class="fund-note" style="margin-bottom:14px"><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The
+      method, written out in full →</a> &nbsp;·&nbsp; what a deterministic-runtime audit has
+      to establish, why a measured maximum is not a bound, and the release where this tool
+      failed its own audit.</p>
+
     <div class="ctas">
       <a class="cta first" href="mailto:connect@axonos.org?subject=Priority%20review%20%E2%80%94%2048h&amp;body=What%20is%20failing%2C%20and%20what%20you%20have%20already%20tried%3A%0A%0A">
         Start a priority review <span>$4,800 · 48h</span>
       </a>
       <a class="cta" href="mailto:connect@axonos.org?subject=Schedulability%20audit&amp;body=Task%20set%20%28C%2C%20T%2C%20D%2C%20blocking%2C%20jitter%20per%20task%29%3A%0A%0A">
-        Send a task set <span>$2,400 · 5 days</span>
+        Send a task set <span>$3,000 · 5 days</span>
       </a>
     </div>
     <p class="fund-note"><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">The
