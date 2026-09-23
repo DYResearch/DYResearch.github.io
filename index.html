@@ -1,910 +1,548 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<!--
-  DY Research — https://dyresearch.github.io
-
-  SPDX-License-Identifier: Apache-2.0 OR MIT
-  Copyright (c) 2026 Denis Yermakou <connect@axonos.org>
-
-  One file. No framework, no build step, no third-party script, no analytics,
-  no fonts fetched from anywhere. A page about deterministic systems that
-  pulled in four CDNs would be arguing against itself.
--->
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DY Research — real-time analysis with the arithmetic shown</title>
-<meta name="description" content="Schedulability and timing analysis in integer arithmetic. Reproducible bit for bit, refuses rather than rounds, and states what it does not know.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DY Research — Timing analysis with the arithmetic shown</title>
+<meta name="description" content="Worst-case timing analysis for real-time systems, in integer arithmetic. I find where a timing claim breaks, and show the arithmetic so you can check it without me.">
 <meta name="author" content="Denis Yermakou">
 <link rel="canonical" href="https://dyresearch.github.io/">
-<meta name="theme-color" content="#08090c">
-<!-- An SVG favicon inline: no extra request, and no missing-icon 404 in the
-     log of a site that argues for not depending on things. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090c'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%235b8def' text-anchor='middle'%3EDY%3C/text%3E%3C/svg%3E">
-
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ctext x='16' y='21.5' font-family='-apple-system,Helvetica,Arial' font-size='13' font-weight='700' fill='%23f5f5f7' text-anchor='middle'%3EDY%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
-<meta property="og:title" content="DY Research">
-<meta property="og:description" content="Real-time timing analysis in integer arithmetic. Two implementations agree bit for bit, or one of them is wrong.">
+<meta property="og:title" content="DY Research — Timing analysis with the arithmetic shown">
+<meta property="og:description" content="A measured maximum is not a worst-case bound. Worst-case timing analysis for real-time systems, with every step of the arithmetic shown.">
 <meta property="og:url" content="https://dyresearch.github.io/">
-  <meta property="og:image" content="https://dyresearch.github.io/og.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Timing analysis with the arithmetic shown. R = 300, a fixed point, where the obvious answer is 400.">
-  <meta property="og:site_name" content="DY Research">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://dyresearch.github.io/og.png">
-<meta name="twitter:title" content="DY Research">
-<meta name="twitter:description" content="Two tasks, one number, and most implementations get it wrong. Timing analysis in integer arithmetic.">
-
+<meta property="og:image" content="https://dyresearch.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Timing analysis with the arithmetic shown. R = 300, a fixed point, where the obvious answer is 400.">
+<meta property="og:site_name" content="DY Research">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DY Research — Timing analysis with the arithmetic shown">
+<meta name="twitter:image" content="https://dyresearch.github.io/og.png">
 <style>
-  :root{
-    --bg:#06070b;
-    /* Surfaces and rules are translucent rather than solid. A solid panel on a
-       dark background reads as a box drawn on top; a translucent one reads as
-       a surface lit from behind, and the difference is most of what separates
-       a page that looks designed from one that looks assembled. */
-    --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.055);
-    --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.14);
-    --ink:#f2f5fb; --dim:#9aa3b8; --faint:#7f8a9e;
-    --accent:#2dd4ff; --violet:#a78bfa; --ok:#34d399; --warn:#fbbf24; --bad:#fb7185;
-    --shadow:0 20px 60px -28px rgba(0,0,0,.85);
-    --shadow-lift:0 28px 70px -30px rgba(0,0,0,.9);
-    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--bg);color:var(--ink);
-    font:400 16.5px/1.65 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif;
-    -webkit-font-smoothing:antialiased;
-    letter-spacing:-.005em;
-  }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* ─────────────────────────────────────────────────────────────────────────
+   DY Research. One idea per screen, a spacing scale of eight, and a grid
+   that keeps every card in a row the same height so their footers line up.
+   System type, no web fonts, no script: the page is the argument, not the
+   frame around it.
+   ───────────────────────────────────────────────────────────────────────── */
+:root{
+  --bg:#000;
+  --panel:#0e0e10;
+  --panel-2:#161618;
+  --hair:rgba(255,255,255,.09);
+  --hair-2:rgba(255,255,255,.16);
+  --text:#f5f5f7;
+  --text-2:#a1a1a6;
+  --text-3:#86868b;
+  --accent:#2dd4ff;
+  --radius:24px;
+  --max:1080px;
+  --text-max:720px;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",
+         "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:17px;line-height:1.52;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"kern","liga";
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.skip{position:absolute;left:-999px;top:0}
+.skip:focus{left:16px;top:12px;z-index:10;background:var(--text);color:#000;padding:8px 14px;border-radius:10px}
 
-  /* The container widens with the screen; the prose does not. A measure of
-     840px is right for a paragraph and wrong for a page — at 1440 it leaves a
-     narrow strip with empty margins, which reads as an unfinished layout
-     rather than as restraint. */
-  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
-  .lede,.demo p,section>.wrap>p{max-width:680px}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 24px}
+.narrow{max-width:var(--text-max);margin:0 auto}
+.center{text-align:center}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-  /* A bar that stays. Without one, a reader deep in the repositories has no
-     way back that does not involve scrolling, and the blur keeps the text
-     under it legible instead of hiding it behind a solid strip. */
-  .topbar{
-    position:sticky;top:0;z-index:20;height:58px;
-    background:rgba(6,7,11,.72);backdrop-filter:saturate(180%) blur(14px);
-    -webkit-backdrop-filter:saturate(180%) blur(14px);
-    border-bottom:1px solid var(--line);
-  }
-  .topbar .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
-  .topbar .mark{margin-right:auto}
-  .mark{color:var(--ink);font-weight:640;font-size:15px;letter-spacing:-.015em}
-  .mark:hover{text-decoration:none}
-  .mark .dy{
-    font-family:var(--mono);font-size:12px;color:var(--accent);
-    border:1px solid var(--line2);border-radius:6px;padding:3px 6px;margin-right:9px;
-  }
-  /* Margin, not gap. Flexbox `gap` is unsupported in older WebKit, and the
-     links render touching — which looks like a bug rather than a style. */
-  .navlinks{font-size:13.5px}
-  .navlinks a{margin-left:22px}
-  .navlinks a:first-child{margin-left:0}
-  .navlinks a{color:var(--faint);display:inline-block}
-  .navlinks a:hover{color:var(--ink);text-decoration:none}
-  /* Hiding every link but the last left a phone reader with one destination.
-     A strip that scrolls sideways keeps all of them reachable. */
-  @media(max-width:760px){
-    .topbar .wrap{padding-right:0;gap:14px}
-    .navlinks{overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;
-      scrollbar-width:none;max-width:62vw;padding-right:20px;
-      -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
-      mask-image:linear-gradient(90deg,#000 82%,transparent)}
-    .navlinks::-webkit-scrollbar{display:none}
-    .navlinks a{margin-left:16px}
-  }
-  /* A way back to the offer from anywhere on the page. */
-  .navcta{margin-left:22px;padding:6px 13px;border:1px solid #2b4258;border-radius:99px;
-    background:rgba(45,212,255,.08);color:var(--ink)!important;font-weight:560}
-  .navcta:hover{border-color:var(--accent);text-decoration:none}
-  /* The topbar is sticky and 58px tall, so an anchor jump used to land the
-     heading underneath it. */
-  section{padding:76px 0;border-top:1px solid var(--line);scroll-margin-top:74px}
-  section:first-of-type{border-top:0}
+/* ── navigation ─────────────────────────────────────────────────────────── */
+.nav{
+  position:sticky;top:0;z-index:5;height:52px;
+  background:rgba(0,0,0,.72);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--hair);
+}
+.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
+.brand{color:var(--text);font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap;flex:none}
+.brand:hover{text-decoration:none}
+.nav-links{display:flex;align-items:center;gap:28px;font-size:13px;flex:none}
+.nav-links a{white-space:nowrap;flex:none}
+.nav-links a{color:var(--text-2)}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-cta{
+  color:#000!important;background:var(--text);border-radius:980px;
+  padding:6px 14px;font-weight:600;font-size:13px;
+}
+.nav-cta:hover{background:#fff;text-decoration:none}
+@media (max-width:734px){.nav-links a:not(.nav-cta){display:none}}
 
-  /* ── masthead ─────────────────────────────────────────────── */
-  header{padding:clamp(56px,7vh,96px) 0 24px;position:relative;overflow:hidden}
-  header::after{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(90% 70% at 12% 0%,rgba(91,141,239,.10),transparent 60%);
-  }
-  .eyebrow{
-    font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--accent);font-weight:600;margin-bottom:22px;
-  }
-  h1{font-size:clamp(40px,6.2vw,78px);line-height:1;letter-spacing:-.04em;font-weight:660;max-width:15ch}
-  h1 em{font-style:normal;color:var(--dim)}
-  .lede{margin-top:28px;font-size:clamp(18px,1.5vw,21px);line-height:1.55;color:var(--dim);max-width:640px}
-  .lede b{color:var(--ink);font-weight:560}
+/* ── type ───────────────────────────────────────────────────────────────── */
+.eyebrow{
+  display:block;color:var(--accent);font-size:15px;font-weight:600;
+  letter-spacing:-.005em;margin:0 0 14px;
+}
+h1,h2,h3{margin:0;font-weight:700;color:var(--text)}
+h1{font-size:clamp(44px,7.2vw,80px);line-height:1.04;letter-spacing:-.035em}
+h2{font-size:clamp(34px,4.8vw,56px);line-height:1.07;letter-spacing:-.03em}
+h3{font-size:21px;line-height:1.25;letter-spacing:-.018em;font-weight:600}
+.lead{
+  font-size:clamp(19px,2.1vw,24px);line-height:1.45;color:var(--text-2);
+  letter-spacing:-.012em;margin:22px 0 0;
+}
+.lead b{color:var(--text);font-weight:600}
+p{margin:0}
+.muted{color:var(--text-2)}
 
-  /* The banner. A visitor who has just read a claim about arithmetic needs one
-     obvious next action, and the honest one is "check it yourself" rather than
-     "learn more". */
-  .start{margin-top:44px;font-size:0}
-  @media(min-width:1000px){
-    /* Above a thousand pixels the hero becomes two columns: the claim on the
-       left, the way to check it on the right. Below, they stack — a two-column
-       hero on a phone is two half-width columns nobody can read. */
-    .hero-grid{display:table;width:100%;table-layout:fixed;border-spacing:44px 0;margin-left:-44px;padding-top:34px}
-    .hero-grid>div{display:table-cell;vertical-align:top}
-    .hero-grid .left{width:52%}
-    .start{margin-top:0}
-    h1{max-width:none}
-  }
-  .start-main{
-    display:block;background:linear-gradient(150deg,#141d2e,#0d1219);
-    border:1px solid #2a3546;border-radius:14px;padding:26px 28px;
-    position:relative;overflow:hidden;font-size:16.5px;
-    transition:border-color .16s ease,transform .16s ease;
-  box-shadow:var(--shadow-lift);}
-  .start-main::after{
-    content:"";position:absolute;top:0;left:0;right:0;height:1px;
-    background:linear-gradient(90deg,transparent,var(--accent) 34%,#8f7ae6 72%,transparent);
-    opacity:.7;
-  }
-  .start-main:hover{border-color:#3d4c63;transform:translateY(-1px);text-decoration:none}
-  .start-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
-           color:var(--accent);font-weight:640;margin-bottom:11px}
-  .start-t{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:31px;font-weight:640;
-           color:var(--ink);letter-spacing:-.02em;line-height:1.1}
-  .start-d{display:block;margin-top:11px;color:var(--dim);font-size:15px;max-width:520px}
-  .start-side{margin-top:12px;font-size:0}
-  .start-alt{display:inline-block;vertical-align:top;width:100%;font-size:14.5px;
-             background:var(--panel);border:1px solid var(--line);border-radius:11px;
-             padding:15px 18px;margin-bottom:10px;transition:border-color .16s ease}
-  .start-alt:hover{border-color:var(--line2);text-decoration:none}
-  .start-alt b{display:block;color:var(--ink);font-weight:570;margin-bottom:3px}
-  .start-alt span{color:var(--faint);font-size:13.5px}
-  @media(min-width:640px){
-    .start-alt{width:calc(50% - 5px)}
-    .start-alt:first-child{margin-right:10px}
-  }
+/* ── sections ───────────────────────────────────────────────────────────── */
+section{padding:clamp(96px,13vw,160px) 0;border-top:1px solid var(--hair)}
+section.first{border-top:0}
+.section-head{margin-bottom:clamp(48px,6vw,72px)}
 
-  h2{font-size:12px;letter-spacing:.19em;text-transform:uppercase;color:var(--faint);
-     font-weight:640;margin-bottom:28px}
-  h3{font-size:23px;line-height:1.25;letter-spacing:-.02em;font-weight:620;margin-bottom:12px}
-  p{margin-bottom:17px;color:var(--dim)}
-  p:last-child{margin-bottom:0}
-  p b,li b{color:var(--ink);font-weight:560}
-  a{color:var(--accent);text-decoration:none}
-  /* Keyboard focus, visible. Without this a keyboard user tabs through the
-     page with no idea where they are — the browser's default outline is
-     invisible against a background this dark. */
-  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
-  /* Skip link. Screen-reader and keyboard users otherwise walk the whole
-     masthead before reaching anything they can act on. */
-  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--bg);
-        padding:10px 16px;border-radius:0 0 8px 0;font-weight:600;font-size:14px;z-index:9}
-  .skip:focus{left:0;text-decoration:none}
-  a:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.9em;color:var(--ink);
-       background:#141922;padding:1.5px 6px;border-radius:4px;border:1px solid var(--line2)}
+/* ── buttons ────────────────────────────────────────────────────────────── */
+.actions{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;align-items:center;margin-top:40px}
+.btn{
+  display:inline-block;background:var(--text);color:#000;border-radius:980px;
+  padding:14px 26px;font-size:17px;font-weight:600;letter-spacing:-.01em;
+  white-space:nowrap;flex:none;
+}
+.btn:hover{background:#fff;text-decoration:none}
+.more{font-size:17px;font-weight:500;white-space:nowrap;flex:none}
+.more::after{content:" ›";font-weight:400}
 
-  /* ── the failure that opens the argument ──────────────────── */
-  /* ── priority band ───────────────────────────────────────────── */
-  .prio{margin-bottom:14px;padding:26px 28px;border:1px solid #2b4258;border-radius:14px;
-    background:linear-gradient(180deg,rgba(45,212,255,.055),rgba(45,212,255,.015))}
-  .prio .pk{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
-    color:var(--accent);margin-bottom:14px}
-  .prio .ph{display:block;color:var(--ink);font-weight:600;font-size:21px;
-    letter-spacing:-.022em;margin-bottom:10px}
-  .prio .pw{color:var(--dim);font-size:15px;line-height:1.62;margin:0 0 18px;max-width:62ch}
-  .prio .pp{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;
-    font-size:31px;font-weight:640;color:var(--ink);letter-spacing:-.02em;line-height:1}
-  .prio .pp small{font-size:14px;font-weight:400;color:var(--faint);letter-spacing:0}
-  .prio .split{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:0}
-  .prio .split>div{display:inline-block;vertical-align:top;width:100%;font-size:14px;
-    line-height:1.6;color:var(--dim)}
-  @media(min-width:820px){
-    .prio .split>div{width:calc(50% - 14px)}
-    .prio .split>div:first-child{margin-right:28px}
-  }
-  .prio .split b{display:block;color:var(--ink);font-weight:565;font-size:13.5px;
-    margin-bottom:7px}
+/* ── hero ───────────────────────────────────────────────────────────────── */
+.hero{position:relative;overflow:hidden;padding-top:clamp(88px,12vw,148px)}
+.hero::before{
+  content:"";position:absolute;left:50%;top:-38%;width:1100px;height:900px;
+  transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(45,212,255,.13),rgba(45,212,255,0));
+}
+.hero .narrow{position:relative;max-width:920px}
 
-  /* ── call to action ──────────────────────────────────────────── */
-  .ctas{margin-top:28px;font-size:0}
-  .cta{display:inline-block;vertical-align:top;width:100%;margin:0 0 10px;
-    padding:16px 22px;border-radius:12px;border:1px solid var(--line2);
-    background:var(--panel2);color:var(--ink);font-size:15px;font-weight:560;
-    letter-spacing:-.01em;transition:border-color .18s ease,transform .18s ease}
-  .cta:hover{border-color:#3d4c63;transform:translateY(-1px);text-decoration:none}
-  .cta.first{border-color:#2b4258;background:rgba(45,212,255,.07)}
-  .cta.first:hover{border-color:var(--accent)}
-  .cta span{float:right;font-family:var(--mono);font-variant-numeric:tabular-nums;
-    color:var(--faint);font-weight:400;font-size:14px}
-  .cta.first span{color:var(--accent)}
-  @media(min-width:760px){
-    .cta{width:calc(50% - 5px)}
-    .cta.first{margin-right:10px}
-  }
+/* ── the argument ───────────────────────────────────────────────────────── */
+.given{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--hair);border:1px solid var(--hair);border-radius:18px;overflow:hidden;
+  max-width:640px;margin:0 auto 56px;
+}
+.given div{background:var(--panel);padding:20px 22px}
+.given .k{display:block;font-size:13px;color:var(--text-3);margin-bottom:6px}
+.given .v{font-family:var(--mono);font-size:16px;color:var(--text)}
+.verdict{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;
+}
+.verdict div{text-align:center}
+.num{
+  display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;
+  font-size:clamp(64px,11vw,112px);line-height:1;letter-spacing:-.04em;font-weight:600;
+}
+.num.wrong{color:#3a3a3d;text-decoration:line-through;text-decoration-color:#6e6e73;text-decoration-thickness:3px}
+.num.right{color:var(--text)}
+.num-label{display:block;margin-top:14px;font-size:15px;color:var(--text-3)}
+.num-label.right{color:var(--accent)}
+.derivation{
+  max-width:640px;margin:56px auto 0;background:var(--panel);border:1px solid var(--hair);
+  border-radius:18px;padding:22px 24px;font-family:var(--mono);font-size:15px;
+  line-height:2;color:var(--text-2);overflow-x:auto;white-space:nowrap;
+}
+.derivation b{color:var(--text);font-weight:600}
+.derivation .fp{color:var(--accent)}
+.note{max-width:640px;margin:28px auto 0;color:var(--text-2);font-size:17px;text-align:center}
 
-  /* ── how it works ────────────────────────────────────────────── */
-  .steps{counter-reset:s;font-size:0;margin-left:-12px}
-  .steps>div{counter-increment:s;display:inline-block;vertical-align:top;
-    width:calc(100% - 12px);margin:0 0 12px 12px;padding:22px 24px;font-size:15px;
-    background:var(--panel);border:1px solid var(--line);border-radius:14px}
-  @media(min-width:900px){.steps>div{width:calc(33.333% - 12px)}}
-  @supports (display:flex){
-    .steps{display:flex;flex-wrap:wrap;gap:12px;margin-left:0}
-    .steps>div{width:auto;flex:1 1 100%;margin:0}
-    @media(min-width:900px){.steps>div{flex:1 1 0;min-width:0;width:auto}}
-  }
-  .steps>div::before{content:counter(s,decimal-leading-zero);display:block;
-    font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;color:var(--accent);
-    margin-bottom:12px}
-  .steps b{display:block;color:var(--ink);font-weight:565;font-size:15.5px;
-    letter-spacing:-.01em;margin-bottom:8px}
-  .steps span{display:block;color:var(--dim);font-size:14px;line-height:1.6}
+/* ── the trap ───────────────────────────────────────────────────────────── */
+.meter{max-width:720px;margin:0 auto}
+.meter-track{position:relative;height:14px;border-radius:14px;background:var(--panel-2);border:1px solid var(--hair)}
+.meter-fill{position:absolute;left:0;top:0;bottom:0;width:71.67%;border-radius:14px;
+  background:linear-gradient(90deg,#1f6f86,var(--accent))}
+.meter-mark{position:absolute;top:-10px;bottom:-10px;left:82.84%;width:2px;background:var(--text)}
+.meter-scale{display:flex;justify-content:space-between;margin-top:14px;font-family:var(--mono);font-size:13px;color:var(--text-3)}
+.meter-legend{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.meter-legend div{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:18px 20px}
+.meter-legend .k{display:block;font-size:13px;color:var(--text-3);margin-bottom:6px}
+.meter-legend .v{font-family:var(--mono);font-size:22px;color:var(--text)}
+.meter-legend .v.a{color:var(--accent)}
 
-  /* ── proof cards ─────────────────────────────────────────────── */
-  .proof{font-size:0;margin-left:-12px}
-  .proof>a{
-    display:inline-block;vertical-align:top;width:calc(100% - 12px);
-    margin:0 0 12px 12px;padding:22px 24px 20px;
-    background:var(--panel);border:1px solid var(--line);border-radius:14px;
-    transition:border-color .18s ease,transform .18s ease,background .18s ease}
-  .proof>a:hover{border-color:var(--line2);background:var(--panel2);
-    transform:translateY(-1px);text-decoration:none}
-  @media(min-width:900px){.proof>a{width:calc(50% - 12px)}}
-  .proof .pk{display:block;font-family:var(--mono);font-size:10.5px;
-    letter-spacing:.19em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
-  .proof .pt{display:block;color:var(--ink);font-weight:570;font-size:15.5px;
-    letter-spacing:-.01em;margin-bottom:9px}
-  .proof .pd{display:block;color:var(--dim);font-size:14px;line-height:1.6}
-  .proof .pl{display:block;margin-top:14px;padding-top:0;color:var(--faint);font-size:13px;
-    font-family:var(--mono)}
-  .proof>a:hover .pl{color:var(--accent)}
+/* ── cards: one grid, every row the same height ─────────────────────────── */
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card{
+  display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--hair);border-radius:var(--radius);padding:32px;
+}
+.card .tag{font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:14px}
+.grid-3 a.card h3{min-height:2.5em}
+.card h3{margin-bottom:12px}
+.card p{color:var(--text-2);font-size:16px;line-height:1.55}
+.card .foot{margin-top:auto;padding-top:24px}
+a.card{color:inherit;transition:border-color .2s ease,background .2s ease;
+  display:grid;grid-template-rows:auto auto 1fr auto;align-content:stretch}
+a.card .foot{margin-top:0;align-self:end}
+a.card:hover{text-decoration:none;border-color:var(--hair-2);background:var(--panel-2)}
+a.card .foot{color:var(--accent);font-size:15px;font-weight:500}
+a.card .foot::after{content:" ›"}
 
-  /* ── price tiers ─────────────────────────────────────────────── */
-  /* Inline-block gives each card its own height, so the divider and the line
-     under it landed at three different levels — the cards read as leaning.
-     Flex stretches them to the tallest and pins the footer to the bottom.
-     Base stays inline-block for the same reason .stakes below does: an engine
-     without flex still gets three readable cards rather than one column. */
-  .tiers{font-size:0;margin-left:-12px}
-  .tier{
-    display:inline-block;vertical-align:top;width:calc(100% - 12px);
-    margin:0 0 12px 12px;padding:26px 26px 24px;
-    background:var(--panel);border:1px solid var(--line);border-radius:14px}
-  .tier.lead{border-color:#26384c;background:var(--panel2)}
-  @media(min-width:900px){.tier{width:calc(33.333% - 12px)}}
-  @supports (display:flex){
-    .tiers{display:flex;flex-wrap:wrap;gap:12px;margin-left:0;font-size:inherit}
-    .tier{display:flex;flex-direction:column;width:auto;flex:1 1 100%;margin:0}
-    @media(min-width:900px){
-      .tier{flex:1 1 0;min-width:0;width:auto}
-      /* the descriptions run two and three lines; reserving the taller one
-         starts every bullet list at the same height */
-      .tier .tw{min-height:4.9em}
-    }
-  }
-  .tier .tk{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
-    color:var(--faint);margin-bottom:14px}
-  .tier.lead .tk{color:var(--accent)}
-  .tier .tp{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;
-    font-size:31px;font-weight:640;color:var(--ink);letter-spacing:-.02em;line-height:1}
-  .tier .tp small{font-size:14px;font-weight:400;color:var(--faint);letter-spacing:0}
-  .tier .tw{display:block;margin-top:14px;color:var(--dim);font-size:14.5px;line-height:1.6}
-  .tier ul{list-style:none;margin:16px 0 0;padding:0}
-  .tier li{color:var(--dim);font-size:13.5px;line-height:1.55;padding-left:16px;
-    position:relative;margin-bottom:7px}
-  .tier li::before{content:"—";position:absolute;left:0;color:var(--faint);
-    font-family:var(--mono);font-size:11px;top:1px}
-  .tier .tt{display:block;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
-    font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.06em}
-  @supports (display:flex){
-    .tier ul{flex:1 1 auto}
-    .tier .tt{margin-top:auto}
-  }
+/* ── pricing ────────────────────────────────────────────────────────────── */
+/* Rows, not flex: badge, name, price, term, list, button. The header rows
+   have fixed heights so every list starts on the same line, the list row is
+   1fr so it absorbs the difference, and the button always lands in the last
+   row. Nothing here depends on margin:auto, which not every engine honours
+   in a flex column — the previous version leaned on it and leaned. */
+.plan{padding:36px 32px;display:grid;grid-template-rows:auto auto auto auto 1fr auto;align-content:stretch}
+.plan.featured{border-color:rgba(45,212,255,.45);background:linear-gradient(180deg,#0c1a20,var(--panel) 42%)}
+.plan .badge{
+  justify-self:start;height:26px;line-height:16px;font-size:12px;font-weight:600;color:var(--accent);
+  border:1px solid rgba(45,212,255,.4);border-radius:980px;padding:4px 11px;margin-bottom:18px;white-space:nowrap;
+}
+.plan .badge.ghost{visibility:hidden}
+.plan .name{display:block;height:24px;font-size:17px;font-weight:600;color:var(--text)}
+.plan .price{display:block;height:60px;white-space:nowrap;font-size:48px;font-weight:700;letter-spacing:-.035em;line-height:60px;margin:12px 0 8px;font-variant-numeric:tabular-nums}
+.plan .price small{font-size:17px;font-weight:500;color:var(--text-2);letter-spacing:-.01em}
+.plan .term{display:block;height:46px;font-size:15px;line-height:23px;color:var(--text-2)}
+.plan ul{list-style:none;margin:24px 0 0;padding:24px 0 0;border-top:1px solid var(--hair);align-self:start}
+.plan li{position:relative;padding-left:26px;margin-bottom:12px;font-size:15px;color:var(--text-2);line-height:1.45}
+.plan li::before{
+  content:"";position:absolute;left:0;top:7px;width:14px;height:8px;
+  border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);
+}
+.plan .foot{align-self:end;padding-top:28px}
+.plan .btn{display:block;text-align:center;font-size:15px;padding:12px 18px}
+.plan .btn.alt{background:transparent;color:var(--text);border:1px solid var(--hair-2)}
+.plan .btn.alt:hover{background:var(--panel-2)}
 
-  /* ── the refusal block ───────────────────────────────────────── */
-  .notsold{margin-top:26px;padding:22px 24px;border:1px solid var(--line);
-    border-left:2px solid var(--warn);border-radius:12px;background:var(--panel)}
-  .notsold b{display:block;color:var(--ink);font-weight:570;font-size:15px;margin-bottom:10px}
-  .notsold p{color:var(--dim);font-size:14px;line-height:1.65;margin:0}
-  .notsold p+p{margin-top:9px}
+/* ── small tiles ────────────────────────────────────────────────────────── */
+.tile{background:var(--panel);border:1px solid var(--hair);border-radius:20px;padding:26px}
+.tile .n{font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:14px;display:block}
+.tile h3{font-size:18px;line-height:1.3;margin-bottom:8px;min-height:2.6em}
+.tile p{color:var(--text-2);font-size:15px;line-height:1.5}
 
-  /* ── deliverable ─────────────────────────────────────────────── */
-  .arrives{counter-reset:step;margin-top:8px}
-  .arrives>div{position:relative;padding:0 0 0 42px;margin-bottom:18px}
-  .arrives>div::before{counter-increment:step;content:counter(step,decimal-leading-zero);
-    position:absolute;left:0;top:1px;font-family:var(--mono);font-size:12px;
-    color:var(--accent);letter-spacing:.1em}
-  .arrives b{display:block;color:var(--ink);font-weight:560;font-size:15px;margin-bottom:5px}
-  .arrives span{display:block;color:var(--dim);font-size:14.5px;line-height:1.6}
+.fit h3{font-size:19px;margin-bottom:18px}
+.fit ul{list-style:none;margin:0;padding:0}
+.fit li{padding:13px 0;border-top:1px solid var(--hair);color:var(--text-2);font-size:16px;line-height:1.45}
+.fit li:first-child{border-top:0;padding-top:0}
+.fit .yes h3{color:var(--text)}
+.fit .no h3{color:var(--text-3)}
 
-  /* ── who ─────────────────────────────────────────────────────── */
-  .who{padding:28px 30px;background:var(--panel);border:1px solid var(--line);
-    border-radius:14px}
-  .who .wn{display:block;color:var(--ink);font-weight:600;font-size:19px;
-    letter-spacing:-.02em;margin-bottom:12px}
-  .who p{color:var(--dim);font-size:15px;line-height:1.68;margin:0;max-width:64ch}
-  .who p+p{margin-top:12px}
-  .who .wl{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);
-    font-family:var(--mono);font-size:13px}
-  .who .wl a{margin-right:20px;color:var(--faint)}
-  .who .wl a:hover{color:var(--accent)}
+.subhead{font-size:clamp(24px,2.6vw,30px);font-weight:700;letter-spacing:-.022em;margin:clamp(72px,9vw,112px) 0 32px;text-align:center}
 
-  .demo{
-    background:linear-gradient(168deg,#0f141c,#0b0e13);
-    border:1px solid var(--line2);border-radius:14px;padding:26px 28px;margin:8px 0 24px;
-  box-shadow:var(--shadow);}
-  .demo pre{font-family:var(--mono);font-size:13.5px;line-height:1.9;color:var(--dim);
-            overflow-x:auto;margin-bottom:18px}
-  .demo pre b{color:var(--ink);font-weight:500}
-  .verdict{display:flex;gap:26px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
-  .verdict div{flex:1;min-width:190px}
-  .verdict .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:27px;font-weight:600;letter-spacing:-.02em}
-  .verdict .n.wrong{color:var(--bad)} .verdict .n.right{color:var(--ok)}
-  .verdict .w{font-size:13.5px;color:var(--faint);margin-top:6px;line-height:1.5}
+/* ── who & footer ───────────────────────────────────────────────────────── */
+.person{font-size:clamp(28px,3.4vw,40px);font-weight:700;letter-spacing:-.03em}
+.links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 32px;margin-top:32px;font-size:17px}
+footer{border-top:1px solid var(--hair);padding:40px 0 56px;color:var(--text-3);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px}
+footer a{color:var(--text-2)}
 
-  /* ── stakes ───────────────────────────────────────────────── */
-  /* Two columns without CSS Grid.
-     wkhtmltoimage and older WebKit ignore `grid` entirely and stack every
-     cell, which turns this section into a single column twice as tall as it
-     should be. inline-block renders identically everywhere, including the
-     modern engines. */
-  .stakes{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:0;background:var(--panel)}
-  .stakes div{
-    background:var(--panel);padding:22px 24px;font-size:16.5px;
-    display:inline-block;vertical-align:top;width:100%;
-  }
-  /* The cells in a row must be the same height or the background shows
-     through under the shorter one. Stretching them is what grid would have
-     done; without it the fill has to be explicit. */
-  /* Separators are cell borders, not a background showing through gaps.
-     With a background the shorter cell in a row leaves a visible strip
-     underneath it in engines that do not stretch inline-blocks — which is
-     every engine older than CSS Grid. */
-  .stakes div{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .stakes div:nth-child(2n){border-right:0}
-  .stakes div:nth-last-child(-n+2){border-bottom:0}
-  @supports (display:grid){
-    .stakes{display:grid;grid-template-columns:1fr;background:var(--panel)}
-    .stakes div{width:auto;margin:0!important}
-    @media(min-width:640px){.stakes{grid-template-columns:1fr 1fr}}
-  }
-  .stakes .k{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);
-             font-weight:620;margin-bottom:10px;line-height:1.4}
-  .stakes p{font-size:15px;margin:0}
-  @media(min-width:640px){.stakes div{width:50%}}
-
-  /* ── repositories ─────────────────────────────────────────── */
-  .repo{
-    display:block;background:var(--panel);border:1px solid var(--line);
-    border-radius:13px;padding:24px 26px;margin-bottom:14px;
-    transition:border-color .16s ease,transform .16s ease;
-  box-shadow:0 12px 40px -30px rgba(0,0,0,.9);}
-  .repo:hover{border-color:var(--line2);transform:translateY(-1px);text-decoration:none}
-  .repo .top{display:block;margin-bottom:11px}
-  .repo .name{margin-right:11px}
-  .repo .name{font-family:var(--mono);font-size:16.5px;color:var(--ink);font-weight:600}
-  .repo .tag{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:640;
-             padding:3px 9px;border-radius:20px;border:1px solid}
-  .tag.live{color:var(--ok);border-color:rgba(62,207,142,.34);background:rgba(62,207,142,.09)}
-  .tag.next{color:var(--warn);border-color:rgba(232,176,75,.32);background:rgba(232,176,75,.08)}
-  .tag.plan{color:var(--faint);border-color:var(--line2)}
-  .repo p{font-size:15px;margin:0;color:var(--dim)}
-  .repo .why{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);
-             font-size:14px;color:var(--faint)}
-
-  /* ── discipline list ──────────────────────────────────────── */
-  ol.disc{list-style:none;counter-reset:d}
-  ol.disc li{counter-increment:d;padding:20px 0 20px 52px;position:relative;border-bottom:1px solid var(--line)}
-  ol.disc li:last-child{border-bottom:0;padding-bottom:0}
-  ol.disc li::before{
-    content:counter(d,decimal-leading-zero);position:absolute;left:0;top:20px;
-    font-family:var(--mono);font-size:12.5px;color:var(--accent);font-weight:600;
-  }
-  ol.disc strong{display:block;color:var(--ink);font-weight:590;margin-bottom:5px;font-size:16.5px}
-  ol.disc span{color:var(--dim);font-size:15px;line-height:1.6}
-
-  /* ── funding, stated once ─────────────────────────────────── */
-  /* The offer. Placed after the argument and before the address, because a
-     reader who is not yet convinced has no use for either. */
-  .audit{
-    display:block;background:linear-gradient(152deg,#16202f,#0d1218);
-    border:1px solid #2d3a4d;border-radius:15px;padding:32px 34px;
-    transition:border-color .16s ease,transform .16s ease;
-  box-shadow:var(--shadow-lift);}
-  .audit:hover{border-color:#43536b;transform:translateY(-1px);text-decoration:none}
-  .audit-k{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;
-           color:var(--accent);font-weight:640;margin-bottom:14px}
-  .audit-t{display:block;font-size:29px;line-height:1.2;letter-spacing:-.028em;
-           font-weight:640;color:var(--ink)}
-  .audit-d{display:block;margin-top:15px;color:var(--dim);font-size:15.5px;max-width:590px}
-  .audit-go{display:block;margin-top:20px;color:var(--accent);font-size:14.5px;font-weight:560}
-
-  .fund-t{font-size:clamp(24px,2.4vw,31px);line-height:1.2;letter-spacing:-.028em;
-          font-weight:640;margin-bottom:14px}
-  .fund-note{margin-top:16px;font-size:14px;color:var(--faint)}
-  /* Touch devices keep :hover after a tap, so a card stays lifted and
-     highlighted until something else is tapped — it reads as "selected"
-     when nothing is. Pointer-capable devices are unaffected. */
-  @media (hover:none){
-    .start-main:hover,.cta:hover,.repo:hover,.audit:hover,
-    .proof>a:hover{transform:none;box-shadow:none}
-    .start-main:hover,.cta:hover,.cta.first:hover,.start-alt:hover,
-    .repo:hover,.audit:hover,.navcta:hover{border-color:var(--line)}
-    .proof>a:hover{border-color:var(--line);background:var(--panel)}
-    .proof>a:hover .pl{color:var(--faint)}
-  }
-
-  footer{padding:44px 0 64px;border-top:1px solid var(--line);color:var(--faint);font-size:14px}
-  footer a{color:var(--dim)}
-  footer .r{margin-top:10px;font-size:13px}
-  /* A class, not an inline style. A strict Content-Security-Policy with
-     style-src 'self' drops inline attributes silently, and this line would
-     render unstyled on a served page while looking correct as a local file. */
-  footer .fname{color:var(--ink)}
+/* ── responsive ─────────────────────────────────────────────────────────── */
+@media (max-width:1068px){
+  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:834px){
+  .grid-3{grid-template-columns:minmax(0,1fr)}
+  .plan .term{height:auto}
+  .plan .badge.ghost{display:none}
+  .grid-3 a.card h3,.tile h3{min-height:0}
+}
+@media (max-width:734px){
+  body{font-size:16px}
+  .wrap{padding:0 20px}
+  .grid-2,.grid-4{grid-template-columns:minmax(0,1fr)}
+  .card{padding:26px}
+  .plan{padding:30px 24px}
+  .given{grid-template-columns:minmax(0,1fr)}
+  .meter-legend{grid-template-columns:minmax(0,1fr)}
+  .derivation{font-size:13px;padding:18px}
+  /* The marker would push the line past a phone's width and make the one
+     equation on the page scroll sideways. It takes its own line instead. */
+  .derivation .fp{display:block;margin-top:2px}
+  footer .wrap{flex-direction:column}
+}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<nav class="topbar">
+<nav class="nav" aria-label="Primary">
   <div class="wrap">
-    <a class="mark" href="#top"><span class="dy">DY</span>DY&nbsp;Research</a>
-    <span class="navlinks">
-      <a href="#work">The failure</a>
-      <a href="#proof">Checked</a>
-      <a href="#how">How</a>
-      <a href="#who">Who</a>
-      <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
-      <a class="navcta" href="#engage">Engage</a>
-    </span>
+    <a class="brand" href="#top">DY Research</a>
+    <div class="nav-links">
+      <a href="#argument">The argument</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#engage">Engage</a>
+      <a class="nav-cta" href="#engage">Book an audit</a>
+    </div>
   </div>
 </nav>
 
-<a class="skip" href="#work">Skip to the work</a>
+<main id="main">
 
-<header id="top">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div class="left">
-    <div class="eyebrow">DY Research</div>
-    <h1>Timing analysis with<br>the arithmetic <em>shown.</em></h1>
-    <p class="lede">Safety-critical systems are certified on numbers that
-      <b>nobody outside the vendor can reproduce.</b> The tools that produce
-      them are closed, licensed per seat, and disagree with each other in the
-      last decimal. This is work on the part where the arithmetic decides the
-      answer.</p>
+<!-- ═══ HERO ════════════════════════════════════════════════════════════ -->
+<section class="hero first" id="top">
+  <div class="wrap center">
+    <div class="narrow">
+      <span class="eyebrow">Worst-case timing analysis</span>
+      <h1>Timing analysis<br>with the arithmetic shown.</h1>
+      <p class="lead">A measured maximum is not a worst-case bound. I find where a
+        timing claim breaks, and show every step of the arithmetic —
+        <b>so you can check it without me.</b></p>
+      <div class="actions">
+        <a class="btn" href="#engage">Book an audit — $3,000</a>
+        <a class="more" href="#argument">See the argument</a>
       </div>
-      <div>
-<div class="start">
-      <a class="start-main" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
-        <span class="start-k">Start here</span>
-        <span class="start-t">dy-wcet</span>
-        <span class="start-d">Clone it, run <code>cargo test</code>, and read the
-          forty-nine tests. The one that matters takes thirty seconds to check.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE ARGUMENT ════════════════════════════════════════════════════ -->
+<section id="argument">
+  <div class="wrap">
+    <div class="section-head center narrow">
+      <span class="eyebrow">The argument</span>
+      <h2>Two tasks.<br>Most answers are wrong.</h2>
+      <p class="lead">What is the worst-case response time of task B?</p>
+    </div>
+
+    <div class="given">
+      <div><span class="k">Task A · higher priority</span><span class="v">100 µs every 400 µs</span></div>
+      <div><span class="k">Task B</span><span class="v">200 µs every 1,000 µs</span></div>
+    </div>
+
+    <div class="verdict">
+      <div><span class="num wrong">400</span><span class="num-label">The obvious answer</span></div>
+      <div><span class="num right">300</span><span class="num-label right">The fixed point</span></div>
+    </div>
+
+    <div class="derivation" aria-label="Derivation">
+      R = 200 &nbsp; ⌈200/400⌉ = 1 &nbsp;→&nbsp; <b>300</b><br>
+      R = 300 &nbsp; ⌈300/400⌉ = 1 &nbsp;→&nbsp; <b>300</b> &nbsp;<span class="fp">← fixed point</span>
+    </div>
+
+    <p class="note">The window that counts is the response time, not the period.
+      B finishes at 300&nbsp;µs, and only one activation of A lands before it.
+      Change the periods and the same mistake reports a deadline as met
+      that is missed on hardware.</p>
+  </div>
+</section>
+
+<!-- ═══ THE TRAP ════════════════════════════════════════════════════════ -->
+<section id="trap">
+  <div class="wrap">
+    <div class="section-head center narrow">
+      <span class="eyebrow">The trap</span>
+      <h2>It passes every utilisation check.<br>It still misses.</h2>
+      <p class="lead">A second set: utilisation sits well under the classical
+        bound, and one task misses its deadline by 70&nbsp;µs — because the
+        bound assumes a deadline equal to the period, and this one has none.</p>
+    </div>
+
+    <div class="meter" role="img" aria-label="Utilisation 0.7167, below the Liu and Layland bound of 0.8284">
+      <div class="meter-track">
+        <div class="meter-fill"></div>
+        <div class="meter-mark"></div>
+      </div>
+      <div class="meter-scale"><span>0</span><span>utilisation</span><span>1.0</span></div>
+      <div class="meter-legend">
+        <div><span class="k">Utilisation of the set</span><span class="v a mono">0.7167</span></div>
+        <div><span class="k">Liu–Layland bound, two tasks</span><span class="v mono">0.8284</span></div>
+      </div>
+    </div>
+
+    <p class="note">The theorem is not wrong. It answers a question nobody asked.
+      The tool declines to apply it here rather than return the flattering answer.</p>
+  </div>
+</section>
+
+<!-- ═══ EVIDENCE ════════════════════════════════════════════════════════ -->
+<section id="evidence">
+  <div class="wrap">
+    <div class="section-head center narrow">
+      <span class="eyebrow">Evidence</span>
+      <h2>Checked, in public.</h2>
+      <p class="lead">Every claim below links to the work behind it —
+        including the time it went wrong.</p>
+    </div>
+
+    <div class="grid-3">
+      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">
+        <span class="tag">Case study</span>
+        <h3>An RP2350 timer that stopped for minutes</h3>
+        <p>An intermittent <span class="mono">embassy-time</span> failure traced
+          through alarm arming and timer-queue liveness, with evidence and
+          hypothesis kept apart.</p>
+        <span class="foot">Read the analysis</span>
       </a>
-      <div class="start-side">
-        <a class="start-alt" href="https://github.com/DYResearch" rel="noopener">
-          <b>All repositories</b><span>github.com/DYResearch</span>
-        </a>
-        <a class="start-alt" href="https://github.com/AxonOS-org" rel="noopener">
-          <b>AxonOS</b><span>Where these problems arrived first</span>
-        </a>
-      </div>
-    </div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<section id="work">
-  <div class="wrap">
-    <h2>The failure, in four lines</h2>
-    <h3>Two tasks. One number. Most implementations get it wrong.</h3>
-    <div class="demo">
-<pre><b>task A</b>  100 µs every  400 µs   ← higher priority
-<b>task B</b>  200 µs every 1000 µs
-
-What is B's worst-case response time?</pre>
-      <div class="verdict">
-        <div>
-          <div class="n wrong">400 µs</div>
-          <div class="w">Counting preemptions across B's <b>period</b>: two
-            activations of A fit inside 1000 µs, so 200 + 2×100.</div>
-        </div>
-        <div>
-          <div class="n right">300 µs</div>
-          <div class="w">Counting across B's <b>response window</b>, which is
-            what the recurrence actually says. At R = 200 one activation fits,
-            giving 300; at R = 300 still one, so 300 is the fixed point.</div>
-        </div>
-      </div>
-    </div>
-    <p>Here the mistake is conservative and the system merely looks worse than
-      it is. Change the periods and it inverts: the wrong method reports a
-      deadline met that is missed on hardware. <b>Both answers are plausible,
-      neither is flagged, and a test written by the same person who wrote the
-      bug passes.</b></p>
-    <p>That is the shape of every defect this work is about. Not crashes —
-      numbers that are quietly wrong in the direction that flatters the
-      result.</p>
-  
-    <div class="notsold" style="border-left-color:var(--accent)">
-      <b>The same set passes every utilisation check</b>
-      <p>Total utilisation here is <span class="mono">0.7167</span>. The Liu and Layland
-        bound for two tasks is <span class="mono">0.8284</span>. The set sits comfortably
-        under the classical bound and still misses its deadline by 70&nbsp;µs — because the
-        bound assumes a deadline equal to the period, and this one does not have that.</p>
-      <p>The theorem is not wrong. It is answering a question nobody asked. A utilisation
-        figure is the cheapest number in real-time analysis to compute and the easiest to
-        misapply, and the tool declines to apply it here rather than returning the
-        flattering answer:</p>
-      <p class="mono" style="font-size:13px;line-height:1.9;color:var(--dim)">
-        set.utilisation_ppm() &nbsp;→&nbsp; Some(716_666)<br>
-        TaskSet::liu_layland_bound_ppm(2) &nbsp;→&nbsp; 828_427<br>
-        set.passes_utilisation_bound() &nbsp;→&nbsp; <b style="color:var(--ink)">false</b>
-      </p>
-    </div>
-</div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>Why now</h2>
-    <div class="stakes">
-      <div>
-        <div class="k">Brain–computer interfaces</div>
-        <p>Devices are moving from laboratories to people. A decoder that
-          misses its window does not drop a frame — it moves a limb late, or
-          does not move it. The field has excellent signal processing and
-          almost no formal timing discipline, and regulators are beginning to
-          ask for one.</p>
-      </div>
-      <div>
-        <div class="k">Everything else that must not stop</div>
-        <p>DO-178C, IEC 61508 and ISO 26262 all require evidence that deadlines
-          are met. The evidence is generated by proprietary tools, priced per
-          seat, whose internals no auditor can inspect. The standard asks for
-          proof and the industry supplies a receipt.</p>
-      </div>
-      <div>
-        <div class="k">The reproducibility gap</div>
-        <p>A bound computed in floating point has last bits that depend on the
-          compiler and the optimisation level. Two teams running the same
-          analysis on the same task set get different numbers and cannot tell
-          who is right. This is normal, and it should not be.</p>
-      </div>
-      <div>
-        <div class="k">Nobody is fixing it openly</div>
-        <p>The analysis has been public since 1986. The implementations are
-          not. There is no open tool an engineer can read end to end, run on
-          their own set, and hand to a reviewer who can run it too.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap" id="repos">
-    <h2>Repositories</h2>
-
-    <a class="repo" href="https://github.com/DYResearch/dy-wcet" rel="noopener">
-      <div class="top"><span class="name">dy-wcet</span><span class="tag live">available</span></div>
-      <p>Worst-case response time for fixed-priority task sets. Integer
-        arithmetic throughout, checked operations, and an explicit
-        unschedulable result where an over-utilised set has no bound —
-        rather than the last value before the loop gave up.</p>
-      <div class="why">Forty-nine tests and five Kani proofs, including the
-        300-versus-400 case above. <code>no_std</code>, zero dependencies, unsafe forbidden.</div>
-    </a>
-
-    <a class="repo" href="https://github.com/DYResearch/dy-certify" rel="noopener">
-      <div class="top"><span class="name">dy-certify</span><span class="tag next">in progress</span></div>
-      <p>A signed schedulability certificate: the task set, the derivation step
-        by step, the tool version, and a hash. An auditor re-runs it and gets
-        the same bytes, or the certificate is void.</p>
-      <div class="why">The thing standards actually require and closed tools
-        cannot provide — because reproducing their result means trusting their
-        binary.</div>
-    </a>
-
-    <a class="repo" href="https://github.com/DYResearch/dy-blocking" rel="noopener">
-      <div class="top"><span class="name">dy-blocking</span><span class="tag plan">planned</span></div>
-      <p>Priority-inheritance and priority-ceiling blocking terms, derived from
-        a resource graph instead of estimated. Today the blocking term is an
-        input to every analysis and usually a guess.</p>
-      <div class="why">The weakest number in most timing arguments, and the one
-        nobody checks.</div>
-    </a>
-
-    <a class="repo" href="https://github.com/DYResearch/dy-trace" rel="noopener">
-      <div class="top"><span class="name">dy-trace</span><span class="tag plan">planned</span></div>
-      <p>Turns an instrumented trace into execution-time inputs with their
-        confidence stated — so an analysis says whether its inputs were
-        measured or assumed.</p>
-      <div class="why">A bound computed from a spreadsheet is arithmetic about
-        a guess, and nothing currently forces that to be visible.</div>
-    </a>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>How this is built</h2>
-    <ol class="disc">
-      <li>
-        <strong>Integers where the result matters</strong>
-        <span>Same input, same bits, any machine, any compiler. Two
-          implementations agree exactly or one of them is wrong — a property no
-          floating-point tool can offer and no test can pin.</span>
-      </li>
-      <li>
-        <strong>Refusal over approximation</strong>
-        <span>When a computation has no answer it returns that, not the last
-          value before the iteration was capped. An infinite response time
-          fails every deadline comparison it is put into, which is the safe
-          direction to be wrong in.</span>
-      </li>
-      <li>
-        <strong>Checked arithmetic as a rule</strong>
-        <span>Overflow is reported. A wrapping add in a schedulability test
-          converts a real failure into an apparent success, and that is the one
-          direction an arithmetic error must never go.</span>
-      </li>
-      <li>
-        <strong>Limits stated in the code, not the marketing</strong>
-        <span>None of this measures anything. It computes bounds from execution
-          times somebody else established, and each crate says so in its own
-          documentation rather than leaving a reader to discover it.</span>
-      </li>
-      <li>
-        <strong>No dependencies where none are needed</strong>
-        <span>A crate that computes a bound should not pull in a runtime to do
-          it. <code>no_std</code>, verified against a bare-metal target in CI
-          rather than asserted.</span>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<section id="proof">
-  <div class="wrap">
-    <h2>What has been checked, and by whom</h2>
-    <div class="proof">
-
-      <a href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">
-        <span class="pk">Case study</span>
-        <span class="pt">Embassy #6528 — RP2350 lost alarm</span>
-        <span class="pd">An intermittent <code>embassy-time</code> failure traced through
-          hardware alarm arming, timer-queue liveness, and a response time with no upper
-          bound. Published entire, with the evidence and the hypotheses kept apart and
-          labelled.</span>
-        <span class="pl">Read the analysis →</span>
+      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/CHANGELOG.md" rel="noopener">
+        <span class="tag">The time it went wrong</span>
+        <h3>557 confident wrong answers</h3>
+        <p>The same review, run on my own tool, found it had reported 557 task
+          sets as meeting deadlines they miss. Found, fixed, and still published
+          in full.</p>
+        <span class="foot">Read the entry</span>
       </a>
-
-      <a href="https://github.com/DYResearch/dy-wcet/blob/main/CHANGELOG.md" rel="noopener">
-        <span class="pk">The time it went wrong</span>
-        <span class="pt">557 confident wrong answers, published</span>
-        <span class="pd">Until 2.0.0 this analysis was unsound where a deadline exceeds its
-          period, and it erred in the flattering direction. A generated search over 400,000
-          task sets found 14,185 under-reported response times and 557 sets returned as
-          meeting deadlines they miss. The witness, the corrected derivation and the wrong
-          version are all still in the repository.</span>
-        <span class="pl">Read the entry →</span>
+      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/docs/CROSSCHECK.md" rel="noopener">
+        <span class="tag">Cross-check</span>
+        <h3>Two implementations, one answer</h3>
+        <p>A second response-time analysis, written separately, agrees on a set
+          where the fixed point is not the first value tried.</p>
+        <span class="foot">See the derivation</span>
       </a>
-
-      <a href="https://github.com/DYResearch/dy-wcet/blob/main/docs/CROSSCHECK.md" rel="noopener">
-        <span class="pk">Cross-check</span>
-        <span class="pt">Two implementations, one answer</span>
-        <span class="pd">The AxonOS kernel carries its own response-time analysis, written
-          months earlier for a different reason. On a shared set they agree — and the first
-          attempt at that comparison was too easy to be worth anything, which the write-up
-          says before it says anything else.</span>
-        <span class="pl">See the derivation →</span>
-      </a>
-
     </div>
   </div>
 </section>
 
+<!-- ═══ ENGAGE ══════════════════════════════════════════════════════════ -->
 <section id="engage">
   <div class="wrap">
-    <h2>Engage</h2>
-    <h3 class="fund-t">One problem, traced end to end, in writing.</h3>
-    <p>Send a task set, or send the failure you cannot pin down. What comes back is the
-      response time of every task with each iteration of the recurrence written out, the
-      verdict per task, and the margin before the first deadline is missed — with the tool
-      version and a hash of the input, so the result can be reproduced without me.</p>
+    <div class="section-head center narrow">
+      <span class="eyebrow">Engage</span>
+      <h2>One problem,<br>traced end to end.</h2>
+      <p class="lead">Fixed price, fixed scope, agreed before anything starts.
+        If the analysis will not tell you anything useful, I say so before you pay.</p>
+    </div>
 
-    <div class="cols" style="display:flex;gap:9mm;flex-wrap:wrap;margin-bottom:22px">
-      <div style="flex:1 1 300px">
-        <h3 class="fund-t" style="font-size:16px;margin-bottom:10px">Worth an audit</h3>
-        <ul style="list-style:none;margin:0;padding:0">
+    <div class="grid-3">
+      <div class="card plan featured">
+        <span class="badge">Most engagements start here</span>
+        <span class="name">Timing audit</span>
+        <span class="price">$3,000</span>
+        <span class="term">One reproducible problem. Written report in five working days.</span>
+        <ul>
+          <li>The execution model, stated precisely</li>
+          <li>WCET and WCRT reasoning, every iteration shown</li>
+          <li>Interference, blocking and determinism boundaries</li>
+          <li>Evidence gaps named, not glossed</li>
+        </ul>
+        <div class="foot"><a class="btn" href="mailto:connect@axonos.org?subject=Timing%20audit">Request an audit</a></div>
+      </div>
+
+      <div class="card plan">
+        <span class="badge ghost" aria-hidden="true">·</span>
+        <span class="name">Priority</span>
+        <span class="price">$4,800</span>
+        <span class="term">For a failure that will not wait. Report within 48 hours.</span>
+        <ul>
+          <li>Two days of attention ahead of everything else</li>
+          <li>The report at the end, whatever it finds</li>
+          <li>A gate before the money: if 48 hours won't get anywhere, I say so</li>
+        </ul>
+        <div class="foot"><a class="btn alt" href="mailto:connect@axonos.org?subject=Priority%20review">Start a priority review</a></div>
+      </div>
+
+      <div class="card plan">
+        <span class="badge ghost" aria-hidden="true">·</span>
+        <span class="name">System review</span>
+        <span class="price"><small>from</small> $8,000</span>
+        <span class="term">Several sets, a scheduler design, or verification on a bench.</span>
+        <ul>
+          <li>Scoped in a short exchange that costs nothing</li>
+          <li>Priced before it starts, never after</li>
+          <li>If you do not need it, that is the answer you get</li>
+        </ul>
+        <div class="foot"><a class="btn alt" href="mailto:connect@axonos.org?subject=System%20review">Discuss scope</a></div>
+      </div>
+    </div>
+
+    <h3 class="subhead">What arrives</h3>
+    <div class="grid-4">
+      <div class="tile"><span class="n">01</span><h3>The failure chain</h3><p>Traced through your source, not summarised from outside.</p></div>
+      <div class="tile"><span class="n">02</span><h3>Evidence and hypothesis</h3><p>Kept apart and labelled. Where the evidence stops, it says so.</p></div>
+      <div class="tile"><span class="n">03</span><h3>Next steps</h3><p>Each naming what would confirm it and what would rule it out.</p></div>
+      <div class="tile"><span class="n">04</span><h3>A proposed fix</h3><p>Where the evidence carries that far, and a note where it does not.</p></div>
+    </div>
+
+    <h3 class="subhead">Is this for you?</h3>
+    <div class="grid-2 fit">
+      <div class="card yes">
+        <h3>A good fit</h3>
+        <ul>
           <li>A deadline miss that will not reproduce under a debugger</li>
-          <li>A timing claim you have to defend to a customer, an auditor or a certifier</li>
-          <li>A task set where adding one feature changed behaviour you cannot explain</li>
-          <li>Numbers from a benchmark being used as if they were bounds</li>
-          <li>An analysis you inherited and nobody left the assumptions for</li>
+          <li>A timing claim you must defend to a customer or certifier</li>
+          <li>Benchmark numbers being used as if they were bounds</li>
+          <li>An analysis inherited without its assumptions</li>
         </ul>
       </div>
-      <div style="flex:1 1 300px">
-        <h3 class="fund-t" style="font-size:16px;margin-bottom:10px">Not worth it yet</h3>
-        <ul style="list-style:none;margin:0;padding:0">
-          <li>You have no execution-time figures at all — measure first, this analyses what you measured</li>
-          <li>The problem is throughput rather than a deadline</li>
+      <div class="card no">
+        <h3>Not yet</h3>
+        <ul>
+          <li>No execution-time figures at all — measure first</li>
+          <li>The problem is throughput, not a deadline</li>
           <li>You want a general code review</li>
-          <li>Multicore interference is the suspected cause — that is a different analysis</li>
           <li>You need a certificate. Nobody here issues one</li>
         </ul>
       </div>
     </div>
-
-    <div class="prio">
-      <span class="pk">When it will not wait</span>
-      <span class="ph">An intermittent failure that survives every fix.</span>
-      <p class="pw">A timer that stops for minutes. A deadline miss that will not reproduce
-        under a debugger. A race nobody can corner because it only shows on the bench at
-        four in the morning.</p>
-      <span class="pp">$4,800 <small>· a written report within 48 hours of me accepting</small></span>
-      <div class="split">
-        <div><b>What that buys</b>Two days of my attention ahead of everything else, and
-          the report at the end of them — whatever it finds, including the parts that stay
-          hypothesis.</div>
-        <div><b>What it does not buy</b>A promise that the cause will be found. Nobody can
-          promise that about a bug they have not seen, and a vendor who does has not met a
-          hard one. What you get instead is a gate <em>before</em> the money: send the
-          description, and if I do not think forty-eight hours will get anywhere, I say so
-          and there is nothing to pay.</div>
-      </div>
-    </div>
-
-    <div class="tiers">
-
-      <div class="tier lead">
-        <span class="tk">Schedulability audit</span>
-        <span class="tp">$3,000</span>
-        <span class="tw">One task set, or one reproducible timing problem, traced end to
-          end.</span>
-        <ul>
-          <li>Written report within five working days</li>
-          <li>Every iteration shown, not just the answer</li>
-          <li>The assumptions your set rests on, named</li>
-          <li>Fixed price, fixed scope, quoted before anything starts</li>
-        </ul>
-        <span class="tt">Asynchronous · EUR or USD</span>
-      </div>
-
-      <div class="tier">
-        <span class="tk">System review</span>
-        <span class="tp">from $8,000</span>
-        <span class="tw">Several sets, a scheduler design, or hardware-in-the-loop
-          verification against a bench.</span>
-        <ul>
-          <li>Scoped in a short exchange that costs nothing</li>
-          <li>Priced before it starts, not after</li>
-          <li>If the answer is that you do not need this, that is the answer you get</li>
-        </ul>
-        <span class="tt">Quoted after scoping</span>
-      </div>
-
-      <div class="tier">
-        <span class="tk">Qualification support</span>
-        <span class="tp">Quoted</span>
-        <span class="tw">Engineering time spent on <em>your</em> tool-confidence argument
-          under IEC 62304 or ISO 26262.</span>
-        <ul>
-          <li>Assembling the evidence your safety case needs</li>
-          <li>Stated precisely: this is work on your documentation</li>
-          <li>It is not a claim that the tool is qualified — nothing here is</li>
-        </ul>
-        <span class="tt">Hourly or fixed, your choice</span>
-      </div>
-
-    </div>
-
-    <div class="notsold">
-      <b>Three things that are not for sale here</b>
-      <p><b style="display:inline;font-weight:570">A licence to the tool.</b>
-        <code>dy-wcet</code> is Apache-2.0 OR MIT and that licence is irrevocable. Nobody
-        can sell you one, including me. For debugging it is free and it is the right
-        answer.</p>
-      <p><b style="display:inline;font-weight:570">Tool qualification data.</b> It does not
-        exist. When it does it will be published with the evidence behind it, and until then
-        selling it would be selling a document I have not written.</p>
-      <p><b style="display:inline;font-weight:570">A warranty on the result.</b> A one-person
-        practice with no professional indemnity should not offer one, and you should not
-        accept one from anybody who would. What is paid for is the analysis, the assumptions
-        named, and the arithmetic shown so you can check it yourself.</p>
-    </div>
-
-    <p class="fund-note" style="margin-bottom:14px"><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The
-      method, written out in full →</a> &nbsp;·&nbsp; what a deterministic-runtime audit has
-      to establish, why a measured maximum is not a bound, and the release where this tool
-      failed its own audit.</p>
-
-    <div class="ctas">
-      <a class="cta first" href="mailto:connect@axonos.org?subject=Priority%20review%20%E2%80%94%2048h&amp;body=What%20is%20failing%2C%20and%20what%20you%20have%20already%20tried%3A%0A%0A">
-        Start a priority review <span>$4,800 · 48h</span>
-      </a>
-      <a class="cta" href="mailto:connect@axonos.org?subject=Schedulability%20audit&amp;body=Task%20set%20%28C%2C%20T%2C%20D%2C%20blocking%2C%20jitter%20per%20task%29%3A%0A%0A">
-        Send a task set <span>$3,000 · 5 days</span>
-      </a>
-    </div>
-    <p class="fund-note"><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">The
-      full scope, what it excludes, and a complete worked example →</a></p>
-    <p class="fund-note">If the analysis will not tell you anything useful, I will say so
-      before you pay for it.</p>
   </div>
 </section>
 
-<section id="how">
+<!-- ═══ NOT FOR SALE ════════════════════════════════════════════════════ -->
+<section id="not-for-sale">
   <div class="wrap">
-    <h2>How it works</h2>
-    <div class="steps">
-      <div><b>You describe it</b><span>The task set, or the failure you cannot pin down.
-        Anonymised if you prefer — the analysis does not need to know what the tasks
-        do.</span></div>
-      <div><b>I scope it, free</b><span>A short exchange, and a fixed price before anything
-        starts. If the analysis will not tell you anything useful, that is what I say, and
-        there is nothing to pay for.</span></div>
-      <div><b>You get it in writing</b><span>Every iteration shown, the assumptions named,
-        and next steps that each say what would confirm them and what would kill
-        them.</span></div>
+    <div class="section-head center narrow">
+      <span class="eyebrow">Stated plainly</span>
+      <h2>Three things you cannot buy here.</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h3>A licence to the tool</h3>
+        <p><span class="mono">dy-wcet</span> is Apache-2.0 or MIT, irrevocably.
+          Nobody can sell you one, including me. It is free, and for debugging it
+          is the right answer.</p>
+      </div>
+      <div class="card">
+        <h3>Tool qualification data</h3>
+        <p>It does not exist yet. When it does, it will be published with the
+          evidence behind it. Until then, selling it would be selling a document
+          I have not written.</p>
+      </div>
+      <div class="card">
+        <h3>A warranty on the result</h3>
+        <p>A one-person practice should not offer one, and you should not accept
+          one from anyone who would. What you pay for is the analysis and the
+          arithmetic, shown so you can check it.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="arrives">
-  <div class="wrap">
-    <h2>What arrives</h2>
-    <p>A markdown report, in the shape of the Embassy analysis above. That case study is the
-      standard of delivery rather than a sample of it.</p>
-    <div class="arrives">
-      <div><b>The failure chain</b><span>Traced end to end through your source, not
-        summarised from the outside.</span></div>
-      <div><b>Evidence, and hypothesis, kept apart</b><span>Marked as such and never blended.
-        Where the evidence stops, the report says so.</span></div>
-      <div><b>Next steps that name their own test</b><span>Each one saying what would confirm
-        it and what would kill it.</span></div>
-      <div><b>A proposed fix</b><span>Where the evidence carries that far, and an explicit
-        note where it does not.</span></div>
-    </div>
-  </div>
-</section>
-
+<!-- ═══ WHO ═════════════════════════════════════════════════════════════ -->
 <section id="who">
-  <div class="wrap">
-    <h2>Who</h2>
-    <div class="who">
-      <span class="wn">Denis Yermakou</span>
-      <p>Timing analysis for systems where the worst case is the only case that matters.
-        Author of <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">dy-wcet</a>,
-        a response-time analysis in integer arithmetic whose every expected test value is
-        derived by hand, and of <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>,
-        an open hard-real-time layer for brain–computer interfaces.</p>
-      <div class="wl">
-        <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
+  <div class="wrap center">
+    <div class="narrow">
+      <span class="eyebrow">Who</span>
+      <p class="person">Denis Yermakou</p>
+      <p class="lead">Timing analysis for systems where the worst case is the only
+        case that matters. Author of <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">dy-wcet</a>
+        and of <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>,
+        a hard real-time layer for brain–computer interfaces.</p>
+      <div class="actions">
+        <a class="btn" href="mailto:connect@axonos.org">connect@axonos.org</a>
+        <a class="more" href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">Read the method</a>
+      </div>
+      <div class="links">
         <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
-        <a href="mailto:connect@axonos.org">Email</a>
+        <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
+        <a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Full audit scope</a>
       </div>
     </div>
   </div>
 </section>
+
+</main>
 
 <footer>
   <div class="wrap">
-    <b class="fname">DY Research</b> — Denis Yermakou<br>
-    <a href="https://github.com/DYResearch" rel="noopener">github.com/DYResearch</a> ·
-    <a href="mailto:connect@axonos.org">connect@axonos.org</a> ·
-    <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>
-    <div class="r">Apache-2.0 OR MIT. © 2026 Denis Yermakou.</div>
+    <span>© 2026 DY Research · Denis Yermakou</span>
+    <span>The tooling is open source. The audit is not.</span>
   </div>
 </footer>
-
 </body>
 </html>
