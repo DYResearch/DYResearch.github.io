@@ -24,6 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DY Research — Timing analysis with the arithmetic shown">
 <meta name="twitter:image" content="https://dyresearch.github.io/og.png">
+<script>document.documentElement.className+=" js";setTimeout(function(){var e=document.querySelectorAll(".reveal");for(var i=0;i<e.length;i++)e[i].classList.add("in")},3000)</script>
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
    DY Research. One idea per screen, a spacing scale of eight, and a grid
@@ -98,7 +99,7 @@ h1,h2,h3{margin:0;font-weight:700;color:var(--text)}
 /* Balanced headline lines, no word left alone on the last one. */
 h1,h2,.subhead{text-wrap:balance}
 .lead,.note{text-wrap:pretty}
-h1{font-size:clamp(44px,7.2vw,80px);line-height:1.04;letter-spacing:-.035em}
+h1{font-size:clamp(42px,6.4vw,74px);line-height:1.05;letter-spacing:-.035em}
 h2{font-size:clamp(34px,4.8vw,56px);line-height:1.07;letter-spacing:-.03em}
 h3{font-size:21px;line-height:1.25;letter-spacing:-.018em;font-weight:600}
 .lead{
@@ -132,7 +133,8 @@ section.first{border-top:0}
   transform:translateX(-50%);pointer-events:none;
   background:radial-gradient(closest-side,rgba(45,212,255,.13),rgba(45,212,255,0));
 }
-.hero .narrow{position:relative;max-width:920px}
+.hero .narrow{position:relative;max-width:1060px}
+.hero .lead{max-width:760px;margin-left:auto;margin-right:auto}
 
 /* ── the argument ───────────────────────────────────────────────────────── */
 .given{
@@ -195,6 +197,52 @@ section.first{border-top:0}
 /* ── who it is for ──────────────────────────────────────────────────────── */
 .for .card h3{font-size:19px}
 .for .card .use{margin-top:auto;padding-top:20px;font-family:var(--mono);font-size:13px;color:var(--accent)}
+
+/* ── the schedule, drawn ─────────────────────────────────────────────── */
+.tl-wrap{margin-top:20px;background:var(--panel);border:1px solid var(--hair);border-radius:22px;padding:20px 22px 12px}
+.tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.tl-head b{font-size:15px;font-weight:600;color:var(--text)}
+.tl-key{font-size:12px;color:var(--text-3);display:flex;gap:14px;flex-wrap:wrap}
+.tl-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.tl{display:block;width:100%;height:auto}
+.tl-lane{fill:var(--text-3);font:600 13px var(--sans)}
+.tl-track{stroke:rgba(255,255,255,.06);stroke-width:30;stroke-linecap:round}
+.tl-a{fill:rgba(45,212,255,.55)}
+.tl-b{fill:#3a3a3d}
+.tl-bw{fill:#f5f5f7}
+.tl-bw.tl-miss{fill:#ff6b6b}
+.tl-fin{stroke:var(--accent);stroke-width:2}
+.tl-fin.tl-miss{stroke:#ff6b6b}
+.tl-dl{stroke:var(--text-3);stroke-width:1.5;stroke-dasharray:4 4}
+.tl-t{fill:var(--text-2);font:500 12px var(--mono)}
+.tl-fin-t{fill:var(--accent)}.tl-miss-t{fill:#ff6b6b}
+.tl-axis{stroke:rgba(255,255,255,.14);stroke-width:1}
+.tl-tick{fill:var(--text-3);font:500 11px var(--mono)}
+
+/* ── facts under the hero ───────────────────────────────────────────────── */
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:20px;overflow:hidden;max-width:880px;margin:64px auto 0}
+.facts div{background:rgba(14,14,16,.82);padding:22px 18px;text-align:center}
+.fact-n{display:block;font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.03em;color:var(--text);font-variant-numeric:tabular-nums}
+.fact-k{display:block;margin-top:6px;font-size:13px;color:var(--text-3);line-height:1.35}
+
+/* ── the gradient on one phrase, where the engine can clip to text ───────── */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .grad{background:linear-gradient(92deg,#f5f5f7 10%,#9be8ff 55%,var(--accent));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+}
+
+/* ── reveal on scroll. Visible by default; hidden only once script has run,
+   and a timer in the head shows everything after three seconds regardless. ── */
+.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}
+
+/* ── closing band ──────────────────────────────────────────────────────── */
+.closing{position:relative;overflow:hidden}
+.closing::before{content:"";position:absolute;left:50%;bottom:-55%;width:1000px;height:760px;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(45,212,255,.11),rgba(45,212,255,0))}
+.closing .narrow{position:relative}
 
 /* ── the trap ───────────────────────────────────────────────────────────── */
 .meter{max-width:720px;margin:0 auto}
@@ -308,6 +356,9 @@ footer a{color:var(--text-2)}
   .lab-nums .k{min-height:2.7em}
   .lab-steps{font-size:12px}
   .lab-steps .fp{display:block}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:48px}
+  .tl-wrap{padding:16px 12px 8px}
+  .tl-head{flex-direction:column;align-items:flex-start;gap:6px}
   footer .wrap{flex-direction:column}
 }
 </style>
@@ -335,14 +386,20 @@ footer a{color:var(--text-2)}
   <div class="wrap center">
     <div class="narrow">
       <span class="eyebrow">Worst-case timing analysis</span>
-      <h1>Timing analysis<br>with the arithmetic shown.</h1>
+      <h1>Timing analysis<br>with the <span class="grad">arithmetic shown.</span></h1>
       <p class="lead">A measured maximum is not a worst-case bound. I find where a
         timing claim breaks, and show every step of the arithmetic —
         <b>so you can check it without me.</b></p>
       <div class="actions">
         <a class="btn" href="#engage">Book an audit — $3,000</a>
-        <a class="more" href="#argument">See the argument</a>
+        <a class="more" href="#try">Try the argument</a>
       </div>
+    </div>
+    <div class="facts" aria-label="What the analysis is built on">
+      <div><span class="fact-n">0</span><span class="fact-k">dependencies</span></div>
+      <div><span class="fact-n">0</span><span class="fact-k">floating-point operations</span></div>
+      <div><span class="fact-n">6</span><span class="fact-k">named refusals, never a guess</span></div>
+      <div><span class="fact-n">no_std</span><span class="fact-k">runs on the device itself</span></div>
     </div>
   </div>
 </section>
@@ -350,7 +407,7 @@ footer a{color:var(--text-2)}
 <!-- ═══ THE ARGUMENT ════════════════════════════════════════════════════ -->
 <section id="argument">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">The argument</span>
       <h2>Two tasks.<br>Most answers are wrong.</h2>
       <p class="lead">What is the worst-case response time of task B?</p>
@@ -361,7 +418,7 @@ footer a{color:var(--text-2)}
       <div><span class="k">Task B</span><span class="v">200 µs every 1,000 µs</span></div>
     </div>
 
-    <div class="verdict">
+    <div class="reveal verdict">
       <div><span class="num wrong">400</span><span class="num-label">The obvious answer</span></div>
       <div><span class="num right">300</span><span class="num-label right">The fixed point</span></div>
     </div>
@@ -406,9 +463,16 @@ footer a{color:var(--text-2)}
           <div class="lab-steps" id="o-steps">R = 200 &nbsp;⌈200/400⌉ = 1 &nbsp;→ <b>300</b><br>R = 300 &nbsp;⌈300/400⌉ = 1 &nbsp;→ <b>300</b> <span class="fp">← fixed point</span></div>
         </div>
       </div>
+      <div class="tl-wrap">
+        <div class="tl-head"><b>The schedule it describes</b>
+          <span class="tl-key"><span><i style="background:rgba(45,212,255,.55)"></i>A preempts</span><span><i style="background:#f5f5f7"></i>B, the job that decides</span><span><i style="background:#3a3a3d"></i>other jobs of B</span></span></div>
+        <div id="o-tl"><svg viewBox="0 0 880 168" class="tl" role="img" aria-label="Schedule: task B's worst job finishes at 300 microseconds, deadline 1,000"><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="50">A</text><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="106">B</text><rect class="tl-track" fill="#16161a" x="28" y="30" width="840" height="30" rx="6"/><rect class="tl-track" fill="#16161a" x="28" y="86" width="840" height="30" rx="6"/><rect class="tl-a" fill="#1f8fae" x="28.0" y="30" width="77.7" height="30" rx="5"/><rect class="tl-bw" fill="#f5f5f7" x="105.7" y="86" width="155.4" height="30" rx="5"/><rect class="tl-a" fill="#1f8fae" x="338.8" y="30" width="77.7" height="30" rx="5"/><rect class="tl-a" fill="#1f8fae" x="649.6" y="30" width="77.7" height="30" rx="5"/><rect class="tl-b" fill="#3a3a3d" x="805.1" y="86" width="62.9" height="30" rx="5"/><line class="tl-dl" stroke="#86868b" stroke-width="1.5" stroke-dasharray="4 4" x1="805.1" x2="805.1" y1="18" y2="124"/><line class="tl-fin" stroke="#2dd4ff" stroke-width="2" x1="261.1" x2="261.1" y1="18" y2="124"/><text class="tl-t tl-fin-t" fill="#2dd4ff" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="261.1" y="14" text-anchor="middle">done 300</text><text class="tl-t" fill="#a1a1a6" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="805.1" y="14" text-anchor="middle">deadline 1,000</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="28" x2="868" y1="146" y2="146"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="28.0" y="162" text-anchor="middle">0</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="28.0" x2="28.0" y1="142" y2="150"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="416.5" y="162" text-anchor="middle">500</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="416.5" x2="416.5" y1="142" y2="150"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="805.1" y="162" text-anchor="middle">1,000</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="805.1" x2="805.1" y1="142" y2="150"/></svg></div>
+      </div>
       <p class="lab-note">The same analysis as the crate for two tasks: the busy period first, then every
         job of B inside it, so a response that runs past the period is not under-reported.
-        Checked against dy-wcet on 4,000 random pairs, including deadlines past the period.</p>
+        Checked against dy-wcet on 4,000 random pairs, including deadlines past the period.
+        The schedule is a simulation of that scheduler, and it lands on the same finishing
+        time as the analysis on 5,000 of 5,000.</p>
     </div>
   </div>
 </section>
@@ -416,7 +480,7 @@ footer a{color:var(--text-2)}
 <!-- ═══ THE TRAP ════════════════════════════════════════════════════════ -->
 <section id="trap">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">The trap</span>
       <h2>It passes every utilisation check.<br>It still misses.</h2>
       <p class="lead">A second set: utilisation sits well under the classical
@@ -424,7 +488,7 @@ footer a{color:var(--text-2)}
         bound assumes a deadline equal to the period, and this one has none.</p>
     </div>
 
-    <div class="meter" role="img" aria-label="Utilisation 0.7167, below the Liu and Layland bound of 0.8284">
+    <div class="reveal meter" role="img" aria-label="Utilisation 0.7167, below the Liu and Layland bound of 0.8284">
       <div class="meter-track">
         <div class="meter-fill"></div>
         <div class="meter-mark"></div>
@@ -444,13 +508,13 @@ footer a{color:var(--text-2)}
 <!-- ═══ WHO IT IS FOR ═════════════════════════════════════════════════════ -->
 <section id="for">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">Who it is for</span>
       <h2>For deadlines that are physical.</h2>
       <p class="lead">Where a missed deadline is a motor that overshoots, a sample that
         is lost, or a device that has to be recalled — not a slow page.</p>
     </div>
-    <div class="grid-2 for">
+    <div class="reveal grid-2 for">
       <div class="card">
         <h3>Firmware teams shipping real-time Rust</h3>
         <p>On Embassy, bare metal or an RTOS. Know whether a task set meets its deadlines
@@ -482,14 +546,14 @@ footer a{color:var(--text-2)}
 <!-- ═══ EVIDENCE ════════════════════════════════════════════════════════ -->
 <section id="evidence">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">Evidence</span>
       <h2>Checked, in public.</h2>
       <p class="lead">Every claim below links to the work behind it —
         including the time it went wrong.</p>
     </div>
 
-    <div class="grid-3">
+    <div class="reveal grid-3">
       <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">
         <span class="tag">Case study</span>
         <h3>An RP2350 timer that stopped for minutes</h3>
@@ -520,14 +584,14 @@ footer a{color:var(--text-2)}
 <!-- ═══ ENGAGE ══════════════════════════════════════════════════════════ -->
 <section id="engage">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">Engage</span>
       <h2>One problem,<br>traced end to end.</h2>
       <p class="lead">Fixed price, fixed scope, agreed before anything starts.
         If the analysis will not tell you anything useful, I say so before you pay.</p>
     </div>
 
-    <div class="grid-3">
+    <div class="reveal grid-3">
       <div class="card plan featured">
         <span class="badge">Most engagements start here</span>
         <span class="name">Timing audit</span>
@@ -570,7 +634,7 @@ footer a{color:var(--text-2)}
     </div>
 
     <h3 class="subhead">What arrives</h3>
-    <div class="grid-4">
+    <div class="reveal grid-4">
       <div class="tile"><span class="n">01</span><h3>The failure chain</h3><p>Traced through your source, not summarised from outside.</p></div>
       <div class="tile"><span class="n">02</span><h3>Evidence and hypothesis</h3><p>Kept apart and labelled. Where the evidence stops, it says so.</p></div>
       <div class="tile"><span class="n">03</span><h3>Next steps</h3><p>Each naming what would confirm it and what would rule it out.</p></div>
@@ -578,7 +642,7 @@ footer a{color:var(--text-2)}
     </div>
 
     <h3 class="subhead">Is this for you?</h3>
-    <div class="grid-2 fit">
+    <div class="reveal grid-2 fit">
       <div class="card yes">
         <h3>A good fit</h3>
         <ul>
@@ -604,11 +668,11 @@ footer a{color:var(--text-2)}
 <!-- ═══ NOT FOR SALE ════════════════════════════════════════════════════ -->
 <section id="not-for-sale">
   <div class="wrap">
-    <div class="section-head center narrow">
+    <div class="section-head center narrow reveal">
       <span class="eyebrow">Stated plainly</span>
       <h2>Three things you cannot buy here.</h2>
     </div>
-    <div class="grid-3">
+    <div class="reveal grid-3">
       <div class="card">
         <h3>A licence to the tool</h3>
         <p><span class="mono">dy-wcet</span> is Apache-2.0 or MIT, irrevocably.
@@ -631,6 +695,22 @@ footer a{color:var(--text-2)}
   </div>
 </section>
 
+<!-- ═══ CLOSING ═════════════════════════════════════════════════════════ -->
+<section class="closing" id="close">
+  <div class="wrap center">
+    <div class="narrow reveal">
+      <span class="eyebrow">Your turn</span>
+      <h2>Send me the claim.<br>I will try to break it.</h2>
+      <p class="lead">If your system claims deterministic or bounded latency, the audit answers
+        one question in writing: does that claim survive someone trying to break it.</p>
+      <div class="actions">
+        <a class="btn" href="mailto:connect@axonos.org?subject=Timing%20audit">Book an audit — $3,000</a>
+        <a class="more" href="#engage">Compare the engagements</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ WHO ═════════════════════════════════════════════════════════════ -->
 <section id="about">
   <div class="wrap center">
@@ -641,11 +721,9 @@ footer a{color:var(--text-2)}
         case that matters. Author of <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">dy-wcet</a>
         and of <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>,
         a hard real-time layer for brain–computer interfaces.</p>
-      <div class="actions">
-        <a class="btn" href="mailto:connect@axonos.org">connect@axonos.org</a>
-        <a class="more" href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">Read the method</a>
-      </div>
       <div class="links">
+        <a href="mailto:connect@axonos.org">connect@axonos.org</a>
+        <a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">Read the method</a>
         <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
         <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
         <a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Full audit scope</a>
@@ -705,6 +783,67 @@ function analyse(ca, ta, cb, tb, db) {
   out.meets = worst <= db; out.margin = db - worst;
   return out;
 }
+// The schedule, drawn. Same scheduler as sim.js, run to a horizon so the
+// picture shows every release in view, not only the jobs the analysis walks.
+function scheduleUntil(ca, ta, cb, tb, until) {
+  let t = 0, aRem = 0, aNext = 0, bNext = 0, bj = 0;
+  const bq = [], segs = [], done = {};
+  const push = (task, s, e, job) => {
+    const L = segs[segs.length - 1];
+    if (L && L.task === task && L.job === job && L.end === s) L.end = e; else segs.push({ task, start: s, end: e, job });
+  };
+  let g = 0;
+  while (t < until && g++ < 400000) {
+    while (aNext <= t) { aRem += ca; aNext += ta; }
+    while (bNext <= t) { bq.push({ j: bj++, rem: cb }); bNext += tb; }
+    const nextEvt = Math.min(aNext, bNext, until);
+    if (aRem > 0) { const r = Math.min(aRem, nextEvt - t); push("A", t, t + r, -1); aRem -= r; t += r; }
+    else if (bq.length) { const c = bq[0], r = Math.min(c.rem, nextEvt - t); push("B", t, t + r, c.j); c.rem -= r; t += r;
+      if (c.rem === 0) { done[c.j] = t; bq.shift(); } }
+    else t = nextEvt;
+  }
+  return { segs, done };
+}
+function timelineSVG(ca, ta, cb, tb, db, a, width) {
+  const q = a.job, rel = q * tb, dl = rel + db;
+  let until = Math.max(rel + a.r, dl);
+  until = Math.ceil(until * 1.08) + 1;
+  const s = scheduleUntil(ca, ta, cb, tb, until);
+  const fin = s.done[q], miss = fin > dl;
+  // Drawn to the width it is shown at, so twelve units of text are twelve
+  // pixels on a phone rather than a scaled-down four.
+  const W = Math.round(Math.max(300, Math.min(880, width || 880))), L = 28, R = 12, yA = 30, yB = 86, h = 30, H = 168;
+  const x = t => L + (t / until) * (W - L - R);
+  const f = n => Number(n).toLocaleString("en-US");
+  let o = `<svg viewBox="0 0 ${W} ${H}" class="tl" role="img" aria-label="Schedule: task B's worst job finishes at ${f(fin)} microseconds, deadline ${f(dl)}">`;
+  o += `<text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="${yA + 20}">A</text><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="${yB + 20}">B</text>`;
+  o += `<rect class="tl-track" fill="#16161a" x="${L}" y="${yA}" width="${W - R - L}" height="${h}" rx="6"/><rect class="tl-track" fill="#16161a" x="${L}" y="${yB}" width="${W - R - L}" height="${h}" rx="6"/>`;
+  for (const g of s.segs) {
+    const x0 = x(g.start), w = Math.max(1.5, x(g.end) - x0);
+    const cls = g.task === "A" ? "tl-a" : (g.job === q ? (miss ? "tl-bw tl-miss" : "tl-bw") : "tl-b");
+    const fill = g.task === "A" ? "#1f8fae" : (g.job === q ? (miss ? "#ff6b6b" : "#f5f5f7") : "#3a3a3d");
+    o += `<rect class="${cls}" fill="${fill}" x="${x0.toFixed(1)}" y="${g.task === "A" ? yA : yB}" width="${w.toFixed(1)}" height="${h}" rx="5"/>`;
+  }
+  o += `<line class="tl-dl" stroke="#86868b" stroke-width="1.5" stroke-dasharray="4 4" x1="${x(dl).toFixed(1)}" x2="${x(dl).toFixed(1)}" y1="${yA - 12}" y2="${yB + h + 8}"/>`;
+  o += `<line class="${miss ? "tl-fin tl-miss" : "tl-fin"}" stroke="${miss ? "#ff6b6b" : "#2dd4ff"}" stroke-width="2" x1="${x(fin).toFixed(1)}" x2="${x(fin).toFixed(1)}" y1="${yA - 12}" y2="${yB + h + 8}"/>`;
+  const lblFin = `${q > 0 ? "job " + (q + 1) + " done" : "done"} ${f(fin)}`, lblDl = `deadline ${f(dl)}`;
+  const near = Math.abs(x(fin) - x(dl)) < Math.min(120, W * 0.3);
+  // A label centred on a line near the edge runs off it; pin it inward.
+  const place = (xp, text, pref) => {
+    const half = text.length * 3.6, lo = L + half, hi = W - R - half;
+    if (xp > hi) return [W - R, "end"];
+    if (xp < lo) return [L, "start"];
+    return [xp, pref];
+  };
+  const [fx, fa] = place(x(fin), lblFin, near && fin < dl ? "end" : "middle");
+  const [dx, da] = place(x(dl), lblDl, near && dl < fin ? "end" : "middle");
+  o += `<text class="${miss ? "tl-t tl-miss-t" : "tl-t tl-fin-t"}" fill="${miss ? "#ff6b6b" : "#2dd4ff"}" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="${fx.toFixed(1)}" y="${yA - 16}" text-anchor="${fa}">${lblFin}</text>`;
+  o += `<text class="tl-t" fill="#a1a1a6" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="${dx.toFixed(1)}" y="${near ? yB + h + 26 : yA - 16}" text-anchor="${da}">${lblDl}</text>`;
+  o += `<line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="${L}" x2="${W - R}" y1="${H - 22}" y2="${H - 22}"/>`;
+  const step = [1,2,5].map(m=>m*Math.pow(10,Math.floor(Math.log10(until/4)))).find(v=>until/v<=(W<520?3:5)) || Math.pow(10,Math.ceil(Math.log10(until/4)));
+  for (let t = 0; t <= until; t += step) o += `<text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="${x(t).toFixed(1)}" y="${H - 6}" text-anchor="middle">${f(t)}</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="${x(t).toFixed(1)}" x2="${x(t).toFixed(1)}" y1="${H - 26}" y2="${H - 18}"/>`;
+  return o + `</svg>`;
+}
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var ids = ["ca", "ta", "cb", "tb", "db"];
@@ -724,6 +863,7 @@ function analyse(ca, ta, cb, tb, db) {
       v.className = "lab-verdict refused";
       v.textContent = "No bound: " + o.refusal + ".";
       why.textContent = "The crate returns a named refusal here rather than a number it cannot justify.";
+      $("o-tl").innerHTML = '<p class="lab-why" style="padding:18px 4px">No schedule to draw: without a bound there is no finishing time to mark.</p>';
       return;
     }
     r.textContent = fmt(o.r);
@@ -748,9 +888,22 @@ function analyse(ca, ta, cb, tb, db) {
       lines.push("R = w − " + o.job + "·" + fmt(tb) + " = " + fmt(w) + " − " + fmt(o.job * tb) + " = <b>" + fmt(o.r) + "</b>");
     }
     st.innerHTML = head + lines.join("<br>");
+    try { $("o-tl").innerHTML = timelineSVG(ca, ta, cb, tb, db, o, $("o-tl").clientWidth); } catch (e) { $("o-tl").innerHTML = ""; }
   }
   ids.forEach(function (id) { $(id).addEventListener("input", render); });
+  // Redrawn to the new width when the phone turns or the window resizes.
+  var pending;
+  window.addEventListener("resize", function () { clearTimeout(pending); pending = setTimeout(render, 120); });
   render();
+})();
+(function () {
+  var els = document.querySelectorAll(".reveal");
+  function show(e) { e.classList.add("in"); }
+  if (!("IntersectionObserver" in window)) { for (var i = 0; i < els.length; i++) show(els[i]); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { show(en.target); io.unobserve(en.target); } });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  for (var j = 0; j < els.length; j++) io.observe(els[j]);
 })();
 </script>
 </body>
