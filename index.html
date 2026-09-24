@@ -7,6 +7,8 @@
 <meta name="description" content="Worst-case timing analysis for real-time systems, in integer arithmetic. I find where a timing claim breaks, and show the arithmetic so you can check it without me.">
 <meta name="author" content="Denis Yermakou">
 <link rel="canonical" href="https://dyresearch.github.io/">
+<meta name="keywords" content="worst-case response time, WCET, response-time analysis, schedulability analysis, real-time systems, embedded Rust, no_std, RTOS, fixed-priority scheduling, timing analysis, safety-critical, timing audit">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Worst-case timing analysis for real-time and embedded systems: response-time analysis in integer arithmetic, with every step shown.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","sameAs":["https://www.linkedin.com/in/axonos","https://github.com/DYResearch"]},"knowsAbout":["Worst-case execution time","Response-time analysis","Schedulability analysis","Real-time systems","Embedded Rust","Fixed-priority scheduling"],"makesOffer":[{"@type":"Offer","name":"Timing audit","price":"3000","priceCurrency":"USD"},{"@type":"Offer","name":"Priority timing audit","price":"4800","priceCurrency":"USD"},{"@type":"Offer","name":"System review","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":"8000","priceCurrency":"USD"}}]}</script>
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ctext x='16' y='21.5' font-family='-apple-system,Helvetica,Arial' font-size='13' font-weight='700' fill='%23f5f5f7' text-anchor='middle'%3EDY%3C/text%3E%3C/svg%3E">
@@ -93,6 +95,9 @@ a:hover{text-decoration:underline;text-underline-offset:3px}
   letter-spacing:-.005em;margin:0 0 14px;
 }
 h1,h2,h3{margin:0;font-weight:700;color:var(--text)}
+/* Balanced headline lines, no word left alone on the last one. */
+h1,h2,.subhead{text-wrap:balance}
+.lead,.note{text-wrap:pretty}
 h1{font-size:clamp(44px,7.2vw,80px);line-height:1.04;letter-spacing:-.035em}
 h2{font-size:clamp(34px,4.8vw,56px);line-height:1.07;letter-spacing:-.03em}
 h3{font-size:21px;line-height:1.25;letter-spacing:-.018em;font-weight:600}
@@ -158,6 +163,38 @@ section.first{border-top:0}
 .derivation b{color:var(--text);font-weight:600}
 .derivation .fp{color:var(--accent)}
 .note{max-width:640px;margin:28px auto 0;color:var(--text-2);font-size:17px;text-align:center}
+
+/* ── the lab: the argument, with your numbers ──────────────────────────── */
+.lab{max-width:880px;margin:88px auto 0}
+.lab-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:stretch}
+.lab-in,.lab-out{background:var(--panel);border:1px solid var(--hair);border-radius:22px;padding:26px}
+.lab-task + .lab-task{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair)}
+.lab-name{display:block;font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:12px}
+.lab-row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;color:var(--text-2);font-size:15px}
+.lab-row label{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.lab input{
+  width:92px;height:40px;box-sizing:border-box;background:#000;color:var(--text);
+  border:1px solid var(--hair-2);border-radius:10px;padding:0 10px;
+  font:500 16px/38px var(--mono);font-variant-numeric:tabular-nums;vertical-align:middle;
+  -moz-appearance:textfield;appearance:textfield}
+.lab input::-webkit-outer-spin-button,.lab input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.lab input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,212,255,.18)}
+.lab-nums{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lab-nums .k{display:block;font-size:13px;color:var(--text-3);line-height:1.35;min-height:2.7em}
+.lab-naive,.lab-r{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(38px,5.2vw,52px);font-weight:600;letter-spacing:-.03em;line-height:1.1;margin-top:6px}
+.lab-naive{color:#3a3a3d;text-decoration:line-through;text-decoration-color:#6e6e73;text-decoration-thickness:2px}
+.lab-naive.same{color:var(--text-3);text-decoration:none}
+.lab-r{color:var(--text)}
+.lab-verdict{margin-top:18px;font-size:16px;color:var(--text);line-height:1.45}
+.lab-verdict.miss{color:#ff6b6b}.lab-verdict.refused{color:#ffb454}
+.lab-why{margin-top:6px;font-size:14px;color:var(--text-2);line-height:1.45}
+.lab-steps{margin-top:18px;padding-top:16px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:13px;color:var(--text-2);line-height:1.9;overflow-x:auto;white-space:nowrap}
+.lab-steps b{color:var(--text);font-weight:600}.lab-steps .fp{color:var(--accent)}
+.lab-note{max-width:880px;margin:18px auto 0;font-size:14px;color:var(--text-3);text-align:center;line-height:1.5}
+
+/* ── who it is for ──────────────────────────────────────────────────────── */
+.for .card h3{font-size:19px}
+.for .card .use{margin-top:auto;padding-top:20px;font-family:var(--mono);font-size:13px;color:var(--accent)}
 
 /* ── the trap ───────────────────────────────────────────────────────────── */
 .meter{max-width:720px;margin:0 auto}
@@ -264,6 +301,13 @@ footer a{color:var(--text-2)}
   /* The marker would push the line past a phone's width and make the one
      equation on the page scroll sideways. It takes its own line instead. */
   .derivation .fp{display:block;margin-top:2px}
+  /* The lab stacks: inputs above, the answer below, each full width. */
+  .lab{margin-top:64px}
+  .lab-grid{grid-template-columns:minmax(0,1fr)}
+  .lab-in,.lab-out{padding:22px 20px}
+  .lab-nums .k{min-height:2.7em}
+  .lab-steps{font-size:12px}
+  .lab-steps .fp{display:block}
   footer .wrap{flex-direction:column}
 }
 </style>
@@ -275,7 +319,8 @@ footer a{color:var(--text-2)}
   <div class="wrap">
     <a class="brand" href="#top">DY Research</a>
     <div class="nav-links">
-      <a href="#argument">The argument</a>
+      <a href="#try">Try it</a>
+      <a href="#for">Who it is for</a>
       <a href="#evidence">Evidence</a>
       <a href="#engage">Engage</a>
       <a class="nav-cta" href="#engage">Book an audit</a>
@@ -330,6 +375,41 @@ footer a{color:var(--text-2)}
       B finishes at 300&nbsp;µs, and only one activation of A lands before it.
       Change the periods and the same mistake reports a deadline as met
       that is missed on hardware.</p>
+
+    <div class="lab" id="try">
+      <h3 class="subhead" style="margin-top:0">Try your own numbers</h3>
+      <div class="lab-grid">
+        <div class="lab-in">
+          <div class="lab-task">
+            <span class="lab-name">Task A · higher priority</span>
+            <div class="lab-row">
+              <label>runs <input id="ca" type="number" inputmode="numeric" min="1" value="100" aria-label="Task A execution time in microseconds"> µs</label>
+              <label>every <input id="ta" type="number" inputmode="numeric" min="1" value="400" aria-label="Task A period in microseconds"> µs</label>
+            </div>
+          </div>
+          <div class="lab-task">
+            <span class="lab-name">Task B</span>
+            <div class="lab-row">
+              <label>runs <input id="cb" type="number" inputmode="numeric" min="1" value="200" aria-label="Task B execution time in microseconds"> µs</label>
+              <label>every <input id="tb" type="number" inputmode="numeric" min="1" value="1000" aria-label="Task B period in microseconds"> µs</label>
+              <label>deadline <input id="db" type="number" inputmode="numeric" min="1" value="1000" aria-label="Task B deadline in microseconds"> µs</label>
+            </div>
+          </div>
+        </div>
+        <div class="lab-out" aria-live="polite">
+          <div class="lab-nums">
+            <div><span class="k">Counting A's activations in B's period</span><span class="lab-naive" id="o-naive">400</span></div>
+            <div><span class="k">Worst-case response, solved</span><span class="lab-r" id="o-r">300</span></div>
+          </div>
+          <p class="lab-verdict" id="o-verdict">Meets its 1,000 µs deadline with 700 µs to spare.</p>
+          <p class="lab-why" id="o-why">The period-based count is pessimistic here. Change the periods and it can become optimistic, passing a set that misses.</p>
+          <div class="lab-steps" id="o-steps">R = 200 &nbsp;⌈200/400⌉ = 1 &nbsp;→ <b>300</b><br>R = 300 &nbsp;⌈300/400⌉ = 1 &nbsp;→ <b>300</b> <span class="fp">← fixed point</span></div>
+        </div>
+      </div>
+      <p class="lab-note">The same analysis as the crate for two tasks: the busy period first, then every
+        job of B inside it, so a response that runs past the period is not under-reported.
+        Checked against dy-wcet on 4,000 random pairs, including deadlines past the period.</p>
+    </div>
   </div>
 </section>
 
@@ -358,6 +438,44 @@ footer a{color:var(--text-2)}
 
     <p class="note">The theorem is not wrong. It answers a question nobody asked.
       The tool declines to apply it here rather than return the flattering answer.</p>
+  </div>
+</section>
+
+<!-- ═══ WHO IT IS FOR ═════════════════════════════════════════════════════ -->
+<section id="for">
+  <div class="wrap">
+    <div class="section-head center narrow">
+      <span class="eyebrow">Who it is for</span>
+      <h2>For deadlines that are physical.</h2>
+      <p class="lead">Where a missed deadline is a motor that overshoots, a sample that
+        is lost, or a device that has to be recalled — not a slow page.</p>
+    </div>
+    <div class="grid-2 for">
+      <div class="card">
+        <h3>Firmware teams shipping real-time Rust</h3>
+        <p>On Embassy, bare metal or an RTOS. Know whether a task set meets its deadlines
+          before it reaches hardware, rather than after a field failure.</p>
+        <span class="use">response_of · is_schedulable</span>
+      </div>
+      <div class="card">
+        <h3>Teams defending a timing claim</h3>
+        <p>A safety case under IEC 62304, ISO 26262 or IEC 61508 wants worst-case response
+          times with a derivation behind them — integer, reproducible, checkable by hand.</p>
+        <span class="use">every iteration shown</span>
+      </div>
+      <div class="card">
+        <h3>Robotics, motor control, drones, BCI</h3>
+        <p>Control loops where a late result is a physical event. Find how much a task can
+          grow before something misses, and plan capacity against it.</p>
+        <span class="use">max_provable_wcet_increase</span>
+      </div>
+      <div class="card">
+        <h3>People building schedulers</h3>
+        <p>An oracle to test admission control against: the same inputs, an answer derived
+          separately, and a refusal wherever a figure cannot be justified.</p>
+        <span class="use">optimal_priority_order</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -514,10 +632,10 @@ footer a{color:var(--text-2)}
 </section>
 
 <!-- ═══ WHO ═════════════════════════════════════════════════════════════ -->
-<section id="who">
+<section id="about">
   <div class="wrap center">
     <div class="narrow">
-      <span class="eyebrow">Who</span>
+      <span class="eyebrow">About</span>
       <p class="person">Denis Yermakou</p>
       <p class="lead">Timing analysis for systems where the worst case is the only
         case that matters. Author of <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">dy-wcet</a>
@@ -544,5 +662,96 @@ footer a{color:var(--text-2)}
     <span>The tooling is open source. The audit is not.</span>
   </div>
 </footer>
+<script>
+// The page's calculator. The same analysis as the crate for two tasks without
+// jitter or blocking: the level busy period first, then every job of the lower
+// task inside it (Lehoczky, 1990), because when a response runs past the period
+// the next job queues behind it and can be the worse one. The first version of
+// this file walked only the first job, and on 2 of 311 random sets reported a
+// smaller response than the crate: the defect dy-wcet fixed in 2.0.0.
+const ITERATION_CAP = 10000, BUSY_PERIOD_CAP = 1024;
+function ceilDiv(a, b) { return Math.floor((a + b - 1) / b); }
+function analyse(ca, ta, cb, tb, db) {
+  const out = { naive: cb + Math.floor(tb / ta) * ca, steps: [] };
+  if (!(ta > 0 && tb > 0 && ca > 0 && cb > 0 && db > 0)) { out.refusal = "every figure must be a positive whole number"; return out; }
+  if (ca > ta) { out.refusal = "task A does more work than its period allows"; return out; }
+  if (cb > db) { out.refusal = "task B needs more time than its deadline"; return out; }
+  if (ca * tb + cb * ta > ta * tb) { out.refusal = "utilisation exceeds one; no fixed point exists"; return out; }
+
+  let L = ca + cb, settled = false;
+  for (let i = 0; i < ITERATION_CAP; i++) {
+    const next = ceilDiv(L, ta) * ca + ceilDiv(L, tb) * cb;
+    if (next === L) { settled = true; break; }
+    L = next;
+  }
+  if (!settled) { out.refusal = "the busy period did not settle within the cap"; return out; }
+  const jobs = Math.max(1, ceilDiv(L, tb));
+  if (jobs > BUSY_PERIOD_CAP) { out.refusal = "the busy period holds more jobs than the cap admits"; return out; }
+
+  let worst = -1, worstSteps = [], worstJob = 0;
+  for (let q = 0; q < jobs; q++) {
+    const base = (q + 1) * cb; let w = base, steps = [], ok = false;
+    for (let i = 0; i < ITERATION_CAP; i++) {
+      const act = ceilDiv(w, ta), next = base + act * ca;
+      steps.push({ r: w, act, next });
+      if (next === w) { ok = true; break; }
+      w = next;
+    }
+    if (!ok) { out.refusal = "the recurrence did not settle within the cap"; return out; }
+    const r = w - q * tb;
+    if (r > worst) { worst = r; worstSteps = steps; worstJob = q; }
+  }
+  out.r = worst; out.job = worstJob; out.jobs = jobs; out.steps = worstSteps;
+  out.meets = worst <= db; out.margin = db - worst;
+  return out;
+}
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var ids = ["ca", "ta", "cb", "tb", "db"];
+  var fmt = function (n) { return Number(n).toLocaleString("en-US"); };
+  function read(id) {
+    var v = Math.floor(Number($(id).value));
+    return isFinite(v) && v > 0 ? Math.min(v, 1000000) : 0;
+  }
+  function render() {
+    var ca = read("ca"), ta = read("ta"), cb = read("cb"), tb = read("tb"), db = read("db");
+    var o = analyse(ca, ta, cb, tb, db);
+    var naive = $("o-naive"), r = $("o-r"), v = $("o-verdict"), why = $("o-why"), st = $("o-steps");
+    naive.textContent = ta > 0 ? fmt(o.naive) : "—";
+    v.className = "lab-verdict"; why.textContent = ""; st.innerHTML = "";
+    if (o.refusal) {
+      r.textContent = "—"; naive.className = "lab-naive same";
+      v.className = "lab-verdict refused";
+      v.textContent = "No bound: " + o.refusal + ".";
+      why.textContent = "The crate returns a named refusal here rather than a number it cannot justify.";
+      return;
+    }
+    r.textContent = fmt(o.r);
+    naive.className = "lab-naive" + (o.naive === o.r ? " same" : "");
+    if (o.meets) { v.textContent = "Meets its " + fmt(db) + " µs deadline with " + fmt(o.margin) + " µs to spare."; }
+    else { v.className = "lab-verdict miss"; v.textContent = "Misses its " + fmt(db) + " µs deadline by " + fmt(-o.margin) + " µs."; }
+    if (o.naive > o.r) why.textContent = "The period-based count is pessimistic here. Change the periods and it can become optimistic, passing a set that misses.";
+    else if (o.naive < o.r) why.textContent = "The period-based count is optimistic here — it under-reports the response. That is the direction that ships a set that misses.";
+    else why.textContent = "Here the two agree. They will not always.";
+    // For the first job the completion time is the response. For a later job q
+    // it is measured from the start of the busy period, so the response is
+    // w − q·T, and the lines say w rather than claim to be R.
+    var sym = o.job > 0 ? "w" : "R";
+    var head = o.jobs > 1 ? "Worst job: " + (o.job + 1) + " of " + o.jobs + " in the busy period<br>" : "";
+    var lines = o.steps.map(function (s, i) {
+      var last = i === o.steps.length - 1;
+      return sym + " = " + fmt(s.r) + " &nbsp;⌈" + fmt(s.r) + "/" + fmt(ta) + "⌉ = " + s.act + " &nbsp;→ <b>" + fmt(s.next) + "</b>" + (last ? ' <span class="fp">← fixed point</span>' : "");
+    });
+    if (lines.length > 7) lines = lines.slice(0, 3).concat(["⋯ " + (lines.length - 5) + " more"], lines.slice(-2));
+    if (o.job > 0) {
+      var w = o.steps[o.steps.length - 1].next;
+      lines.push("R = w − " + o.job + "·" + fmt(tb) + " = " + fmt(w) + " − " + fmt(o.job * tb) + " = <b>" + fmt(o.r) + "</b>");
+    }
+    st.innerHTML = head + lines.join("<br>");
+  }
+  ids.forEach(function (id) { $(id).addEventListener("input", render); });
+  render();
+})();
+</script>
 </body>
 </html>
