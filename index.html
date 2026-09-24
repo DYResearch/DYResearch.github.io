@@ -3,378 +3,383 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>DY Research — Timing analysis with the arithmetic shown</title>
-<meta name="description" content="Worst-case timing analysis for real-time systems, in integer arithmetic. I find where a timing claim breaks, and show the arithmetic so you can check it without me.">
+<title>DY Research — Independent technical intelligence</title>
+<meta name="description" content="Technical due diligence for investors, founders and engineering teams. Every claim a technology makes, traced to its code, its tests and its evidence — with a written verdict on what holds.">
 <meta name="author" content="Denis Yermakou">
 <link rel="canonical" href="https://dyresearch.github.io/">
-<meta name="keywords" content="worst-case response time, WCET, response-time analysis, schedulability analysis, real-time systems, embedded Rust, no_std, RTOS, fixed-priority scheduling, timing analysis, safety-critical, timing audit">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Worst-case timing analysis for real-time and embedded systems: response-time analysis in integer arithmetic, with every step shown.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","sameAs":["https://www.linkedin.com/in/axonos","https://github.com/DYResearch"]},"knowsAbout":["Worst-case execution time","Response-time analysis","Schedulability analysis","Real-time systems","Embedded Rust","Fixed-priority scheduling"],"makesOffer":[{"@type":"Offer","name":"Timing audit","price":"3000","priceCurrency":"USD"},{"@type":"Offer","name":"Priority timing audit","price":"4800","priceCurrency":"USD"},{"@type":"Offer","name":"System review","priceCurrency":"USD","priceSpecification":{"@type":"PriceSpecification","minPrice":"8000","priceCurrency":"USD"}}]}</script>
+<meta name="keywords" content="technical due diligence, technology due diligence, code audit, architecture review, claims verification, worst-case timing, WCET, real-time systems, formal verification, embedded Rust, brain–computer interfaces, neurotech">
 <meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ctext x='16' y='21.5' font-family='-apple-system,Helvetica,Arial' font-size='13' font-weight='700' fill='%23f5f5f7' text-anchor='middle'%3EDY%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
-<meta property="og:title" content="DY Research — Timing analysis with the arithmetic shown">
-<meta property="og:description" content="A measured maximum is not a worst-case bound. Worst-case timing analysis for real-time systems, with every step of the arithmetic shown.">
+<meta property="og:site_name" content="DY Research">
+<meta property="og:title" content="DY Research — Know what is real">
+<meta property="og:description" content="Independent technical due diligence. Every claim traced to its code, its tests and its evidence — and a written verdict on what holds.">
 <meta property="og:url" content="https://dyresearch.github.io/">
 <meta property="og:image" content="https://dyresearch.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Timing analysis with the arithmetic shown. R = 300, a fixed point, where the obvious answer is 400.">
-<meta property="og:site_name" content="DY Research">
+<meta property="og:image:alt" content="DY Research. Know what is real. Independent technical intelligence.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DY Research — Timing analysis with the arithmetic shown">
+<meta name="twitter:title" content="DY Research — Know what is real">
 <meta name="twitter:image" content="https://dyresearch.github.io/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Independent technical intelligence: technical due diligence, focused audits and snapshots for investors, founders and engineering teams, each ending in a written verdict on what the evidence supports.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","jobTitle":"Principal","sameAs":["https://www.linkedin.com/in/axonos","https://github.com/DYResearch"]},"knowsAbout":["Technical due diligence","Software architecture","Worst-case execution time","Real-time systems","Formal verification","Embedded Rust","Brain–computer interfaces"],"makesOffer":[{"@type":"Offer","name":"Snapshot","description":"What the technology actually does, and what its evidence supports. Five business days.","price":"5000","priceCurrency":"USD"},{"@type":"Offer","name":"Focused Audit","description":"One critical property investigated to the bottom. Two to three weeks.","price":"12000","priceCurrency":"USD"},{"@type":"Offer","name":"Due Diligence","description":"Whether the technology is what the company says it is, and what could break the investment. Three to four weeks.","price":"25000","priceCurrency":"USD"}]}</script>
 <script>document.documentElement.className+=" js";setTimeout(function(){var e=document.querySelectorAll(".reveal");for(var i=0;i<e.length;i++)e[i].classList.add("in")},3000)</script>
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
-   DY Research. One idea per screen, a spacing scale of eight, and a grid
-   that keeps every card in a row the same height so their footers line up.
-   System type, no web fonts, no script: the page is the argument, not the
-   frame around it.
+   DY Research. Monochrome, one restrained accent, thin rules, generous space.
+   Cards at fourteen pixels of radius: an instrument, not a toy. Every row of
+   cards is a grid, and every card inside is a grid of rows, so prices, lists
+   and buttons share a line across a row whatever each one says.
    ───────────────────────────────────────────────────────────────────────── */
 :root{
-  --bg:#000;
-  --panel:#0e0e10;
-  --panel-2:#161618;
-  --hair:rgba(255,255,255,.09);
-  --hair-2:rgba(255,255,255,.16);
-  --text:#f5f5f7;
-  --text-2:#a1a1a6;
-  --text-3:#86868b;
-  --accent:#2dd4ff;
-  --radius:24px;
-  --max:1080px;
-  --text-max:720px;
-  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter",
-         "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bg:#000;--panel:#0c0c0e;--panel-2:#131316;--panel-3:#1c1c20;
+  --hair:rgba(255,255,255,.08);--hair-2:rgba(255,255,255,.15);
+  --text:#f5f5f7;--text-2:#a1a1a6;--text-3:#86868b;
+  --accent:#2dd4ff;--accent-2:#9be8ff;
+  --r:14px;--r-sm:10px;--max:1120px;--measure:760px;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:var(--sans);font-size:17px;line-height:1.52;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
-  font-feature-settings:"kern","liga";
-}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.52 var(--sans);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline;text-underline-offset:3px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
 .skip{position:absolute;left:-999px;top:0}
-.skip:focus{left:16px;top:12px;z-index:10;background:var(--text);color:#000;padding:8px 14px;border-radius:10px}
-
+.skip:focus{left:16px;top:12px;z-index:30;background:var(--text);color:#000;padding:8px 14px;border-radius:10px}
 .wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 24px}
-.narrow{max-width:var(--text-max);margin:0 auto}
 .center{text-align:center}
+.measure{max-width:var(--measure);margin-left:auto;margin-right:auto}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-
-/* ── navigation ─────────────────────────────────────────────────────────── */
-.nav{
-  position:sticky;top:0;z-index:5;height:52px;
-  background:rgba(0,0,0,.72);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:1px solid var(--hair);
-}
-.nav .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
-.brand{color:var(--text);font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap;flex:none}
-.brand:hover{text-decoration:none}
-.nav-links{display:flex;align-items:center;gap:28px;font-size:13px;flex:none}
-.nav-links a{white-space:nowrap;flex:none}
-.nav-links a{color:var(--text-2)}
-.nav-links a:hover{color:var(--text);text-decoration:none}
-.nav-cta{
-  color:#000!important;background:var(--text);border-radius:980px;
-  padding:6px 14px;font-weight:600;font-size:13px;
-}
-.nav-cta:hover{background:#fff;text-decoration:none}
-@media (max-width:734px){.nav-links a:not(.nav-cta){display:none}}
-
-/* ── type ───────────────────────────────────────────────────────────────── */
-.eyebrow{
-  display:block;color:var(--accent);font-size:15px;font-weight:600;
-  letter-spacing:-.005em;margin:0 0 14px;
-}
-h1,h2,h3{margin:0;font-weight:700;color:var(--text)}
-/* Balanced headline lines, no word left alone on the last one. */
+p{margin:0}
+h1,h2,h3{margin:0;color:var(--text);font-weight:700}
 h1,h2,.subhead{text-wrap:balance}
 .lead,.note{text-wrap:pretty}
-h1{font-size:clamp(42px,6.4vw,74px);line-height:1.05;letter-spacing:-.035em}
-h2{font-size:clamp(34px,4.8vw,56px);line-height:1.07;letter-spacing:-.03em}
-h3{font-size:21px;line-height:1.25;letter-spacing:-.018em;font-weight:600}
-.lead{
-  font-size:clamp(19px,2.1vw,24px);line-height:1.45;color:var(--text-2);
-  letter-spacing:-.012em;margin:22px 0 0;
-}
+
+/* ── the family bar and the local navigation ───────────────────────────── */
+.family{background:#000;border-bottom:1px solid var(--hair);font-size:12px;letter-spacing:.01em}
+.family .wrap{display:flex;justify-content:center;align-items:center;gap:30px;height:34px;
+  overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.family .wrap::-webkit-scrollbar{display:none}
+.family a{color:var(--text-3);flex:none}
+.family a:hover{color:var(--text);text-decoration:none}
+.family a[aria-current="page"]{color:var(--text)}
+.nav{position:sticky;top:0;z-index:20;height:52px;background:rgba(0,0,0,.74);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--hair)}
+.nav .wrap{height:52px;display:flex;align-items:center;justify-content:space-between}
+.brand{color:var(--text);font-weight:600;font-size:16px;letter-spacing:-.015em;white-space:nowrap}
+.brand:hover{text-decoration:none}
+.nav-links{display:flex;align-items:center;font-size:13px}
+.nav-links > a + a{margin-left:28px}
+.nav-links a{color:var(--text-2);white-space:nowrap}
+.nav-links a:hover{color:var(--text);text-decoration:none}
+.nav-cta{color:#000!important;background:var(--text);border-radius:980px;padding:6px 14px;font-weight:600}
+.nav-cta:hover{background:#fff}
+
+/* ── type ───────────────────────────────────────────────────────────────── */
+.eyebrow{display:block;color:var(--accent);font-size:14px;font-weight:600;letter-spacing:.01em;margin-bottom:14px}
+h1{font-size:clamp(56px,10vw,120px);line-height:.98;letter-spacing:-.048em}
+h2{font-size:clamp(36px,5.2vw,62px);line-height:1.05;letter-spacing:-.036em}
+h3{font-size:21px;line-height:1.25;letter-spacing:-.02em;font-weight:600}
+.lead{font-size:clamp(19px,2.2vw,24px);line-height:1.42;color:var(--text-2);letter-spacing:-.012em;margin-top:22px}
 .lead b{color:var(--text);font-weight:600}
-p{margin:0}
-.muted{color:var(--text-2)}
-
-/* ── sections ───────────────────────────────────────────────────────────── */
-section{padding:clamp(96px,13vw,160px) 0;border-top:1px solid var(--hair)}
-section.first{border-top:0}
-.section-head{margin-bottom:clamp(48px,6vw,72px)}
-
-/* ── buttons ────────────────────────────────────────────────────────────── */
-.actions{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;align-items:center;margin-top:40px}
-.btn{
-  display:inline-block;background:var(--text);color:#000;border-radius:980px;
-  padding:14px 26px;font-size:17px;font-weight:600;letter-spacing:-.01em;
-  white-space:nowrap;flex:none;
-}
-.btn:hover{background:#fff;text-decoration:none}
-.more{font-size:17px;font-weight:500;white-space:nowrap;flex:none}
-.more::after{content:" ›";font-weight:400}
-
-/* ── hero ───────────────────────────────────────────────────────────────── */
-.hero{position:relative;overflow:hidden;padding-top:clamp(88px,12vw,148px)}
-.hero::before{
-  content:"";position:absolute;left:50%;top:-38%;width:1100px;height:900px;
-  transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(closest-side,rgba(45,212,255,.13),rgba(45,212,255,0));
-}
-.hero .narrow{position:relative;max-width:1060px}
-.hero .lead{max-width:760px;margin-left:auto;margin-right:auto}
-
-/* ── the argument ───────────────────────────────────────────────────────── */
-.given{
-  display:grid;grid-template-columns:1fr 1fr;gap:1px;
-  background:var(--hair);border:1px solid var(--hair);border-radius:18px;overflow:hidden;
-  max-width:640px;margin:0 auto 56px;
-}
-.given div{background:var(--panel);padding:20px 22px}
-.given .k{display:block;font-size:13px;color:var(--text-3);margin-bottom:6px}
-.given .v{font-family:var(--mono);font-size:16px;color:var(--text)}
-.verdict{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:640px;margin:0 auto;
-}
-.verdict div{text-align:center}
-.num{
-  display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;
-  font-size:clamp(64px,11vw,112px);line-height:1;letter-spacing:-.04em;font-weight:600;
-}
-.num.wrong{color:#3a3a3d;text-decoration:line-through;text-decoration-color:#6e6e73;text-decoration-thickness:3px}
-.num.right{color:var(--text)}
-.num-label{display:block;margin-top:14px;font-size:15px;color:var(--text-3)}
-.num-label.right{color:var(--accent)}
-.derivation{
-  max-width:640px;margin:56px auto 0;background:var(--panel);border:1px solid var(--hair);
-  border-radius:18px;padding:22px 24px;font-family:var(--mono);font-size:15px;
-  line-height:2;color:var(--text-2);overflow-x:auto;white-space:nowrap;
-}
-.derivation b{color:var(--text);font-weight:600}
-.derivation .fp{color:var(--accent)}
-.note{max-width:640px;margin:28px auto 0;color:var(--text-2);font-size:17px;text-align:center}
-
-/* ── the lab: the argument, with your numbers ──────────────────────────── */
-.lab{max-width:880px;margin:88px auto 0}
-.lab-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:20px;align-items:stretch}
-.lab-in,.lab-out{background:var(--panel);border:1px solid var(--hair);border-radius:22px;padding:26px}
-.lab-task + .lab-task{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair)}
-.lab-name{display:block;font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:12px}
-.lab-row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;color:var(--text-2);font-size:15px}
-.lab-row label{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
-.lab input{
-  width:92px;height:40px;box-sizing:border-box;background:#000;color:var(--text);
-  border:1px solid var(--hair-2);border-radius:10px;padding:0 10px;
-  font:500 16px/38px var(--mono);font-variant-numeric:tabular-nums;vertical-align:middle;
-  -moz-appearance:textfield;appearance:textfield}
-.lab input::-webkit-outer-spin-button,.lab input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.lab input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,212,255,.18)}
-.lab-nums{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.lab-nums .k{display:block;font-size:13px;color:var(--text-3);line-height:1.35;min-height:2.7em}
-.lab-naive,.lab-r{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:clamp(38px,5.2vw,52px);font-weight:600;letter-spacing:-.03em;line-height:1.1;margin-top:6px}
-.lab-naive{color:#3a3a3d;text-decoration:line-through;text-decoration-color:#6e6e73;text-decoration-thickness:2px}
-.lab-naive.same{color:var(--text-3);text-decoration:none}
-.lab-r{color:var(--text)}
-.lab-verdict{margin-top:18px;font-size:16px;color:var(--text);line-height:1.45}
-.lab-verdict.miss{color:#ff6b6b}.lab-verdict.refused{color:#ffb454}
-.lab-why{margin-top:6px;font-size:14px;color:var(--text-2);line-height:1.45}
-.lab-steps{margin-top:18px;padding-top:16px;border-top:1px solid var(--hair);font-family:var(--mono);font-size:13px;color:var(--text-2);line-height:1.9;overflow-x:auto;white-space:nowrap}
-.lab-steps b{color:var(--text);font-weight:600}.lab-steps .fp{color:var(--accent)}
-.lab-note{max-width:880px;margin:18px auto 0;font-size:14px;color:var(--text-3);text-align:center;line-height:1.5}
-
-/* ── who it is for ──────────────────────────────────────────────────────── */
-.for .card h3{font-size:19px}
-.for .card .use{margin-top:auto;padding-top:20px;font-family:var(--mono);font-size:13px;color:var(--accent)}
-
-/* ── the schedule, drawn ─────────────────────────────────────────────── */
-.tl-wrap{margin-top:20px;background:var(--panel);border:1px solid var(--hair);border-radius:22px;padding:20px 22px 12px}
-.tl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
-.tl-head b{font-size:15px;font-weight:600;color:var(--text)}
-.tl-key{font-size:12px;color:var(--text-3);display:flex;gap:14px;flex-wrap:wrap}
-.tl-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
-.tl{display:block;width:100%;height:auto}
-.tl-lane{fill:var(--text-3);font:600 13px var(--sans)}
-.tl-track{stroke:rgba(255,255,255,.06);stroke-width:30;stroke-linecap:round}
-.tl-a{fill:rgba(45,212,255,.55)}
-.tl-b{fill:#3a3a3d}
-.tl-bw{fill:#f5f5f7}
-.tl-bw.tl-miss{fill:#ff6b6b}
-.tl-fin{stroke:var(--accent);stroke-width:2}
-.tl-fin.tl-miss{stroke:#ff6b6b}
-.tl-dl{stroke:var(--text-3);stroke-width:1.5;stroke-dasharray:4 4}
-.tl-t{fill:var(--text-2);font:500 12px var(--mono)}
-.tl-fin-t{fill:var(--accent)}.tl-miss-t{fill:#ff6b6b}
-.tl-axis{stroke:rgba(255,255,255,.14);stroke-width:1}
-.tl-tick{fill:var(--text-3);font:500 11px var(--mono)}
-
-/* ── facts under the hero ───────────────────────────────────────────────── */
-.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);
-  border:1px solid var(--hair);border-radius:20px;overflow:hidden;max-width:880px;margin:64px auto 0}
-.facts div{background:rgba(14,14,16,.82);padding:22px 18px;text-align:center}
-.fact-n{display:block;font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.03em;color:var(--text);font-variant-numeric:tabular-nums}
-.fact-k{display:block;margin-top:6px;font-size:13px;color:var(--text-3);line-height:1.35}
-
-/* ── the gradient on one phrase, where the engine can clip to text ───────── */
+.subhead{font-size:clamp(24px,2.6vw,30px);font-weight:700;letter-spacing:-.024em;text-align:center;margin:clamp(72px,9vw,104px) 0 30px}
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
-  .grad{background:linear-gradient(92deg,#f5f5f7 10%,#9be8ff 55%,var(--accent));
+  .grad{background:linear-gradient(95deg,#f5f5f7 5%,var(--accent-2) 55%,var(--accent));
     -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 }
 
-/* ── reveal on scroll. Visible by default; hidden only once script has run,
-   and a timer in the head shows everything after three seconds regardless. ── */
-.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+/* ── sections and buttons ──────────────────────────────────────────────── */
+section{padding:clamp(96px,12vw,152px) 0;border-top:1px solid var(--hair);scroll-margin-top:60px}
+section.first{border-top:0}
+.head{margin-bottom:clamp(44px,5.5vw,68px)}
+.actions{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:center;align-items:center;margin-top:38px}
+.btn{display:inline-block;background:var(--text);color:#000;border-radius:980px;padding:14px 26px;
+  font-size:17px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;border:0;cursor:pointer;
+  transition:background .2s var(--ease),transform .2s var(--ease)}
+.btn:hover{background:#fff;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--text);box-shadow:inset 0 0 0 1px var(--hair-2)}
+.btn.ghost:hover{background:var(--panel-2)}
+.more{font-size:17px;font-weight:500;white-space:nowrap}
+.more::after{content:" ›"}
+
+/* ── hero ──────────────────────────────────────────────────────────────── */
+.hero{position:relative;overflow:hidden;padding-top:clamp(84px,11vw,140px)}
+.hero::before{content:"";position:absolute;left:50%;top:-42%;width:1200px;height:960px;transform:translateX(-50%);
+  pointer-events:none;background:radial-gradient(closest-side,rgba(45,212,255,.12),rgba(45,212,255,0))}
+.hero > .wrap{position:relative}
+.caps{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:44px}
+.caps span{font-size:12.5px;color:var(--text-2);border:1px solid var(--hair);border-radius:980px;padding:6px 12px;white-space:nowrap}
+
+/* ── the claim, traced: the method shown on the practice's own tool ────── */
+.chain-wrap{margin-top:clamp(64px,8vw,96px)}
+.chain-cap{font-size:13px;color:var(--text-3);text-align:center;margin-bottom:18px}
+.chain{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;position:relative}
+.node{position:relative;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:16px 14px 15px;text-align:left}
+.node:not(:last-child)::after{content:"";position:absolute;top:50%;right:-12px;width:12px;height:1px;
+  background:linear-gradient(90deg,var(--hair-2),rgba(45,212,255,.6))}
+.node .k{display:block;font:600 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.node .v{display:block;font-size:14px;line-height:1.38;color:var(--text)}
+.node .d{display:block;margin-top:6px;font:500 11.5px/1.4 var(--mono);color:var(--text-3)}
+.node.verdict{border-color:rgba(45,212,255,.5);background:linear-gradient(180deg,rgba(45,212,255,.1),var(--panel) 70%)}
+.node.verdict .k{color:var(--accent)}
+.chain-foot{font-size:14px;color:var(--text-2);text-align:center;margin-top:20px}
+.js .chain .node{opacity:0;transform:translateY(8px)}
+.chain-wrap.in .node{animation:rise .5s var(--ease) forwards}
+.chain-wrap.in .node:nth-child(2){animation-delay:.1s}.chain-wrap.in .node:nth-child(3){animation-delay:.2s}
+.chain-wrap.in .node:nth-child(4){animation-delay:.3s}.chain-wrap.in .node:nth-child(5){animation-delay:.4s}
+.chain-wrap.in .node:nth-child(6){animation-delay:.52s}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.js .chain .node{opacity:1;transform:none}.chain-wrap.in .node{animation:none}}
+
+/* ── segmented tabs ────────────────────────────────────────────────────── */
+.tabs{display:none}
+.js .tabs{display:flex;justify-content:center;margin:0 auto 34px;width:max-content;max-width:100%;
+  background:var(--panel-2);border:1px solid var(--hair);border-radius:980px;padding:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab + .tab{margin-left:2px}
+.tab{appearance:none;border:0;background:transparent;color:var(--text-2);font:500 15px/1 var(--sans);
+  padding:11px 18px;border-radius:980px;cursor:pointer;white-space:nowrap;transition:color .2s var(--ease),background .2s var(--ease)}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{background:var(--panel-3);color:var(--text);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 4px 14px rgba(0,0,0,.4)}
+.panel + .panel{margin-top:22px}
+.js .panel + .panel{margin-top:0}
+.panel-h{display:block;font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.js .panel-h{display:none}
+
+/* ── cards ─────────────────────────────────────────────────────────────── */
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:var(--r);padding:32px}
+.card p{color:var(--text-2);font-size:16px;line-height:1.55}
+
+/* who it is for */
+.who{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:stretch}
+.who .card h3{font-size:clamp(26px,3vw,34px);letter-spacing:-.03em;line-height:1.1;margin-bottom:16px}
+.who .card p + p{margin-top:12px}
+.who dl{margin:0;display:grid;gap:18px}
+.who dt{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.who dd{margin:0;color:var(--text);font-size:16px;line-height:1.5}
+.who dd a{font-weight:600}
+
+/* engagements */
+.plan{display:grid;grid-template-rows:auto auto auto auto 1fr auto;padding:34px 30px 30px;position:relative}
+.plan.featured{border-color:rgba(45,212,255,.45);background:linear-gradient(180deg,#0b1a20,var(--panel) 40%)}
+.plan .row-top{display:flex;justify-content:space-between;align-items:center;height:26px;margin-bottom:18px}
+.plan .when{font:500 12.5px/1 var(--mono);color:var(--text-3)}
+.plan .badge{font-size:11.5px;font-weight:600;color:var(--accent);border:1px solid rgba(45,212,255,.4);border-radius:980px;padding:5px 10px;white-space:nowrap}
+.plan .name{display:block;font-size:22px;font-weight:700;letter-spacing:-.025em;height:28px}
+.plan .price{display:block;font-size:54px;font-weight:700;letter-spacing:-.045em;line-height:1;margin:14px 0 14px;font-variant-numeric:tabular-nums}
+.plan .q{display:block;font-size:15.5px;line-height:1.45;color:var(--text);min-height:4.4em}
+.plan ul{list-style:none;margin:22px 0 0;padding:22px 0 0;border-top:1px solid var(--hair);align-self:start}
+.plan li{position:relative;padding-left:24px;margin-bottom:11px;font-size:15px;color:var(--text-2);line-height:1.42}
+.plan li.plus{padding-left:0;color:var(--text-3);font-size:13px;margin-bottom:13px}
+.plan li:not(.plus)::before{content:"";position:absolute;left:1px;top:6px;width:12px;height:7px;border-left:1.8px solid var(--accent);border-bottom:1.8px solid var(--accent);transform:rotate(-45deg)}
+.plan .foot{display:grid;gap:10px;padding-top:26px;align-self:end}
+.plan .btn{display:block;text-align:center;font-size:15px;padding:12px 16px}
+.plan .link{text-align:center;font-size:14px;font-weight:500}
+.plan .link::after{content:" ›"}
+.terms{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin-top:30px;font-size:13.5px;color:var(--text-3)}
+.terms span::before{content:"·";margin-right:10px;color:var(--hair-2)}
+.terms span:first-child::before{content:none}
+
+/* where the money goes */
+#funding .head{max-width:1000px}
+.fund{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.fund .card{position:relative;overflow:hidden}
+.fund .card.field{border-color:rgba(45,212,255,.35);background:linear-gradient(160deg,rgba(45,212,255,.09),var(--panel) 55%)}
+.fund .n{display:block;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:18px}
+.fund .field .n{color:var(--accent)}
+.fund h3{font-size:clamp(24px,2.6vw,30px);letter-spacing:-.03em;line-height:1.12;margin-bottom:12px}
+.pledge{display:flex;gap:16px;align-items:flex-start;max-width:880px;margin:26px auto 0;padding:20px 24px;
+  border:1px solid var(--hair);border-radius:var(--r);background:var(--panel)}
+.pledge b{flex:none;font:600 11px/1.6 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+.pledge p{font-size:15px;line-height:1.55;color:var(--text-2)}
+@media (max-width:734px){.fund{grid-template-columns:minmax(0,1fr)}.pledge{flex-direction:column;gap:8px}}
+
+/* compare and full scope */
+.compare{overflow-x:auto;border:1px solid var(--hair);border-radius:var(--r);background:var(--panel)}
+.compare table{width:100%;min-width:640px;border-collapse:collapse;font-size:14.5px}
+.compare th,.compare td{padding:14px 18px;border-top:1px solid var(--hair);text-align:center;vertical-align:middle}
+.compare thead th{border-top:0;font-size:15px;font-weight:600;color:var(--text);padding-top:22px;padding-bottom:18px}
+.compare thead th small{display:block;font:500 12px/1.3 var(--mono);color:var(--text-3);margin-top:6px}
+.compare th[scope=row]{text-align:left;font-weight:400;color:var(--text-2);position:sticky;left:0;background:var(--panel);min-width:230px}
+.compare .y{color:var(--accent);font-size:17px}
+.compare .n{color:#3a3a3d}
+.compare .t{color:var(--text-2);font-size:13.5px}
+.compare tr.price td,.compare tr.price th{font-weight:700;color:var(--text);font-size:17px}
+.compare .group th{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);text-align:left;padding-top:22px;background:var(--panel)}
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.scope .card h3{font-size:26px;letter-spacing:-.03em;margin-bottom:6px}
+.scope .sub{font:500 13px/1 var(--mono);color:var(--text-3);margin-bottom:18px;display:block}
+.scope .q{font-size:18px;color:var(--text);line-height:1.4;margin-bottom:16px}
+.scope h4{margin:22px 0 10px;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
+.scope h4:first-child{margin-top:0}
+.scope ul{margin:0;padding-left:18px;color:var(--text-2);font-size:15px;line-height:1.5}
+.scope li{margin-bottom:6px}
+.scope .card p{font-size:15px}
+.scope .price-line{display:flex;justify-content:space-between;align-items:baseline;margin-top:24px;padding-top:18px;border-top:1px solid var(--hair)}
+.scope .price-line b{font-size:30px;letter-spacing:-.035em}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;counter-reset:s}
+.step{counter-increment:s;position:relative;background:var(--panel);border:1px solid var(--hair);border-radius:12px;padding:22px 18px}
+.step::before{content:counter(s,decimal-leading-zero);display:block;font:600 12px/1 var(--mono);color:var(--accent);letter-spacing:.12em;margin-bottom:16px}
+.step h3{font-size:17px;margin-bottom:8px}
+.step p{font-size:14.5px;color:var(--text-2);line-height:1.5}
+
+/* the ecosystem */
+.eco{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:stretch}
+.eco .card h3{font-size:clamp(28px,3.4vw,40px);letter-spacing:-.035em;line-height:1.08;margin:6px 0 16px}
+.eco .kind{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.eco .links{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:26px;align-items:center}
+.eco .facts{display:grid;grid-template-rows:repeat(3,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden}
+.eco .facts div{background:var(--panel);padding:20px 24px;display:flex;flex-direction:column;justify-content:center}
+.eco .facts b{font-size:clamp(30px,3.4vw,40px);letter-spacing:-.035em;line-height:1;font-weight:700}
+.eco .facts span{font-size:13.5px;color:var(--text-3);margin-top:6px}
+
+/* principal and boundaries */
+.principal{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;max-width:880px;margin:0 auto}
+.mark{width:120px;height:120px;border-radius:28px;background:linear-gradient(145deg,#15252b,#0b0b0d);border:1px solid var(--hair-2);
+  display:block;text-align:center;line-height:118px;font-weight:700;font-size:40px;letter-spacing:-.04em;color:var(--text)}
+.principal p{color:var(--text-2);font-size:18px;line-height:1.55}
+.principal p + p{margin-top:12px}
+.principal .name{color:var(--text);font-size:clamp(26px,3vw,34px);font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.principal .links{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:22px;font-size:16px}
+.bounds .card h3{font-size:19px;margin-bottom:10px}
+
+/* closing */
+.closing{position:relative;overflow:hidden}
+.closing::before{content:"";position:absolute;left:50%;bottom:-58%;width:1100px;height:820px;transform:translateX(-50%);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(45,212,255,.12),rgba(45,212,255,0))}
+.closing .wrap{position:relative}
+
+/* footer */
+footer{border-top:1px solid var(--hair);padding:56px 0 calc(64px + env(safe-area-inset-bottom));font-size:13px;color:var(--text-3)}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:28px}
+.fgrid b{display:block;color:var(--text);font-size:13px;margin-bottom:12px;font-weight:600}
+.fgrid a{display:block;color:var(--text-2);margin-bottom:8px}
+.fgrid a:hover{color:var(--text);text-decoration:none}
+.fbrand{color:var(--text);font-size:15px;font-weight:600;margin-bottom:8px}
+.fbase{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:40px;padding-top:22px;border-top:1px solid var(--hair)}
+
+/* ── the request sheet ─────────────────────────────────────────────────── */
+dialog.sheet{border:1px solid var(--hair-2);border-radius:18px;background:#0e0e11;color:var(--text);padding:0;
+  width:min(600px,calc(100% - 32px));max-height:calc(100% - 48px);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sheet form{padding:28px 28px 26px;display:grid;gap:18px}
+.sheet-h{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.sheet-h h2{font-size:26px;letter-spacing:-.03em}
+.sheet-h p{font-size:14px;color:var(--text-3);margin-top:6px}
+.x{appearance:none;border:0;background:var(--panel-3);color:var(--text-2);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;flex:none}
+.x:hover{color:var(--text)}
+.field{display:grid;gap:8px}
+.field > span{font-size:13px;font-weight:600;color:var(--text-2)}
+.field input{height:46px}
+.field input,.field textarea{width:100%;background:#000;color:var(--text);border:1px solid var(--hair-2);border-radius:10px;
+  padding:12px 13px;font:16px/1.4 var(--sans)}
+.field textarea{min-height:92px;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(45,212,255,.16)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:9px 13px;border-radius:980px;border:1px solid var(--hair-2);font-size:14px;color:var(--text-2);white-space:nowrap;transition:all .18s var(--ease)}
+.seg input:checked + span{background:var(--text);color:#000;border-color:var(--text)}
+.seg input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.sheet .send{display:block;width:100%;height:50px;line-height:22px;font-size:16px;text-align:center}
+.sheet .small{font-size:12.5px;color:var(--text-3);line-height:1.5;text-align:center}
+.sheet .pay{display:none}
+.sheet .pay.on{display:block}
+
+/* ── mobile dock ───────────────────────────────────────────────────────── */
+.dock{position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:25;display:none;text-align:center;
+  background:var(--text);color:#000!important;border-radius:980px;padding:15px;font-weight:600;font-size:16px;box-shadow:0 10px 30px rgba(0,0,0,.5);
+  transform:translateY(140%);transition:transform .25s var(--ease)}
+.dock:hover{text-decoration:none}
+.dock.show{transform:none}
+
+/* ── reveal ────────────────────────────────────────────────────────────── */
+.js .reveal{opacity:0;transform:translateY(18px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}
 
-/* ── closing band ──────────────────────────────────────────────────────── */
-.closing{position:relative;overflow:hidden}
-.closing::before{content:"";position:absolute;left:50%;bottom:-55%;width:1000px;height:760px;transform:translateX(-50%);pointer-events:none;
-  background:radial-gradient(closest-side,rgba(45,212,255,.11),rgba(45,212,255,0))}
-.closing .narrow{position:relative}
-
-/* ── the trap ───────────────────────────────────────────────────────────── */
-.meter{max-width:720px;margin:0 auto}
-.meter-track{position:relative;height:14px;border-radius:14px;background:var(--panel-2);border:1px solid var(--hair)}
-.meter-fill{position:absolute;left:0;top:0;bottom:0;width:71.67%;border-radius:14px;
-  background:linear-gradient(90deg,#1f6f86,var(--accent))}
-.meter-mark{position:absolute;top:-10px;bottom:-10px;left:82.84%;width:2px;background:var(--text)}
-.meter-scale{display:flex;justify-content:space-between;margin-top:14px;font-family:var(--mono);font-size:13px;color:var(--text-3)}
-.meter-legend{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
-.meter-legend div{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:18px 20px}
-.meter-legend .k{display:block;font-size:13px;color:var(--text-3);margin-bottom:6px}
-.meter-legend .v{font-family:var(--mono);font-size:22px;color:var(--text)}
-.meter-legend .v.a{color:var(--accent)}
-
-/* ── cards: one grid, every row the same height ─────────────────────────── */
-.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.card{
-  display:flex;flex-direction:column;background:var(--panel);
-  border:1px solid var(--hair);border-radius:var(--radius);padding:32px;
-}
-.card .tag{font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:14px}
-.grid-3 a.card h3{min-height:2.5em}
-.card h3{margin-bottom:12px}
-.card p{color:var(--text-2);font-size:16px;line-height:1.55}
-.card .foot{margin-top:auto;padding-top:24px}
-a.card{color:inherit;transition:border-color .2s ease,background .2s ease;
-  display:grid;grid-template-rows:auto auto 1fr auto;align-content:stretch}
-a.card .foot{margin-top:0;align-self:end}
-a.card:hover{text-decoration:none;border-color:var(--hair-2);background:var(--panel-2)}
-a.card .foot{color:var(--accent);font-size:15px;font-weight:500}
-a.card .foot::after{content:" ›"}
-
-/* ── pricing ────────────────────────────────────────────────────────────── */
-/* Rows, not flex: badge, name, price, term, list, button. The header rows
-   have fixed heights so every list starts on the same line, the list row is
-   1fr so it absorbs the difference, and the button always lands in the last
-   row. Nothing here depends on margin:auto, which not every engine honours
-   in a flex column — the previous version leaned on it and leaned. */
-.plan{padding:36px 32px;display:grid;grid-template-rows:auto auto auto auto 1fr auto;align-content:stretch}
-.plan.featured{border-color:rgba(45,212,255,.45);background:linear-gradient(180deg,#0c1a20,var(--panel) 42%)}
-.plan .badge{
-  justify-self:start;height:26px;line-height:16px;font-size:12px;font-weight:600;color:var(--accent);
-  border:1px solid rgba(45,212,255,.4);border-radius:980px;padding:4px 11px;margin-bottom:18px;white-space:nowrap;
-}
-.plan .badge.ghost{visibility:hidden}
-.plan .name{display:block;height:24px;font-size:17px;font-weight:600;color:var(--text)}
-.plan .price{display:block;height:60px;white-space:nowrap;font-size:48px;font-weight:700;letter-spacing:-.035em;line-height:60px;margin:12px 0 8px;font-variant-numeric:tabular-nums}
-.plan .price small{font-size:17px;font-weight:500;color:var(--text-2);letter-spacing:-.01em}
-.plan .term{display:block;height:46px;font-size:15px;line-height:23px;color:var(--text-2)}
-.plan ul{list-style:none;margin:24px 0 0;padding:24px 0 0;border-top:1px solid var(--hair);align-self:start}
-.plan li{position:relative;padding-left:26px;margin-bottom:12px;font-size:15px;color:var(--text-2);line-height:1.45}
-.plan li::before{
-  content:"";position:absolute;left:0;top:7px;width:14px;height:8px;
-  border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);
-}
-.plan .foot{align-self:end;padding-top:28px}
-.plan .btn{display:block;text-align:center;font-size:15px;padding:12px 18px}
-.plan .btn.alt{background:transparent;color:var(--text);border:1px solid var(--hair-2)}
-.plan .btn.alt:hover{background:var(--panel-2)}
-
-/* ── small tiles ────────────────────────────────────────────────────────── */
-.tile{background:var(--panel);border:1px solid var(--hair);border-radius:20px;padding:26px}
-.tile .n{font-family:var(--mono);font-size:13px;color:var(--accent);margin-bottom:14px;display:block}
-.tile h3{font-size:18px;line-height:1.3;margin-bottom:8px;min-height:2.6em}
-.tile p{color:var(--text-2);font-size:15px;line-height:1.5}
-
-.fit h3{font-size:19px;margin-bottom:18px}
-.fit ul{list-style:none;margin:0;padding:0}
-.fit li{padding:13px 0;border-top:1px solid var(--hair);color:var(--text-2);font-size:16px;line-height:1.45}
-.fit li:first-child{border-top:0;padding-top:0}
-.fit .yes h3{color:var(--text)}
-.fit .no h3{color:var(--text-3)}
-
-.subhead{font-size:clamp(24px,2.6vw,30px);font-weight:700;letter-spacing:-.022em;margin:clamp(72px,9vw,112px) 0 32px;text-align:center}
-
-/* ── who & footer ───────────────────────────────────────────────────────── */
-.person{font-size:clamp(28px,3.4vw,40px);font-weight:700;letter-spacing:-.03em}
-.links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 32px;margin-top:32px;font-size:17px}
-footer{border-top:1px solid var(--hair);padding:40px 0 56px;color:var(--text-3);font-size:13px}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px}
-footer a{color:var(--text-2)}
-
-/* ── responsive ─────────────────────────────────────────────────────────── */
+/* ── responsive ────────────────────────────────────────────────────────── */
 @media (max-width:1068px){
-  .grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .chain{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .node:nth-child(3)::after{display:none}
+  .steps{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .fgrid{grid-template-columns:1fr 1fr}
 }
-@media (max-width:834px){
-  .grid-3{grid-template-columns:minmax(0,1fr)}
-  .plan .term{height:auto}
-  .plan .badge.ghost{display:none}
-  .grid-3 a.card h3,.tile h3{min-height:0}
+@media (max-width:900px){
+  .grid-3,.who,.eco,.scope{grid-template-columns:minmax(0,1fr)}
+  .plan .q{min-height:0}
+  .eco .facts{grid-template-rows:none;grid-template-columns:repeat(3,1fr)}
 }
 @media (max-width:734px){
   body{font-size:16px}
   .wrap{padding:0 20px}
-  .grid-2,.grid-4{grid-template-columns:minmax(0,1fr)}
-  .card{padding:26px}
-  .plan{padding:30px 24px}
-  .given{grid-template-columns:minmax(0,1fr)}
-  .meter-legend{grid-template-columns:minmax(0,1fr)}
-  .derivation{font-size:13px;padding:18px}
-  /* The marker would push the line past a phone's width and make the one
-     equation on the page scroll sideways. It takes its own line instead. */
-  .derivation .fp{display:block;margin-top:2px}
-  /* The lab stacks: inputs above, the answer below, each full width. */
-  .lab{margin-top:64px}
-  .lab-grid{grid-template-columns:minmax(0,1fr)}
-  .lab-in,.lab-out{padding:22px 20px}
-  .lab-nums .k{min-height:2.7em}
-  .lab-steps{font-size:12px}
-  .lab-steps .fp{display:block}
-  .facts{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:48px}
-  .tl-wrap{padding:16px 12px 8px}
-  .tl-head{flex-direction:column;align-items:flex-start;gap:6px}
-  footer .wrap{flex-direction:column}
+  .family .wrap{justify-content:flex-start;gap:22px}
+  .nav-links a:not(.nav-cta){display:none}
+  .grid-2{grid-template-columns:minmax(0,1fr)}
+  .chain{grid-template-columns:minmax(0,1fr);gap:10px}
+  .node:not(:last-child)::after{display:block;top:auto;bottom:-10px;right:auto;left:28px;width:1px;height:10px;
+    background:linear-gradient(180deg,var(--hair-2),rgba(45,212,255,.6))}
+  .node:nth-child(3)::after{display:block}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .card{padding:26px 22px}
+  .plan{padding:28px 22px 24px}
+  .plan .price{font-size:48px}
+  .eco .facts{grid-template-columns:minmax(0,1fr)}
+  .principal{grid-template-columns:minmax(0,1fr);text-align:center}
+  .principal .mark{justify-self:center}
+  .principal .links{justify-content:center}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .dock{display:block}
+  .lg{display:none}
+  .js .tabs{width:100%}
+  .tab{flex:1 1 0;padding:10px 6px;font-size:14px;text-align:center}
+  .tab + .tab{margin-left:2px}
+  .terms{flex-direction:column;align-items:center;gap:6px}
+  .terms span::before{content:none}
+  .compare table{min-width:0;table-layout:fixed;font-size:13px}
+  .compare th[scope=row]{position:static;min-width:0;width:50%}
+  .compare th,.compare td{padding:11px 6px}
+  .compare thead th{font-size:12.5px}
+  .compare thead th small{display:none}
+  .compare tr.price td,.compare tr.price th{font-size:13.5px}
+  .compare .t{font-size:11.5px}
+  .sheet form{padding:22px 20px}
+  dialog.sheet{width:100%;max-width:100%;margin:auto 0 0;border-radius:20px 20px 0 0;max-height:92%}
 }
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
+<nav class="family" aria-label="DY Research family">
+  <div class="wrap">
+    <a href="/" aria-current="page">DY Research</a>
+    <a href="/wcet/">dy-wcet</a>
+    <a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar <span aria-hidden="true">↗</span></a>
+    <a href="https://axonos.org" rel="noopener">AxonOS <span aria-hidden="true">↗</span></a>
+  </div>
+</nav>
 <nav class="nav" aria-label="Primary">
   <div class="wrap">
     <a class="brand" href="#top">DY Research</a>
     <div class="nav-links">
-      <a href="#try">Try it</a>
+      <a href="#engagements">Engagements</a>
       <a href="#for">Who it is for</a>
-      <a href="#evidence">Evidence</a>
-      <a href="#engage">Engage</a>
-      <a class="nav-cta" href="#engage">Book an audit</a>
+      <a href="#proof">Proof</a>
+      <a href="#process">Process</a>
+      <a class="nav-cta" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
     </div>
   </div>
 </nav>
@@ -384,313 +389,437 @@ footer a{color:var(--text-2)}
 <!-- ═══ HERO ════════════════════════════════════════════════════════════ -->
 <section class="hero first" id="top">
   <div class="wrap center">
-    <div class="narrow">
-      <span class="eyebrow">Worst-case timing analysis</span>
-      <h1>Timing analysis<br>with the <span class="grad">arithmetic shown.</span></h1>
-      <p class="lead">A measured maximum is not a worst-case bound. I find where a
-        timing claim breaks, and show every step of the arithmetic —
-        <b>so you can check it without me.</b></p>
-      <div class="actions">
-        <a class="btn" href="#engage">Book an audit — $3,000</a>
-        <a class="more" href="#try">Try the argument</a>
-      </div>
+    <span class="eyebrow">Independent technical intelligence</span>
+    <h1>Know what is <span class="grad">real.</span></h1>
+    <p class="lead measure">Technical due diligence for investors, founders and engineering teams.
+      Every claim a technology makes, traced to its code, its tests and its evidence —
+      <b>and a written verdict on what holds.</b></p>
+    <div class="actions">
+      <a class="btn" href="#engagements">See the engagements</a>
+      <a class="more" href="#process">How an engagement runs</a>
     </div>
-    <div class="facts" aria-label="What the analysis is built on">
-      <div><span class="fact-n">0</span><span class="fact-k">dependencies</span></div>
-      <div><span class="fact-n">0</span><span class="fact-k">floating-point operations</span></div>
-      <div><span class="fact-n">6</span><span class="fact-k">named refusals, never a guess</span></div>
-      <div><span class="fact-n">no_std</span><span class="fact-k">runs on the device itself</span></div>
+    <div class="caps" aria-label="Areas of expertise">
+      <span>Technical due diligence</span><span>Real-time systems</span><span>Worst-case timing</span>
+      <span>Formal verification</span><span>Embedded Rust</span><span>Brain–computer interfaces</span>
+    </div>
+
+    <div class="chain-wrap reveal" aria-label="One claim traced to its evidence">
+      <p class="chain-cap">The method, applied to DY Research's own tool</p>
+      <div class="chain">
+        <div class="node"><span class="k">Claim</span><span class="v">Response times are computed exactly, in integer arithmetic</span></div>
+        <div class="node"><span class="k">Source</span><span class="v">Stated as a design rule</span><span class="d">README.md</span></div>
+        <div class="node"><span class="k">Code</span><span class="v"><span class="mono">u64</span> throughout, no floating point</span><span class="d">src/lib.rs</span></div>
+        <div class="node"><span class="k">Tests</span><span class="v">100 tests, 15 derived by hand</span><span class="d">tests/on_paper.rs</span></div>
+        <div class="node"><span class="k">Proof</span><span class="v">8 Kani proofs, verified in CI</span><span class="d">kani/</span></div>
+        <div class="node verdict"><span class="k">Verdict</span><span class="v">Evidenced, within its stated scope</span></div>
+      </div>
+      <p class="chain-foot measure">Every engagement does this for every claim that matters — and says plainly where the evidence stops.</p>
     </div>
   </div>
 </section>
 
-<!-- ═══ THE ARGUMENT ════════════════════════════════════════════════════ -->
-<section id="argument">
-  <div class="wrap">
-    <div class="section-head center narrow reveal">
-      <span class="eyebrow">The argument</span>
-      <h2>Two tasks.<br>Most answers are wrong.</h2>
-      <p class="lead">What is the worst-case response time of task B?</p>
-    </div>
-
-    <div class="given">
-      <div><span class="k">Task A · higher priority</span><span class="v">100 µs every 400 µs</span></div>
-      <div><span class="k">Task B</span><span class="v">200 µs every 1,000 µs</span></div>
-    </div>
-
-    <div class="reveal verdict">
-      <div><span class="num wrong">400</span><span class="num-label">The obvious answer</span></div>
-      <div><span class="num right">300</span><span class="num-label right">The fixed point</span></div>
-    </div>
-
-    <div class="derivation" aria-label="Derivation">
-      R = 200 &nbsp; ⌈200/400⌉ = 1 &nbsp;→&nbsp; <b>300</b><br>
-      R = 300 &nbsp; ⌈300/400⌉ = 1 &nbsp;→&nbsp; <b>300</b> &nbsp;<span class="fp">← fixed point</span>
-    </div>
-
-    <p class="note">The window that counts is the response time, not the period.
-      B finishes at 300&nbsp;µs, and only one activation of A lands before it.
-      Change the periods and the same mistake reports a deadline as met
-      that is missed on hardware.</p>
-
-    <div class="lab" id="try">
-      <h3 class="subhead" style="margin-top:0">Try your own numbers</h3>
-      <div class="lab-grid">
-        <div class="lab-in">
-          <div class="lab-task">
-            <span class="lab-name">Task A · higher priority</span>
-            <div class="lab-row">
-              <label>runs <input id="ca" type="number" inputmode="numeric" min="1" value="100" aria-label="Task A execution time in microseconds"> µs</label>
-              <label>every <input id="ta" type="number" inputmode="numeric" min="1" value="400" aria-label="Task A period in microseconds"> µs</label>
-            </div>
-          </div>
-          <div class="lab-task">
-            <span class="lab-name">Task B</span>
-            <div class="lab-row">
-              <label>runs <input id="cb" type="number" inputmode="numeric" min="1" value="200" aria-label="Task B execution time in microseconds"> µs</label>
-              <label>every <input id="tb" type="number" inputmode="numeric" min="1" value="1000" aria-label="Task B period in microseconds"> µs</label>
-              <label>deadline <input id="db" type="number" inputmode="numeric" min="1" value="1000" aria-label="Task B deadline in microseconds"> µs</label>
-            </div>
-          </div>
-        </div>
-        <div class="lab-out" aria-live="polite">
-          <div class="lab-nums">
-            <div><span class="k">Counting A's activations in B's period</span><span class="lab-naive" id="o-naive">400</span></div>
-            <div><span class="k">Worst-case response, solved</span><span class="lab-r" id="o-r">300</span></div>
-          </div>
-          <p class="lab-verdict" id="o-verdict">Meets its 1,000 µs deadline with 700 µs to spare.</p>
-          <p class="lab-why" id="o-why">The period-based count is pessimistic here. Change the periods and it can become optimistic, passing a set that misses.</p>
-          <div class="lab-steps" id="o-steps">R = 200 &nbsp;⌈200/400⌉ = 1 &nbsp;→ <b>300</b><br>R = 300 &nbsp;⌈300/400⌉ = 1 &nbsp;→ <b>300</b> <span class="fp">← fixed point</span></div>
-        </div>
-      </div>
-      <div class="tl-wrap">
-        <div class="tl-head"><b>The schedule it describes</b>
-          <span class="tl-key"><span><i style="background:rgba(45,212,255,.55)"></i>A preempts</span><span><i style="background:#f5f5f7"></i>B, the job that decides</span><span><i style="background:#3a3a3d"></i>other jobs of B</span></span></div>
-        <div id="o-tl"><svg viewBox="0 0 880 168" class="tl" role="img" aria-label="Schedule: task B's worst job finishes at 300 microseconds, deadline 1,000"><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="50">A</text><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="106">B</text><rect class="tl-track" fill="#16161a" x="28" y="30" width="840" height="30" rx="6"/><rect class="tl-track" fill="#16161a" x="28" y="86" width="840" height="30" rx="6"/><rect class="tl-a" fill="#1f8fae" x="28.0" y="30" width="77.7" height="30" rx="5"/><rect class="tl-bw" fill="#f5f5f7" x="105.7" y="86" width="155.4" height="30" rx="5"/><rect class="tl-a" fill="#1f8fae" x="338.8" y="30" width="77.7" height="30" rx="5"/><rect class="tl-a" fill="#1f8fae" x="649.6" y="30" width="77.7" height="30" rx="5"/><rect class="tl-b" fill="#3a3a3d" x="805.1" y="86" width="62.9" height="30" rx="5"/><line class="tl-dl" stroke="#86868b" stroke-width="1.5" stroke-dasharray="4 4" x1="805.1" x2="805.1" y1="18" y2="124"/><line class="tl-fin" stroke="#2dd4ff" stroke-width="2" x1="261.1" x2="261.1" y1="18" y2="124"/><text class="tl-t tl-fin-t" fill="#2dd4ff" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="261.1" y="14" text-anchor="middle">done 300</text><text class="tl-t" fill="#a1a1a6" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="805.1" y="14" text-anchor="middle">deadline 1,000</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="28" x2="868" y1="146" y2="146"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="28.0" y="162" text-anchor="middle">0</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="28.0" x2="28.0" y1="142" y2="150"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="416.5" y="162" text-anchor="middle">500</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="416.5" x2="416.5" y1="142" y2="150"/><text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="805.1" y="162" text-anchor="middle">1,000</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="805.1" x2="805.1" y1="142" y2="150"/></svg></div>
-      </div>
-      <p class="lab-note">The same analysis as the crate for two tasks: the busy period first, then every
-        job of B inside it, so a response that runs past the period is not under-reported.
-        Checked against dy-wcet on 4,000 random pairs, including deadlines past the period.
-        The schedule is a simulation of that scheduler, and it lands on the same finishing
-        time as the analysis on 5,000 of 5,000.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ THE TRAP ════════════════════════════════════════════════════════ -->
-<section id="trap">
-  <div class="wrap">
-    <div class="section-head center narrow reveal">
-      <span class="eyebrow">The trap</span>
-      <h2>It passes every utilisation check.<br>It still misses.</h2>
-      <p class="lead">A second set: utilisation sits well under the classical
-        bound, and one task misses its deadline by 70&nbsp;µs — because the
-        bound assumes a deadline equal to the period, and this one has none.</p>
-    </div>
-
-    <div class="reveal meter" role="img" aria-label="Utilisation 0.7167, below the Liu and Layland bound of 0.8284">
-      <div class="meter-track">
-        <div class="meter-fill"></div>
-        <div class="meter-mark"></div>
-      </div>
-      <div class="meter-scale"><span>0</span><span>utilisation</span><span>1.0</span></div>
-      <div class="meter-legend">
-        <div><span class="k">Utilisation of the set</span><span class="v a mono">0.7167</span></div>
-        <div><span class="k">Liu–Layland bound, two tasks</span><span class="v mono">0.8284</span></div>
-      </div>
-    </div>
-
-    <p class="note">The theorem is not wrong. It answers a question nobody asked.
-      The tool declines to apply it here rather than return the flattering answer.</p>
-  </div>
-</section>
-
-<!-- ═══ WHO IT IS FOR ═════════════════════════════════════════════════════ -->
+<!-- ═══ WHO IT IS FOR ═══════════════════════════════════════════════════ -->
 <section id="for">
   <div class="wrap">
-    <div class="section-head center narrow reveal">
+    <div class="head center measure reveal">
       <span class="eyebrow">Who it is for</span>
-      <h2>For deadlines that are physical.</h2>
-      <p class="lead">Where a missed deadline is a motor that overshoots, a sample that
-        is lost, or a device that has to be recalled — not a slow page.</p>
+      <h2>One question.<br>Three people who ask it.</h2>
     </div>
-    <div class="reveal grid-2 for">
+    <div class="tabs" role="tablist" aria-label="Who it is for">
+      <button class="tab" role="tab" id="t-inv" aria-controls="p-inv" aria-selected="true">Investors</button>
+      <button class="tab" role="tab" id="t-fnd" aria-controls="p-fnd" aria-selected="false">Founders<span class="lg"> &amp; CTOs</span></button>
+      <button class="tab" role="tab" id="t-eng" aria-controls="p-eng" aria-selected="false">Engineering<span class="lg"> teams</span></button>
+    </div>
+
+    <div class="panel who" role="tabpanel" id="p-inv" aria-labelledby="t-inv">
       <div class="card">
-        <h3>Firmware teams shipping real-time Rust</h3>
-        <p>On Embassy, bare metal or an RTOS. Know whether a task set meets its deadlines
-          before it reaches hardware, rather than after a field failure.</p>
-        <span class="use">response_of · is_schedulable</span>
+        <span class="panel-h">Investors</span>
+        <h3>Before the term sheet.</h3>
+        <p>A deck full of technical claims, a closing date, and nobody on the team who can read the code.</p>
+        <p>You need to know what the technology is — not what it is described as — and what could break the investment.</p>
       </div>
+      <div class="card"><dl>
+        <div><dt>You receive</dt><dd>An independent, written verdict on what holds, with every claim traced to its evidence and the risks ranked.</dd></div>
+        <div><dt>Start with</dt><dd><a href="#scope" data-scope="dd">Due Diligence</a>, or a <a href="#scope" data-scope="snap">Snapshot</a> to screen a deal.</dd></div>
+      </dl></div>
+    </div>
+
+    <div class="panel who" role="tabpanel" id="p-fnd" aria-labelledby="t-fnd">
       <div class="card">
-        <h3>Teams defending a timing claim</h3>
-        <p>A safety case under IEC 62304, ISO 26262 or IEC 61508 wants worst-case response
-          times with a derivation behind them — integer, reproducible, checkable by hand.</p>
-        <span class="use">every iteration shown</span>
+        <span class="panel-h">Founders &amp; CTOs</span>
+        <h3>Before the investor asks.</h3>
+        <p>Diligence is coming, and the question is whether your code can prove what your deck says.</p>
+        <p>Where it cannot, you would rather hear it first — while there is still time to close the gap.</p>
       </div>
+      <div class="card"><dl>
+        <div><dt>You receive</dt><dd>A claims-to-evidence matrix of your own system, with every gap named and ranked.</dd></div>
+        <div><dt>Start with</dt><dd>A <a href="#scope" data-scope="snap">Snapshot</a>, or a <a href="#scope" data-scope="audit">Focused Audit</a> for the one property that matters most.</dd></div>
+      </dl></div>
+    </div>
+
+    <div class="panel who" role="tabpanel" id="p-eng" aria-labelledby="t-eng">
       <div class="card">
-        <h3>Robotics, motor control, drones, BCI</h3>
-        <p>Control loops where a late result is a physical event. Find how much a task can
-          grow before something misses, and plan capacity against it.</p>
-        <span class="use">max_provable_wcet_increase</span>
+        <span class="panel-h">Engineering teams</span>
+        <h3>When the deadline is physical.</h3>
+        <p>A timing failure that survives every fix. A safety case that has to hold up in review. A race nobody can corner.</p>
+        <p>You need the failure traced to its cause, in writing, by someone who has done it before.</p>
       </div>
-      <div class="card">
-        <h3>People building schedulers</h3>
-        <p>An oracle to test admission control against: the same inputs, an answer derived
-          separately, and a refusal wherever a figure cannot be justified.</p>
-        <span class="use">optimal_priority_order</span>
-      </div>
+      <div class="card"><dl>
+        <div><dt>You receive</dt><dd>The execution model rebuilt from source, worst-case timing with every iteration shown, and the failure chain traced end to end.</dd></div>
+        <div><dt>Start with</dt><dd>A <a href="#scope" data-scope="audit">Focused Audit</a>.</dd></div>
+      </dl></div>
     </div>
   </div>
 </section>
 
-<!-- ═══ EVIDENCE ════════════════════════════════════════════════════════ -->
-<section id="evidence">
+<!-- ═══ ENGAGEMENTS ═════════════════════════════════════════════════════ -->
+<section id="engagements">
   <div class="wrap">
-    <div class="section-head center narrow reveal">
-      <span class="eyebrow">Evidence</span>
-      <h2>Checked, in public.</h2>
-      <p class="lead">Every claim below links to the work behind it —
-        including the time it went wrong.</p>
+    <div class="head center measure reveal">
+      <span class="eyebrow">Engagements</span>
+      <h2>Fixed price. Fixed scope.<br>A written verdict.</h2>
+      <p class="lead">Three engagements, each answering one kind of question.
+        The price is agreed in writing before any work begins.</p>
     </div>
 
-    <div class="reveal grid-3">
-      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">
-        <span class="tag">Case study</span>
-        <h3>An RP2350 timer that stopped for minutes</h3>
-        <p>An intermittent <span class="mono">embassy-time</span> failure traced
-          through alarm arming and timer-queue liveness, with evidence and
-          hypothesis kept apart.</p>
-        <span class="foot">Read the analysis</span>
-      </a>
-      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/CHANGELOG.md" rel="noopener">
-        <span class="tag">The time it went wrong</span>
-        <h3>557 confident wrong answers</h3>
-        <p>The same review, run on my own tool, found it had reported 557 task
-          sets as meeting deadlines they miss. Found, fixed, and still published
-          in full.</p>
-        <span class="foot">Read the entry</span>
-      </a>
-      <a class="card" href="https://github.com/DYResearch/dy-wcet/blob/main/docs/CROSSCHECK.md" rel="noopener">
-        <span class="tag">Cross-check</span>
-        <h3>Two implementations, one answer</h3>
-        <p>A second response-time analysis, written separately, agrees on a set
-          where the fixed point is not the first value tried.</p>
-        <span class="foot">See the derivation</span>
-      </a>
-    </div>
-  </div>
-</section>
+    <div class="grid-3 reveal">
+      <div class="card plan">
+        <div class="row-top"><span class="when">5 business days</span></div>
+        <span class="name">Snapshot</span>
+        <span class="price">$5,000</span>
+        <span class="q">What does this technology actually do, and what does its evidence support?</span>
+        <ul>
+          <li>Architecture map, as built</li>
+          <li>Claims-to-evidence matrix</li>
+          <li>Engineering health: tests, CI, dependencies</li>
+          <li>The risks that matter, ranked</li>
+          <li>Questions to put to the founders</li>
+        </ul>
+        <div class="foot">
+          <a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request a Snapshot</a>
+          <a class="link" href="#scope" data-scope="snap">Full scope</a>
+        </div>
+      </div>
 
-<!-- ═══ ENGAGE ══════════════════════════════════════════════════════════ -->
-<section id="engage">
-  <div class="wrap">
-    <div class="section-head center narrow reveal">
-      <span class="eyebrow">Engage</span>
-      <h2>One problem,<br>traced end to end.</h2>
-      <p class="lead">Fixed price, fixed scope, agreed before anything starts.
-        If the analysis will not tell you anything useful, I say so before you pay.</p>
-    </div>
+      <div class="card plan">
+        <div class="row-top"><span class="when">2–3 weeks</span><span class="badge">One critical property</span></div>
+        <span class="name">Focused Audit</span>
+        <span class="price">$12,000</span>
+        <span class="q">Does this one critical property — timing, determinism, concurrency — actually hold?</span>
+        <ul>
+          <li class="plus">Everything in Snapshot, and:</li>
+          <li>Execution model rebuilt from source</li>
+          <li>Worst-case timing with dy-wcet</li>
+          <li>The failure chain, evidence kept apart from hypothesis</li>
+          <li>Fixes, each with the test that confirms it</li>
+          <li>A stated confidence boundary</li>
+        </ul>
+        <div class="foot">
+          <a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request a Focused Audit</a>
+          <a class="link" href="#scope" data-scope="audit">Full scope</a>
+        </div>
+      </div>
 
-    <div class="reveal grid-3">
       <div class="card plan featured">
-        <span class="badge">Most engagements start here</span>
-        <span class="name">Timing audit</span>
-        <span class="price">$3,000</span>
-        <span class="term">One reproducible problem. Written report in five working days.</span>
+        <div class="row-top"><span class="when">3–4 weeks</span><span class="badge">For investment decisions</span></div>
+        <span class="name">Due Diligence</span>
+        <span class="price">$25,000</span>
+        <span class="q">Is the technology what the company says it is — and what could break the investment?</span>
         <ul>
-          <li>The execution model, stated precisely</li>
-          <li>WCET and WCRT reasoning, every iteration shown</li>
-          <li>Interference, blocking and determinism boundaries</li>
-          <li>Evidence gaps named, not glossed</li>
+          <li class="plus">Everything in Focused Audit, across the whole system, and:</li>
+          <li>Security and software supply chain</li>
+          <li>Technical debt and scalability</li>
+          <li>Every technical claim in the deck, traced</li>
+          <li>Risk register, severity and likelihood</li>
+          <li>A memo for the investment committee</li>
         </ul>
-        <div class="foot"><a class="btn" href="mailto:connect@axonos.org?subject=Timing%20audit">Request an audit</a></div>
-      </div>
-
-      <div class="card plan">
-        <span class="badge ghost" aria-hidden="true">·</span>
-        <span class="name">Priority</span>
-        <span class="price">$4,800</span>
-        <span class="term">For a failure that will not wait. Report within 48 hours.</span>
-        <ul>
-          <li>Two days of attention ahead of everything else</li>
-          <li>The report at the end, whatever it finds</li>
-          <li>A gate before the money: if 48 hours won't get anywhere, I say so</li>
-        </ul>
-        <div class="foot"><a class="btn alt" href="mailto:connect@axonos.org?subject=Priority%20review">Start a priority review</a></div>
-      </div>
-
-      <div class="card plan">
-        <span class="badge ghost" aria-hidden="true">·</span>
-        <span class="name">System review</span>
-        <span class="price"><small>from</small> $8,000</span>
-        <span class="term">Several sets, a scheduler design, or verification on a bench.</span>
-        <ul>
-          <li>Scoped in a short exchange that costs nothing</li>
-          <li>Priced before it starts, never after</li>
-          <li>If you do not need it, that is the answer you get</li>
-        </ul>
-        <div class="foot"><a class="btn alt" href="mailto:connect@axonos.org?subject=System%20review">Discuss scope</a></div>
+        <div class="foot">
+          <a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request Due Diligence</a>
+          <a class="link" href="#scope" data-scope="dd">Full scope</a>
+        </div>
       </div>
     </div>
 
-    <h3 class="subhead">What arrives</h3>
-    <div class="reveal grid-4">
-      <div class="tile"><span class="n">01</span><h3>The failure chain</h3><p>Traced through your source, not summarised from outside.</p></div>
-      <div class="tile"><span class="n">02</span><h3>Evidence and hypothesis</h3><p>Kept apart and labelled. Where the evidence stops, it says so.</p></div>
-      <div class="tile"><span class="n">03</span><h3>Next steps</h3><p>Each naming what would confirm it and what would rule it out.</p></div>
-      <div class="tile"><span class="n">04</span><h3>A proposed fix</h3><p>Where the evidence carries that far, and a note where it does not.</p></div>
+    <div class="terms">
+      <span>Fixed price, confirmed in writing</span>
+      <span>Invoiced in USD or EUR — half on starting, half on delivery</span>
+      <span>Mutual NDA on request</span>
+      <span>Nothing invoiced until the scope is agreed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHERE THE MONEY GOES ══════════════════════════════════════════ -->
+<section id="funding">
+  <div class="wrap">
+    <div class="head center measure reveal">
+      <span class="eyebrow">Where the money goes</span>
+      <h2>The verdict is yours.<br>The infrastructure is everyone's.</h2>
+      <p class="lead">Revenue from every engagement funds AxonOS — an open-source, deterministic
+        systems layer for neurotechnology — and its path to independent foundation governance.</p>
+    </div>
+    <div class="fund reveal">
+      <div class="card">
+        <span class="n">01 · For you</span>
+        <h3>Independent technical intelligence</h3>
+        <p>The investigation, the evidence review and the written verdict you receive —
+          carried out by the principal, start to finish.</p>
+      </div>
+      <div class="card field">
+        <span class="n">02 · For the field</span>
+        <h3>Open infrastructure</h3>
+        <p>Continued development of the AxonOS infrastructure layer and its open-source components:
+          the real-time kernel, the signal pipeline, and consent enforced below the application layer.
+          <a href="https://axonos.org" rel="noopener">axonos.org&nbsp;↗</a></p>
+      </div>
+    </div>
+    <div class="pledge reveal">
+      <b>Independence</b>
+      <p>Funding AxonOS never shapes a verdict. If a company under review competes with AxonOS or
+        builds on it, you are told at scoping — before you commit to anything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SCOPE ═══════════════════════════════════════════════════════════ -->
+<section id="scope">
+  <div class="wrap">
+    <div class="head center measure reveal">
+      <span class="eyebrow">Scope</span>
+      <h2>Exactly what you are buying.</h2>
+      <p class="lead">Side by side, or one engagement at a time.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Scope">
+      <button class="tab" role="tab" id="t-cmp" aria-controls="p-cmp" aria-selected="true">Compare</button>
+      <button class="tab" role="tab" id="t-snap" aria-controls="p-snap" aria-selected="false">Snapshot</button>
+      <button class="tab" role="tab" id="t-audit" aria-controls="p-audit" aria-selected="false"><span class="lg">Focused </span>Audit</button>
+      <button class="tab" role="tab" id="t-dd" aria-controls="p-dd" aria-selected="false"><span class="lg">Due </span>Diligence</button>
     </div>
 
-    <h3 class="subhead">Is this for you?</h3>
-    <div class="reveal grid-2 fit">
-      <div class="card yes">
-        <h3>A good fit</h3>
-        <ul>
-          <li>A deadline miss that will not reproduce under a debugger</li>
-          <li>A timing claim you must defend to a customer or certifier</li>
-          <li>Benchmark numbers being used as if they were bounds</li>
-          <li>An analysis inherited without its assumptions</li>
-        </ul>
+    <div class="panel" role="tabpanel" id="p-cmp" aria-labelledby="t-cmp">
+      <span class="panel-h">Compare</span>
+      <div class="compare">
+        <table>
+          <thead><tr><th scope="col"></th>
+            <th scope="col">Snapshot<small>5 business days</small></th>
+            <th scope="col"><span class="lg">Focused </span>Audit<small>2–3 weeks</small></th>
+            <th scope="col"><span class="lg">Due </span>Diligence<small>3–4 weeks</small></th></tr></thead>
+          <tbody>
+            <tr class="group"><th colspan="4">Understand</th></tr>
+            <tr><th scope="row">Architecture map, as built</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Claims-to-evidence matrix</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Engineering health</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Ranked risks and questions for the founders</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr class="group"><th colspan="4">Investigate</th></tr>
+            <tr><th scope="row">Execution model rebuilt from source</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Worst-case timing with dy-wcet</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Failure chain and proposed fixes</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Stated confidence boundary</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr class="group"><th colspan="4">Decide</th></tr>
+            <tr><th scope="row">Security and supply chain</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Technical debt and scalability</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Open-source licence inventory</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Every claim in the deck, traced</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Risk register and committee memo</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
+            <tr class="group"><th colspan="4">Terms</th></tr>
+            <tr><th scope="row">Written round of questions</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Mutual NDA</th><td class="t">On request</td><td class="t">On request</td><td class="t">Standard</td></tr>
+            <tr class="price"><th scope="row">Price</th><td>$5,000</td><td>$12,000</td><td>$25,000</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="card no">
-        <h3>Not yet</h3>
-        <ul>
-          <li>No execution-time figures at all — measure first</li>
-          <li>The problem is throughput, not a deadline</li>
-          <li>You want a general code review</li>
-          <li>You need a certificate. Nobody here issues one</li>
-        </ul>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-snap" aria-labelledby="t-snap">
+      <span class="panel-h">Snapshot</span>
+      <div class="scope">
+        <div class="card">
+          <h3>Snapshot</h3><span class="sub">Five business days from confirmed scope</span>
+          <p class="q">What does this technology actually do, and what does its evidence support?</p>
+          <h4>For</h4><p>Investors screening a deal. Founders preparing for one.</p>
+          <h4>Included</h4>
+          <ul><li>An architecture map of the system as built, not as described</li>
+            <li>A claims-to-evidence matrix: every public technical claim traced to code, tests or CI, or marked unverified</li>
+            <li>Engineering health: tests, CI, dependencies, release discipline</li>
+            <li>The risks that matter most, ranked, with the evidence for each</li>
+            <li>Questions to put to the founders</li></ul>
+        </div>
+        <div class="card">
+          <h4>You receive</h4><p>A one-page executive summary, the written report and the evidence matrix.</p>
+          <h4>We need from you</h4><p>Access to the repository or product, the deck or technical documentation, and the question you most need answered.</p>
+          <h4>Not included</h4><p>Running the build, measurement on hardware, and changes to the code.</p>
+          <div class="price-line"><b>$5,000</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-audit" aria-labelledby="t-audit">
+      <span class="panel-h">Focused Audit</span>
+      <div class="scope">
+        <div class="card">
+          <h3>Focused Audit</h3><span class="sub">Two to three weeks from confirmed scope</span>
+          <p class="q">Does this one critical property actually hold?</p>
+          <h4>For</h4><p>CTOs with a system that has to be right. Investors with one specific technical doubt.</p>
+          <h4>Included — everything in Snapshot, and</h4>
+          <ul><li>One property investigated to the bottom: worst-case timing, determinism, concurrency and races, verification claims, or the security of one component</li>
+            <li>The execution model rebuilt from source</li>
+            <li>Worst-case response times with dy-wcet, every iteration shown, where timing is the question</li>
+            <li>The failure chain traced end to end, evidence kept apart from hypothesis</li>
+            <li>Proposed fixes, each naming what would confirm it and what would rule it out</li>
+            <li>A stated confidence boundary: what the evidence proves, and where it stops</li></ul>
+        </div>
+        <div class="card">
+          <h4>You receive</h4><p>The audit report, the artefacts needed to reproduce it, and one written round of questions after delivery.</p>
+          <h4>The standard</h4><p><a href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">An RP2350 timer that stopped for minutes</a> — a complete analysis, published in full.</p>
+          <h4>We need from you</h4><p>The above, plus the property in question and any logs, traces or measurements you already hold.</p>
+          <h4>Not included</h4><p>Instrumentation on a bench, changes to your code, and a second property, which is quoted separately.</p>
+          <div class="price-line"><b>$12,000</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request</a></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p-dd" aria-labelledby="t-dd">
+      <span class="panel-h">Due Diligence</span>
+      <div class="scope">
+        <div class="card">
+          <h3>Due Diligence</h3><span class="sub">Three to four weeks from confirmed scope</span>
+          <p class="q">Is the technology what the company says it is — and what could break the investment?</p>
+          <h4>For</h4><p>Investors before a term sheet. Acquirers. Boards.</p>
+          <h4>Included — everything in Focused Audit, across the whole system, and</h4>
+          <ul><li>Architecture, code quality and technical debt</li>
+            <li>Security posture and the software supply chain</li>
+            <li>Testing and verification maturity</li>
+            <li>Real-time and determinism claims, wherever the product makes them</li>
+            <li>Scalability limits and single points of failure</li>
+            <li>An open-source licence inventory — technical, not a legal opinion</li>
+            <li>Every technical claim in the deck, traced to its evidence</li>
+            <li>A risk register, each risk rated for severity and likelihood</li></ul>
+        </div>
+        <div class="card">
+          <h4>You receive</h4><p>A two-page memo written for an investment committee, the full report, the risk register, the evidence appendix and one written round of questions.</p>
+          <h4>We need from you</h4><p>Repository access, the deck and the technical materials in the data room, and one technical contact who can answer in writing.</p>
+          <h4>Not included</h4><p>Legal, financial or commercial diligence, and investment advice. The findings are technical; the decision stays yours.</p>
+          <div class="price-line"><b>$25,000</b><a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request</a></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ NOT FOR SALE ════════════════════════════════════════════════════ -->
-<section id="not-for-sale">
+<!-- ═══ PROCESS ═════════════════════════════════════════════════════════ -->
+<section id="process">
   <div class="wrap">
-    <div class="section-head center narrow reveal">
-      <span class="eyebrow">Stated plainly</span>
-      <h2>Three things you cannot buy here.</h2>
+    <div class="head center measure reveal">
+      <span class="eyebrow">Process</span>
+      <h2>Written first.<br>No call required.</h2>
     </div>
-    <div class="reveal grid-3">
+    <div class="steps reveal">
+      <div class="step"><h3>Send the question</h3><p>What to investigate, what you need to know, and by when.</p></div>
+      <div class="step"><h3>Scope, fixed</h3><p>Scope and price come back in writing, with any conflict of interest disclosed.</p></div>
+      <div class="step"><h3>The investigation</h3><p>Carried out by the principal, start to finish. Evidence kept apart from hypothesis.</p></div>
+      <div class="step"><h3>The verdict</h3><p>Every claim traced to its evidence, and a stated boundary where the evidence stops.</p></div>
+      <div class="step"><h3>Questions</h3><p>One written round after delivery, on anything in the report.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROOF ═══════════════════════════════════════════════════════════ -->
+<section id="proof">
+  <div class="wrap">
+    <div class="head center measure reveal">
+      <span class="eyebrow">Proof of expertise</span>
+      <h2>Built in public.<br>Check the work before you buy it.</h2>
+      <p class="lead">Three open systems stand behind the practice. Each can be inspected, run
+        and verified without asking anyone.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Proof of expertise">
+      <button class="tab" role="tab" id="t-radar" aria-controls="p-radar" aria-selected="true">Radar</button>
+      <button class="tab" role="tab" id="t-wcet" aria-controls="p-wcet" aria-selected="false">dy-wcet</button>
+      <button class="tab" role="tab" id="t-axon" aria-controls="p-axon" aria-selected="false">AxonOS</button>
+    </div>
+
+    <div class="panel eco" role="tabpanel" id="p-radar" aria-labelledby="t-radar">
       <div class="card">
-        <h3>A licence to the tool</h3>
-        <p><span class="mono">dy-wcet</span> is Apache-2.0 or MIT, irrevocably.
-          Nobody can sell you one, including me. It is free, and for debugging it
-          is the right answer.</p>
+        <span class="kind">Discover · Radar</span>
+        <h3>A living map of open neurotech.</h3>
+        <p>Open brain–computer-interface projects, tracked and scored from public evidence and updated
+          continuously. Each score is published with the evidence it rests on, so any of them can be
+          reproduced.</p>
+        <div class="links"><a class="btn ghost" href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Explore the Radar ↗</a></div>
       </div>
+      <div class="facts">
+        <div><b>100+</b><span>open BCI projects tracked</span></div>
+        <div><b>Continuous</b><span>updated from public signals</span></div>
+        <div><b>Reproducible</b><span>every score shows its evidence</span></div>
+      </div>
+    </div>
+
+    <div class="panel eco" role="tabpanel" id="p-wcet" aria-labelledby="t-wcet">
       <div class="card">
-        <h3>Tool qualification data</h3>
-        <p>It does not exist yet. When it does, it will be published with the
-          evidence behind it. Until then, selling it would be selling a document
-          I have not written.</p>
+        <span class="kind">Measure · dy-wcet</span>
+        <h3>Timing analysis that refuses rather than rounds.</h3>
+        <p>Worst-case response time for real-time systems, in integer arithmetic. When it cannot justify
+          a bound, it returns a named refusal instead of a number — and it is the tool the Focused Audit
+          uses.</p>
+        <div class="links"><a class="btn ghost" href="/wcet/">Try it live</a><a class="more" href="https://github.com/DYResearch/dy-wcet" rel="noopener">Source</a></div>
       </div>
+      <div class="facts">
+        <div><b>0</b><span>dependencies, no floating point</span></div>
+        <div><b>8</b><span>Kani proofs, verified in CI</span></div>
+        <div><b>100</b><span>tests, 15 derived by hand</span></div>
+      </div>
+    </div>
+
+    <div class="panel eco" role="tabpanel" id="p-axon" aria-labelledby="t-axon">
       <div class="card">
-        <h3>A warranty on the result</h3>
-        <p>A one-person practice should not offer one, and you should not accept
-          one from anyone who would. What you pay for is the analysis and the
-          arithmetic, shown so you can check it.</p>
+        <span class="kind">Build · AxonOS</span>
+        <h3>A real-time operating system for brain–computer interfaces.</h3>
+        <p>An open-source kernel in <span class="mono">no_std</span> Rust on ARM Cortex-M, with bounded worst-case
+          response times and privacy built below the application layer, where an application cannot
+          bypass it.</p>
+        <div class="links"><a class="btn ghost" href="https://axonos.org" rel="noopener">axonos.org ↗</a><a class="more" href="https://github.com/AxonOS-org" rel="noopener">Source</a></div>
       </div>
+      <div class="facts">
+        <div><b>Hard</b><span>real-time, on the device</span></div>
+        <div><b>no_std</b><span>Rust, ARM Cortex-M</span></div>
+        <div><b>Open</b><span>specified so others can check it</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRINCIPAL ═══════════════════════════════════════════════════════ -->
+<section id="principal">
+  <div class="wrap">
+    <div class="principal reveal">
+      <div class="mark" aria-hidden="true">DY</div>
+      <div>
+        <span class="eyebrow">The principal</span>
+        <p class="name">One principal. No handoffs.</p>
+        <p>Every engagement is carried out by Denis Yermakou, start to finish. The person who writes
+          the verdict is the person who read the code.</p>
+        <p>Author of the Radar, dy-wcet and AxonOS — the work above, all of it open.</p>
+        <div class="links">
+          <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
+          <a href="mailto:connect@axonos.org">connect@axonos.org</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BOUNDARIES ══════════════════════════════════════════════════════ -->
+<section id="bounds">
+  <div class="wrap">
+    <div class="head center measure reveal">
+      <span class="eyebrow">Stated plainly</span>
+      <h2>What an engagement is not.</h2>
+    </div>
+    <div class="grid-3 bounds reveal">
+      <div class="card"><h3>Not investment advice</h3><p>The findings are technical. The decision, and everything commercial around it, stays yours.</p></div>
+      <div class="card"><h3>Not a certification</h3><p>No standard's qualification is issued or implied. What you receive is the analysis a certifier would ask to see.</p></div>
+      <div class="card"><h3>Not a warranty</h3><p>Evidence and reasoning, set out so they can be checked — by you, or by anyone you ask.</p></div>
     </div>
   </div>
 </section>
@@ -698,35 +827,13 @@ footer a{color:var(--text-2)}
 <!-- ═══ CLOSING ═════════════════════════════════════════════════════════ -->
 <section class="closing" id="close">
   <div class="wrap center">
-    <div class="narrow reveal">
-      <span class="eyebrow">Your turn</span>
-      <h2>Send me the claim.<br>I will try to break it.</h2>
-      <p class="lead">If your system claims deterministic or bounded latency, the audit answers
-        one question in writing: does that claim survive someone trying to break it.</p>
+    <div class="measure reveal">
+      <span class="eyebrow">Begin</span>
+      <h2>Bring the question.<br>Leave with the evidence.</h2>
+      <p class="lead">Scope and a fixed price come back in writing. Nothing is invoiced until you agree.</p>
       <div class="actions">
-        <a class="btn" href="mailto:connect@axonos.org?subject=Timing%20audit">Book an audit — $3,000</a>
-        <a class="more" href="#engage">Compare the engagements</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ WHO ═════════════════════════════════════════════════════════════ -->
-<section id="about">
-  <div class="wrap center">
-    <div class="narrow">
-      <span class="eyebrow">About</span>
-      <p class="person">Denis Yermakou</p>
-      <p class="lead">Timing analysis for systems where the worst case is the only
-        case that matters. Author of <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">dy-wcet</a>
-        and of <a href="https://github.com/AxonOS-org" rel="noopener">AxonOS</a>,
-        a hard real-time layer for brain–computer interfaces.</p>
-      <div class="links">
-        <a href="mailto:connect@axonos.org">connect@axonos.org</a>
-        <a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">Read the method</a>
-        <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
-        <a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Full audit scope</a>
+        <a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
+        <a class="more" href="#scope">Compare the engagements</a>
       </div>
     </div>
   </div>
@@ -736,174 +843,156 @@ footer a{color:var(--text-2)}
 
 <footer>
   <div class="wrap">
-    <span>© 2026 DY Research · Denis Yermakou</span>
-    <span>The tooling is open source. The audit is not.</span>
+    <div class="fgrid">
+      <div><p class="fbrand">DY Research</p><p>Independent technical intelligence.<br>Every claim traced to its evidence.</p></div>
+      <div><b>Engagements</b><a href="#scope" data-scope="snap">Snapshot</a><a href="#scope" data-scope="audit">Focused Audit</a><a href="#scope" data-scope="dd">Due Diligence</a><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Scope document</a></div>
+      <div><b>The work</b><a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar ↗</a><a href="/wcet/">dy-wcet</a><a href="https://axonos.org" rel="noopener">AxonOS ↗</a><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The method</a></div>
+      <div><b>Contact</b><a href="mailto:connect@axonos.org">connect@axonos.org</a><a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a><a href="https://github.com/DYResearch" rel="noopener">GitHub</a></div>
+    </div>
+    <div class="fbase"><span>© 2026 DY Research · Denis Yermakou</span><span>The tooling is open source. The verdict is yours.</span></div>
   </div>
 </footer>
+
+<a class="dock" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit" aria-hidden="true" tabindex="-1">Request an engagement</a>
+
+<!-- ═══ REQUEST SHEET ═══════════════════════════════════════════════════ -->
+<dialog class="sheet" id="req" aria-labelledby="req-title">
+  <form method="dialog" id="req-form">
+    <div class="sheet-h">
+      <div><h2 id="req-title">Request an engagement</h2><p>Scope and a fixed price come back in writing.</p></div>
+      <button class="x" type="button" data-close aria-label="Close">×</button>
+    </div>
+    <div class="field"><span>Engagement</span>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="tier" value="snap"><span>Snapshot · $5,000</span></label>
+        <label><input type="radio" name="tier" value="audit" checked><span>Focused Audit · $12,000</span></label>
+        <label><input type="radio" name="tier" value="dd"><span>Due Diligence · $25,000</span></label>
+      </div></div>
+    <label class="field"><span>What should be investigated?</span>
+      <input name="what" type="text" autocomplete="url" placeholder="Repository, product or company"></label>
+    <label class="field"><span>What do you need to know?</span>
+      <textarea name="question" placeholder="The claim you doubt, the property that must hold, the decision in front of you"></textarea></label>
+    <div class="field"><span>You are</span>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="role" value="Investor" checked><span>Investor</span></label>
+        <label><input type="radio" name="role" value="Founder"><span>Founder</span></label>
+        <label><input type="radio" name="role" value="CTO or engineer"><span>CTO or engineer</span></label>
+        <label><input type="radio" name="role" value="Other"><span>Other</span></label>
+      </div></div>
+    <div class="field"><span>Timeline</span>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="pace" value="Standard" checked><span>Standard</span></label>
+        <label><input type="radio" name="pace" value="Expedited"><span>Expedited</span></label>
+      </div></div>
+    <label class="field"><span>Your email</span><input name="email" type="email" autocomplete="email" placeholder="you@company.com"></label>
+    <button class="btn send" type="submit">Send request</button>
+    <a class="btn ghost send pay" id="req-pay" href="#" rel="noopener">Reserve now — pay the deposit by card</a>
+    <p class="small">Opens your email with everything filled in, addressed to connect@axonos.org.
+      Nothing is charged until the scope and price are confirmed in writing.</p>
+  </form>
+</dialog>
+
 <script>
-// The page's calculator. The same analysis as the crate for two tasks without
-// jitter or blocking: the level busy period first, then every job of the lower
-// task inside it (Lehoczky, 1990), because when a response runs past the period
-// the next job queues behind it and can be the worse one. The first version of
-// this file walked only the first job, and on 2 of 311 random sets reported a
-// smaller response than the crate: the defect dy-wcet fixed in 2.0.0.
-const ITERATION_CAP = 10000, BUSY_PERIOD_CAP = 1024;
-function ceilDiv(a, b) { return Math.floor((a + b - 1) / b); }
-function analyse(ca, ta, cb, tb, db) {
-  const out = { naive: cb + Math.floor(tb / ta) * ca, steps: [] };
-  if (!(ta > 0 && tb > 0 && ca > 0 && cb > 0 && db > 0)) { out.refusal = "every figure must be a positive whole number"; return out; }
-  if (ca > ta) { out.refusal = "task A does more work than its period allows"; return out; }
-  if (cb > db) { out.refusal = "task B needs more time than its deadline"; return out; }
-  if (ca * tb + cb * ta > ta * tb) { out.refusal = "utilisation exceeds one; no fixed point exists"; return out; }
-
-  let L = ca + cb, settled = false;
-  for (let i = 0; i < ITERATION_CAP; i++) {
-    const next = ceilDiv(L, ta) * ca + ceilDiv(L, tb) * cb;
-    if (next === L) { settled = true; break; }
-    L = next;
-  }
-  if (!settled) { out.refusal = "the busy period did not settle within the cap"; return out; }
-  const jobs = Math.max(1, ceilDiv(L, tb));
-  if (jobs > BUSY_PERIOD_CAP) { out.refusal = "the busy period holds more jobs than the cap admits"; return out; }
-
-  let worst = -1, worstSteps = [], worstJob = 0;
-  for (let q = 0; q < jobs; q++) {
-    const base = (q + 1) * cb; let w = base, steps = [], ok = false;
-    for (let i = 0; i < ITERATION_CAP; i++) {
-      const act = ceilDiv(w, ta), next = base + act * ca;
-      steps.push({ r: w, act, next });
-      if (next === w) { ok = true; break; }
-      w = next;
-    }
-    if (!ok) { out.refusal = "the recurrence did not settle within the cap"; return out; }
-    const r = w - q * tb;
-    if (r > worst) { worst = r; worstSteps = steps; worstJob = q; }
-  }
-  out.r = worst; out.job = worstJob; out.jobs = jobs; out.steps = worstSteps;
-  out.meets = worst <= db; out.margin = db - worst;
-  return out;
-}
-// The schedule, drawn. Same scheduler as sim.js, run to a horizon so the
-// picture shows every release in view, not only the jobs the analysis walks.
-function scheduleUntil(ca, ta, cb, tb, until) {
-  let t = 0, aRem = 0, aNext = 0, bNext = 0, bj = 0;
-  const bq = [], segs = [], done = {};
-  const push = (task, s, e, job) => {
-    const L = segs[segs.length - 1];
-    if (L && L.task === task && L.job === job && L.end === s) L.end = e; else segs.push({ task, start: s, end: e, job });
-  };
-  let g = 0;
-  while (t < until && g++ < 400000) {
-    while (aNext <= t) { aRem += ca; aNext += ta; }
-    while (bNext <= t) { bq.push({ j: bj++, rem: cb }); bNext += tb; }
-    const nextEvt = Math.min(aNext, bNext, until);
-    if (aRem > 0) { const r = Math.min(aRem, nextEvt - t); push("A", t, t + r, -1); aRem -= r; t += r; }
-    else if (bq.length) { const c = bq[0], r = Math.min(c.rem, nextEvt - t); push("B", t, t + r, c.j); c.rem -= r; t += r;
-      if (c.rem === 0) { done[c.j] = t; bq.shift(); } }
-    else t = nextEvt;
-  }
-  return { segs, done };
-}
-function timelineSVG(ca, ta, cb, tb, db, a, width) {
-  const q = a.job, rel = q * tb, dl = rel + db;
-  let until = Math.max(rel + a.r, dl);
-  until = Math.ceil(until * 1.08) + 1;
-  const s = scheduleUntil(ca, ta, cb, tb, until);
-  const fin = s.done[q], miss = fin > dl;
-  // Drawn to the width it is shown at, so twelve units of text are twelve
-  // pixels on a phone rather than a scaled-down four.
-  const W = Math.round(Math.max(300, Math.min(880, width || 880))), L = 28, R = 12, yA = 30, yB = 86, h = 30, H = 168;
-  const x = t => L + (t / until) * (W - L - R);
-  const f = n => Number(n).toLocaleString("en-US");
-  let o = `<svg viewBox="0 0 ${W} ${H}" class="tl" role="img" aria-label="Schedule: task B's worst job finishes at ${f(fin)} microseconds, deadline ${f(dl)}">`;
-  o += `<text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="${yA + 20}">A</text><text class="tl-lane" fill="#86868b" font-family="-apple-system,BlinkMacSystemFont,Inter,Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" x="4" y="${yB + 20}">B</text>`;
-  o += `<rect class="tl-track" fill="#16161a" x="${L}" y="${yA}" width="${W - R - L}" height="${h}" rx="6"/><rect class="tl-track" fill="#16161a" x="${L}" y="${yB}" width="${W - R - L}" height="${h}" rx="6"/>`;
-  for (const g of s.segs) {
-    const x0 = x(g.start), w = Math.max(1.5, x(g.end) - x0);
-    const cls = g.task === "A" ? "tl-a" : (g.job === q ? (miss ? "tl-bw tl-miss" : "tl-bw") : "tl-b");
-    const fill = g.task === "A" ? "#1f8fae" : (g.job === q ? (miss ? "#ff6b6b" : "#f5f5f7") : "#3a3a3d");
-    o += `<rect class="${cls}" fill="${fill}" x="${x0.toFixed(1)}" y="${g.task === "A" ? yA : yB}" width="${w.toFixed(1)}" height="${h}" rx="5"/>`;
-  }
-  o += `<line class="tl-dl" stroke="#86868b" stroke-width="1.5" stroke-dasharray="4 4" x1="${x(dl).toFixed(1)}" x2="${x(dl).toFixed(1)}" y1="${yA - 12}" y2="${yB + h + 8}"/>`;
-  o += `<line class="${miss ? "tl-fin tl-miss" : "tl-fin"}" stroke="${miss ? "#ff6b6b" : "#2dd4ff"}" stroke-width="2" x1="${x(fin).toFixed(1)}" x2="${x(fin).toFixed(1)}" y1="${yA - 12}" y2="${yB + h + 8}"/>`;
-  const lblFin = `${q > 0 ? "job " + (q + 1) + " done" : "done"} ${f(fin)}`, lblDl = `deadline ${f(dl)}`;
-  const near = Math.abs(x(fin) - x(dl)) < Math.min(120, W * 0.3);
-  // A label centred on a line near the edge runs off it; pin it inward.
-  const place = (xp, text, pref) => {
-    const half = text.length * 3.6, lo = L + half, hi = W - R - half;
-    if (xp > hi) return [W - R, "end"];
-    if (xp < lo) return [L, "start"];
-    return [xp, pref];
-  };
-  const [fx, fa] = place(x(fin), lblFin, near && fin < dl ? "end" : "middle");
-  const [dx, da] = place(x(dl), lblDl, near && dl < fin ? "end" : "middle");
-  o += `<text class="${miss ? "tl-t tl-miss-t" : "tl-t tl-fin-t"}" fill="${miss ? "#ff6b6b" : "#2dd4ff"}" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="${fx.toFixed(1)}" y="${yA - 16}" text-anchor="${fa}">${lblFin}</text>`;
-  o += `<text class="tl-t" fill="#a1a1a6" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="12" font-weight="500" x="${dx.toFixed(1)}" y="${near ? yB + h + 26 : yA - 16}" text-anchor="${da}">${lblDl}</text>`;
-  o += `<line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="${L}" x2="${W - R}" y1="${H - 22}" y2="${H - 22}"/>`;
-  const step = [1,2,5].map(m=>m*Math.pow(10,Math.floor(Math.log10(until/4)))).find(v=>until/v<=(W<520?3:5)) || Math.pow(10,Math.ceil(Math.log10(until/4)));
-  for (let t = 0; t <= until; t += step) o += `<text class="tl-tick" fill="#86868b" font-family="ui-monospace,SF Mono,JetBrains Mono,Roboto Mono,Menlo,monospace" font-size="11" x="${x(t).toFixed(1)}" y="${H - 6}" text-anchor="middle">${f(t)}</text><line class="tl-axis" stroke="#2a2a2e" stroke-width="1" x1="${x(t).toFixed(1)}" x2="${x(t).toFixed(1)}" y1="${H - 26}" y2="${H - 18}"/>`;
-  return o + `</svg>`;
-}
 (function () {
-  var $ = function (id) { return document.getElementById(id); };
-  var ids = ["ca", "ta", "cb", "tb", "db"];
-  var fmt = function (n) { return Number(n).toLocaleString("en-US"); };
-  function read(id) {
-    var v = Math.floor(Number($(id).value));
-    return isFinite(v) && v > 0 ? Math.min(v, 1000000) : 0;
-  }
-  function render() {
-    var ca = read("ca"), ta = read("ta"), cb = read("cb"), tb = read("tb"), db = read("db");
-    var o = analyse(ca, ta, cb, tb, db);
-    var naive = $("o-naive"), r = $("o-r"), v = $("o-verdict"), why = $("o-why"), st = $("o-steps");
-    naive.textContent = ta > 0 ? fmt(o.naive) : "—";
-    v.className = "lab-verdict"; why.textContent = ""; st.innerHTML = "";
-    if (o.refusal) {
-      r.textContent = "—"; naive.className = "lab-naive same";
-      v.className = "lab-verdict refused";
-      v.textContent = "No bound: " + o.refusal + ".";
-      why.textContent = "The crate returns a named refusal here rather than a number it cannot justify.";
-      $("o-tl").innerHTML = '<p class="lab-why" style="padding:18px 4px">No schedule to draw: without a bound there is no finishing time to mark.</p>';
-      return;
-    }
-    r.textContent = fmt(o.r);
-    naive.className = "lab-naive" + (o.naive === o.r ? " same" : "");
-    if (o.meets) { v.textContent = "Meets its " + fmt(db) + " µs deadline with " + fmt(o.margin) + " µs to spare."; }
-    else { v.className = "lab-verdict miss"; v.textContent = "Misses its " + fmt(db) + " µs deadline by " + fmt(-o.margin) + " µs."; }
-    if (o.naive > o.r) why.textContent = "The period-based count is pessimistic here. Change the periods and it can become optimistic, passing a set that misses.";
-    else if (o.naive < o.r) why.textContent = "The period-based count is optimistic here — it under-reports the response. That is the direction that ships a set that misses.";
-    else why.textContent = "Here the two agree. They will not always.";
-    // For the first job the completion time is the response. For a later job q
-    // it is measured from the start of the busy period, so the response is
-    // w − q·T, and the lines say w rather than claim to be R.
-    var sym = o.job > 0 ? "w" : "R";
-    var head = o.jobs > 1 ? "Worst job: " + (o.job + 1) + " of " + o.jobs + " in the busy period<br>" : "";
-    var lines = o.steps.map(function (s, i) {
-      var last = i === o.steps.length - 1;
-      return sym + " = " + fmt(s.r) + " &nbsp;⌈" + fmt(s.r) + "/" + fmt(ta) + "⌉ = " + s.act + " &nbsp;→ <b>" + fmt(s.next) + "</b>" + (last ? ' <span class="fp">← fixed point</span>' : "");
+  // A card payment link per engagement, for the deposit. Empty means the
+  // button stays hidden: a link that goes nowhere is worse than no link.
+  var PAY = { snap: "", audit: "", dd: "" };
+  var TIERS = { snap: ["Snapshot", "$5,000"], audit: ["Focused Audit", "$12,000"], dd: ["Due Diligence", "$25,000"] };
+
+  // ── tabs ─────────────────────────────────────────────────────────────
+  function select(tab) {
+    var list = tab.closest('[role="tablist"]');
+    list.querySelectorAll('[role="tab"]').forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) p.hidden = !on;
     });
-    if (lines.length > 7) lines = lines.slice(0, 3).concat(["⋯ " + (lines.length - 5) + " more"], lines.slice(-2));
-    if (o.job > 0) {
-      var w = o.steps[o.steps.length - 1].next;
-      lines.push("R = w − " + o.job + "·" + fmt(tb) + " = " + fmt(w) + " − " + fmt(o.job * tb) + " = <b>" + fmt(o.r) + "</b>");
-    }
-    st.innerHTML = head + lines.join("<br>");
-    try { $("o-tl").innerHTML = timelineSVG(ca, ta, cb, tb, db, o, $("o-tl").clientWidth); } catch (e) { $("o-tl").innerHTML = ""; }
   }
-  ids.forEach(function (id) { $(id).addEventListener("input", render); });
-  // Redrawn to the new width when the phone turns or the window resizes.
-  var pending;
-  window.addEventListener("resize", function () { clearTimeout(pending); pending = setTimeout(render, 120); });
-  render();
-})();
-(function () {
+  document.querySelectorAll('[role="tablist"]').forEach(function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { select(t); });
+      t.addEventListener("keydown", function (e) {
+        var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!k) return;
+        e.preventDefault();
+        var n = tabs[(i + k + tabs.length) % tabs.length]; select(n); n.focus();
+      });
+    });
+    select(tabs.filter(function (t) { return t.getAttribute("aria-selected") === "true"; })[0] || tabs[0]);
+  });
+  // "Full scope" links open the right tab before scrolling to it.
+  document.querySelectorAll("[data-scope]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var t = document.getElementById("t-" + a.getAttribute("data-scope"));
+      if (t) select(t);
+    });
+  });
+
+  // ── the request sheet ────────────────────────────────────────────────
+  var dlg = document.getElementById("req"), form = document.getElementById("req-form");
+  var canModal = dlg && typeof dlg.showModal === "function";
+  // Read fields by query, not through the form's named properties: those are
+  // a legacy getter that not every DOM implements.
+  function val(n) {
+    var el = form.querySelector('input[name="' + n + '"]:checked') || form.querySelector('[name="' + n + '"]');
+    return el ? el.value : "";
+  }
+  function setPay() {
+    var tier = val("tier"), pay = document.getElementById("req-pay");
+    if (PAY[tier]) { pay.href = PAY[tier]; pay.classList.add("on"); } else { pay.classList.remove("on"); }
+  }
+  if (canModal) {
+    document.querySelectorAll("[data-request]").forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        var tier = a.getAttribute("data-request");
+        var r = form.querySelector('input[name="tier"][value="' + tier + '"]');
+        if (r) r.checked = true;
+        setPay(); dlg.showModal();
+        var first = form.querySelector('input[name="what"]'); if (first) first.focus();
+      });
+    });
+    form.querySelectorAll('input[name="tier"]').forEach(function (r) { r.addEventListener("change", setPay); });
+    dlg.querySelector("[data-close]").addEventListener("click", function () { dlg.close(); });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var t = TIERS[val("tier")] || TIERS.audit;
+      var body = [
+        "Engagement: " + t[0] + " (" + t[1] + ")",
+        "Investigate: " + (val("what") || "—"),
+        "What I need to know: " + (val("question") || "—"),
+        "I am: " + val("role"),
+        "Timeline: " + val("pace"),
+        "Reply to: " + (val("email") || "—"),
+        "",
+        "Sent from dyresearch.github.io"
+      ].join("\n");
+      window.location.href = "mailto:connect@axonos.org?subject=" +
+        encodeURIComponent("Engagement request — " + t[0]) + "&body=" + encodeURIComponent(body);
+      dlg.close();
+    });
+  }
+
+  // ── the mobile dock: shown once the hero has gone, hidden at the close ─
+  var dock = document.querySelector(".dock"), hero = document.getElementById("top"), close = document.getElementById("close");
+  if (dock && "IntersectionObserver" in window) {
+    var heroGone = false, closeSeen = false;
+    function upd() { dock.classList.toggle("show", heroGone && !closeSeen); }
+    new IntersectionObserver(function (e) { heroGone = !e[0].isIntersecting; upd(); }, { threshold: 0 }).observe(hero);
+    new IntersectionObserver(function (e) { closeSeen = e[0].isIntersecting; upd(); }, { threshold: 0 }).observe(close);
+  }
+
+  // ── reveal ───────────────────────────────────────────────────────────
   var els = document.querySelectorAll(".reveal");
-  function show(e) { e.classList.add("in"); }
-  if (!("IntersectionObserver" in window)) { for (var i = 0; i < els.length; i++) show(els[i]); return; }
+  if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
   var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) { if (en.isIntersecting) { show(en.target); io.unobserve(en.target); } });
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-  for (var j = 0; j < els.length; j++) io.observe(els[j]);
+  els.forEach(function (e) { io.observe(e); });
 })();
 </script>
 </body>
