@@ -16,14 +16,15 @@
 <meta property="og:title" content="DY Research — Know what is real">
 <meta property="og:description" content="Independent technical due diligence. Every claim traced to its code, its tests and its evidence — and a written verdict on what holds.">
 <meta property="og:url" content="https://dyresearch.github.io/">
-<meta property="og:image" content="https://dyresearch.github.io/og.png">
+<meta property="og:image" content="https://dyresearch.github.io/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="DY Research. Know what is real. Independent technical intelligence.">
+<meta property="og:image:alt" content="DY Research — independent technical due diligence. A figure above a sea of clouds at dawn.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DY Research — Know what is real">
-<meta name="twitter:image" content="https://dyresearch.github.io/og.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Independent technical intelligence: technical due diligence, focused audits and snapshots for investors, founders and engineering teams, each ending in a written verdict on what the evidence supports.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","jobTitle":"Principal","sameAs":["https://www.linkedin.com/in/axonos","https://github.com/DYResearch"]},"knowsAbout":["Technical due diligence","Software architecture","Worst-case execution time","Real-time systems","Formal verification","Embedded Rust","Brain–computer interfaces"],"makesOffer":[{"@type":"Offer","name":"Snapshot","description":"What the technology actually does, and what its evidence supports. Five business days.","price":"5000","priceCurrency":"USD"},{"@type":"Offer","name":"Focused Audit","description":"One critical property investigated to the bottom. Two to three weeks.","price":"12000","priceCurrency":"USD"},{"@type":"Offer","name":"Due Diligence","description":"Whether the technology is what the company says it is, and what could break the investment. Three to four weeks.","price":"25000","priceCurrency":"USD"}]}</script>
+<meta name="twitter:image" content="https://dyresearch.github.io/og.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Independent technical intelligence: technical due diligence, focused audits and snapshots for investors, founders and engineering teams, each ending in a written verdict on what the evidence supports.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","jobTitle":"Principal","sameAs":["https://www.linkedin.com/in/dyresearch/","https://github.com/DYResearch"]},"knowsAbout":["Technical due diligence","Software architecture","Worst-case execution time","Real-time systems","Formal verification","Embedded Rust","Brain–computer interfaces"],"makesOffer":[{"@type":"Offer","name":"Snapshot","description":"What the technology actually does, and what its evidence supports. Five business days.","price":"5000","priceCurrency":"USD"},{"@type":"Offer","name":"Focused Audit","description":"One critical property investigated to the bottom. Two to three weeks.","price":"12000","priceCurrency":"USD"},{"@type":"Offer","name":"Due Diligence","description":"Whether the technology is what the company says it is, and what could break the investment. Three to four weeks.","price":"25000","priceCurrency":"USD"}]}</script>
 <script>document.documentElement.className+=" js";setTimeout(function(){var e=document.querySelectorAll(".reveal");for(var i=0;i<e.length;i++)e[i].classList.add("in")},3000)</script>
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
@@ -415,6 +416,29 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   .chain-wrap.in .node,.chain-wrap.in .node.verdict{animation:rise .01s forwards}
   .plan{transition:none}.plan:hover{transform:none}
 }
+
+/* ── the sheet after sending ─────────────────────────────────────────── */
+.sheet .sent{margin-top:18px;padding:18px 18px 14px;border:1px solid var(--hair);border-radius:14px;background:rgba(255,255,255,.03)}
+.sheet .sent[hidden]{display:none}
+.sent-h{font-weight:600;color:var(--text);margin:0 0 4px}
+.sent-s{color:var(--text-2);margin:0 0 14px;font-size:15px}
+.sent-ways{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sent-ways .more{background:none;border:0;font:inherit;cursor:pointer;padding:8px 4px}
+.sent-live{min-height:1.4em;margin:10px 0 0;font-size:14px;color:#34d399}
+.sheet.is-sent .send:not(.pay){opacity:.55}
+.offscreen{position:fixed;left:-9999px;top:0;opacity:0}
+/* ── the finale, at dawn ─────────────────────────────────────────────────
+   The page leaves the dark for the sky of the brand's own photograph, a
+   figure above a sea of cloud, and returns to the dark for the footer. The
+   words are set in ink, as on the brand's own lockup. */
+.closing.vista{background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.5) 6%,rgba(0,0,0,0) 15%,rgba(0,0,0,0) 69%,rgba(0,0,0,.5) 88%,#000 100%),url(/vista.jpg) center 36%/cover no-repeat,#000;padding:clamp(170px,19vw,270px) 0 clamp(190px,24vw,330px)}
+.closing.vista::after{display:none}
+.closing.vista .eyebrow{color:#0b6e8e}
+.closing.vista h2{color:#1d1d1f}
+.closing.vista .lead{color:#3a3a3c}
+.closing.vista .btn{background:#1d1d1f;color:#f5f5f7}
+.closing.vista .btn:hover{background:#000}
+.closing.vista .more{color:#0b6e8e}
 </style>
 </head>
 <body>
@@ -858,7 +882,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           the verdict is the person who read the code.</p>
         <p>Author of the Radar, dy-wcet and AxonOS — the work above, all of it open.</p>
         <div class="links">
-          <a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/dyresearch/" rel="noopener">LinkedIn</a>
           <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
           <a href="mailto:connect@axonos.org">connect@axonos.org</a>
         </div>
@@ -883,7 +907,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 </section>
 
 <!-- ═══ CLOSING ═════════════════════════════════════════════════════════ -->
-<section class="closing" id="close">
+<section class="closing vista" id="close">
   <div class="wrap center">
     <div class="measure reveal">
       <span class="eyebrow">Begin</span>
@@ -891,7 +915,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <p class="lead">Scope and a fixed price come back in writing. Nothing is invoiced until you agree.</p>
       <div class="actions">
         <a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
-        <a class="more" href="#scope">Compare the engagements</a>
+        <a class="more" href="#scope" data-scope="cmp">Compare the engagements</a>
       </div>
     </div>
   </div>
@@ -905,7 +929,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div><p class="fbrand">DY Research</p><p>Independent technical intelligence.<br>Every claim traced to its evidence.</p></div>
       <div><b>Engagements</b><a href="#scope" data-scope="snap">Snapshot</a><a href="#scope" data-scope="audit">Focused Audit</a><a href="#scope" data-scope="dd">Due Diligence</a><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Scope document</a></div>
       <div><b>The work</b><a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar ↗</a><a href="/wcet/">dy-wcet</a><a href="https://axonos.org" rel="noopener">AxonOS ↗</a><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The method</a></div>
-      <div><b>Contact</b><a href="mailto:connect@axonos.org">connect@axonos.org</a><a href="https://www.linkedin.com/in/axonos" rel="noopener">LinkedIn</a><a href="https://github.com/DYResearch" rel="noopener">GitHub</a></div>
+      <div><b>Contact</b><a href="mailto:connect@axonos.org">connect@axonos.org</a><a href="https://www.linkedin.com/in/dyresearch/" rel="noopener">LinkedIn</a><a href="https://github.com/DYResearch" rel="noopener">GitHub</a></div>
     </div>
     <div class="fbase"><span>© 2026 DY Research · Denis Yermakou</span><span>The tooling is open source. The verdict is yours.</span></div>
   </div>
@@ -945,6 +969,16 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <label class="field"><span>Your email</span><input name="email" type="email" autocomplete="email" placeholder="you@company.com"></label>
     <button class="btn send" type="submit">Send request</button>
     <a class="btn ghost send pay" id="req-pay" href="#" rel="noopener">Reserve now — pay the deposit by card</a>
+    <div class="sent" id="req-sent" hidden>
+      <p class="sent-h">Your email should now be open, with everything filled in.</p>
+      <p class="sent-s">If nothing opened, send it another way. Nothing you typed is lost.</p>
+      <div class="sent-ways">
+        <button class="btn ghost" type="button" id="req-copy">Copy the request</button>
+        <a class="btn ghost" href="https://www.linkedin.com/in/dyresearch/" target="_blank" rel="noopener">Write on LinkedIn ↗</a>
+        <button class="more" type="button" id="req-addr">Copy connect@axonos.org</button>
+      </div>
+      <p class="sent-live" id="req-live" role="status" aria-live="polite"></p>
+    </div>
     <p class="small">Opens your email with everything filled in, addressed to connect@axonos.org.
       Nothing is charged until the scope and price are confirmed in writing.</p>
   </form>
@@ -1016,6 +1050,20 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     form.querySelectorAll('input[name="tier"]').forEach(function (r) { r.addEventListener("change", setPay); });
     dlg.querySelector("[data-close]").addEventListener("click", function () { dlg.close(); });
     dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+    var sent = document.getElementById("req-sent"), live = document.getElementById("req-live"), lastRequest = "";
+    function copyText(text, done) {
+      var ok = function () { live.textContent = done; };
+      if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(ok, fallback); } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", "");
+        ta.className = "offscreen"; document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); ok(); } catch (e) { live.textContent = "Select and copy: " + text.slice(0, 80); }
+        document.body.removeChild(ta);
+      }
+    }
+    document.getElementById("req-copy").addEventListener("click", function () { copyText(lastRequest, "Copied. Paste it into any email or message."); });
+    document.getElementById("req-addr").addEventListener("click", function () { copyText("connect@axonos.org", "Copied: connect@axonos.org"); });
+    dlg.addEventListener("close", function () { dlg.classList.remove("is-sent"); sent.hidden = true; live.textContent = ""; });
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var t = TIERS[val("tier")] || TIERS.audit;
@@ -1029,11 +1077,35 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
         "",
         "Sent from dyresearch.github.io"
       ].join("\n");
+      var subject = "Engagement request — " + t[0];
+      lastRequest = "To: connect@axonos.org\nSubject: " + subject + "\n\n" + body;
       window.location.href = "mailto:connect@axonos.org?subject=" +
-        encodeURIComponent("Engagement request — " + t[0]) + "&body=" + encodeURIComponent(body);
-      dlg.close();
+        encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+      // Without a mail app, a mailto does nothing at all. So the sheet stays
+      // open and offers the other ways; nothing typed is ever lost.
+      dlg.classList.add("is-sent"); sent.hidden = false; live.textContent = "";
     });
   }
+
+  // ── links to a scope open that engagement, not the comparison ──────────
+  // Ten links carry data-scope. Each selects its tab, scrolls to it, and
+  // leaves an address that opens the same tab when shared: #scope-dd.
+  function openScope(key, smooth) {
+    var tab = document.getElementById("t-" + key), sec = document.getElementById("scope");
+    if (!tab || !sec) return false;
+    tab.click();
+    var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sec.scrollIntoView({ behavior: smooth && !still ? "smooth" : "auto", block: "start" });
+    return true;
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[data-scope]") : null;
+    if (!a) return;
+    var key = a.getAttribute("data-scope");
+    if (openScope(key, true)) { e.preventDefault(); history.replaceState(null, "", "#scope-" + key); }
+  });
+  var deep = /^#scope-(cmp|snap|audit|dd)$/.exec(location.hash);
+  if (deep) openScope(deep[1], false);
 
   // ── the mobile dock: shown once the hero has gone, hidden at the close ─
   var dock = document.querySelector(".dock"), hero = document.getElementById("top"), close = document.getElementById("close");
