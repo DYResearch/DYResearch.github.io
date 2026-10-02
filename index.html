@@ -439,6 +439,34 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 .closing.vista .btn{background:#1d1d1f;color:#f5f5f7}
 .closing.vista .btn:hover{background:#000}
 .closing.vista .more{color:#0b6e8e}
+
+/* ── what you receive ────────────────────────────────────────────────── */
+.receive{padding:clamp(88px,11vw,150px) 0 clamp(40px,5vw,64px)}
+.receive-head{max-width:720px}
+.samples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,36px);margin-top:clamp(32px,4vw,48px)}
+@media (max-width:860px){.samples{grid-template-columns:minmax(0,1fr)}}
+.sample{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit}
+.sample img{display:block;width:100%;height:auto;border-radius:16px;margin-bottom:10px;transition:transform .5s var(--ease)}
+@media (hover:hover){.sample:hover img{transform:translateY(-4px)}}
+.sample-k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.sample b{font-size:21px;line-height:1.25;letter-spacing:-.01em;color:var(--text);font-weight:600}
+.sample-d{color:var(--text-2);font-size:15px;line-height:1.5}
+.receive-list{list-style:none;padding:0;margin:clamp(36px,4vw,52px) 0 0;max-width:820px}
+.receive-list li{padding:14px 0;border-top:1px solid var(--hair);color:var(--text-2);font-size:15px;line-height:1.55}
+.receive-list li:last-child{border-bottom:1px solid var(--hair)}
+.receive-list b{color:var(--text);font-weight:600}
+/* ── confidential by design ──────────────────────────────────────────── */
+.confidential{padding:clamp(72px,9vw,128px) 0}
+.conf-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(32px,5vw,80px);align-items:start}
+@media (max-width:900px){.conf-grid{grid-template-columns:minmax(0,1fr)}}
+.conf-why{margin-top:22px;padding:18px 20px;border:1px solid rgba(45,212,255,.35);border-radius:14px;color:var(--text);font-size:15px;line-height:1.55;background:rgba(45,212,255,.04)}
+.vows{list-style:none;padding:0;margin:0;counter-reset:v}
+.vows li{display:grid;grid-template-columns:92px minmax(0,1fr);gap:16px;padding:18px 0;border-top:1px solid var(--hair);color:var(--text-2);font-size:15px;line-height:1.55}
+.vows li:last-child{border-bottom:1px solid var(--hair)}
+.vows span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#2dd4ff;padding-top:3px}
+.vows p{margin:0}
+.vows b{display:block;color:var(--text);font-weight:600;margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){.sample img{transition:none}.sample:hover img{transform:none}}
 </style>
 </head>
 <body>
@@ -447,7 +475,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 <nav class="family" aria-label="DY Research family">
   <div class="wrap">
     <a href="/" aria-current="page">DY Research</a>
-    <a href="/wcet/">dy-wcet</a>
+    <a href="/wcet/">DY-WCET</a>
     <a href="https://dy-proof.github.io/" rel="noopener">DY PROOF <span aria-hidden="true">↗</span></a>
     <a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar <span aria-hidden="true">↗</span></a>
     <a href="https://axonos.org" rel="noopener">AxonOS <span aria-hidden="true">↗</span></a>
@@ -592,7 +620,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
         <ul>
           <li class="plus">Everything in Snapshot, and:</li>
           <li>Execution model rebuilt from source</li>
-          <li>Worst-case timing with dy-wcet</li>
+          <li>Worst-case timing with DY-WCET</li>
           <li>The failure chain, evidence kept apart from hypothesis</li>
           <li>Fixes, each with the test that confirms it</li>
           <li>A stated confidence boundary</li>
@@ -626,7 +654,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <div class="terms">
       <span>Fixed price, confirmed in writing</span>
       <span>Invoiced in USD or EUR — half on starting, half on delivery</span>
-      <span>Mutual NDA on request</span>
+      <span>Mutual NDA before the first file</span>
       <span>Nothing invoiced until the scope is agreed</span>
     </div>
   </div>
@@ -695,7 +723,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
             <tr><th scope="row">Ranked risks and questions for the founders</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr class="group"><th colspan="4">Investigate</th></tr>
             <tr><th scope="row">Execution model rebuilt from source</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><th scope="row">Worst-case timing with dy-wcet</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
+            <tr><th scope="row">Worst-case timing with DY-WCET</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr><th scope="row">Failure chain and proposed fixes</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr><th scope="row">Stated confidence boundary</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr class="group"><th colspan="4">Decide</th></tr>
@@ -706,7 +734,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
             <tr><th scope="row">Risk register and committee memo</th><td class="n">—</td><td class="n">—</td><td class="y">✓</td></tr>
             <tr class="group"><th colspan="4">Terms</th></tr>
             <tr><th scope="row">Written round of questions</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-            <tr><th scope="row">Mutual NDA</th><td class="t">On request</td><td class="t">On request</td><td class="t">Standard</td></tr>
+            <tr><th scope="row">Mutual NDA</th><td class="t">Standard</td><td class="t">Standard</td><td class="t">Standard</td></tr>
             <tr class="price"><th scope="row">Price</th><td>$5,000</td><td>$12,000</td><td>$25,000</td></tr>
           </tbody>
         </table>
@@ -746,7 +774,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>Included — everything in Snapshot, and</h4>
           <ul><li>One property investigated to the bottom: worst-case timing, determinism, concurrency and races, verification claims, or the security of one component</li>
             <li>The execution model rebuilt from source</li>
-            <li>Worst-case response times with dy-wcet, every iteration shown, where timing is the question</li>
+            <li>Worst-case response times with DY-WCET, every iteration shown, where timing is the question</li>
             <li>The failure chain traced end to end, evidence kept apart from hypothesis</li>
             <li>Proposed fixes, each naming what would confirm it and what would rule it out</li>
             <li>A stated confidence boundary: what the evidence proves, and where it stops</li></ul>
@@ -790,6 +818,57 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 </section>
 
 <!-- ═══ PROCESS ═════════════════════════════════════════════════════════ -->
+<section class="receive" id="receive">
+  <div class="wrap">
+    <div class="receive-head reveal">
+      <span class="eyebrow">What you receive</span>
+      <h2>A verdict a board can act on.</h2>
+      <p class="lead">Every engagement ends in writing: the question, the answer in one sentence, the arithmetic written out, and the line where the evidence stops. These are the two documents investors read most, shown on a robotics company.</p>
+    </div>
+    <div class="samples">
+      <a class="sample reveal" href="/sample/dy-research-focused-audit-sample.pdf" target="_blank" rel="noopener">
+        <img src="/sample/preview.jpg" width="1394" height="997" loading="lazy" alt="The sample Focused Audit: a cover with a figure above a sea of clouds, and a verdict page: the servo loop's worst case is 886 microseconds against a stated 500.">
+        <span class="sample-k">Focused Audit · 14 pages</span>
+        <b>Does the 1 kHz servo loop hold?</b>
+        <span class="sample-d">The full report: the claim traced, the system reconstructed, every iteration shown, three findings, the fixes with their own tests, and the boundary.</span>
+        <span class="more">Read the sample report</span>
+      </a>
+      <a class="sample reveal" href="/sample/dy-research-ic-memo-sample.pdf" target="_blank" rel="noopener">
+        <img src="/sample/preview-memo.jpg" width="1394" height="997" loading="lazy" alt="The sample investment-committee memorandum: Proceed, with two conditions precedent; the five risks that matter, with their likelihood and impact.">
+        <span class="sample-k">Due Diligence · investment committee memo · 2 pages</span>
+        <b>Proceed, with two conditions precedent.</b>
+        <span class="sample-d">What a committee reads before it decides: the recommendation, what holds and what does not, the five risks that matter, and the conditions of the close.</span>
+        <span class="more">Read the sample memo</span>
+      </a>
+    </div>
+    <ul class="receive-list reveal">
+      <li><b>Produced with the tools every engagement uses.</b> DY-WCET for the analysis, an independent simulation of the schedule to check it, and the reporting pipeline that typeset these. Nothing here was drawn by hand.</li>
+      <li><b>Every figure reproducible.</b> The report shows the code that recomputes it.</li>
+      <li><b>Fact, assumption, hypothesis.</b> Marked on every claim, so you know what rests on what.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="confidential" id="confidential">
+  <div class="wrap">
+    <div class="conf-grid">
+      <div class="reveal">
+        <span class="eyebrow">Confidential by design</span>
+        <h2>What you show us stays yours.</h2>
+        <p class="lead">Your code, your numbers and the way your system is built are the competence you are selling. An engagement reads them; it does not take them.</p>
+        <p class="conf-why">Why is the company in our samples fictional? Because no client&#8217;s work is ever shown without their written consent.</p>
+      </div>
+      <ol class="vows reveal">
+        <li><span>Before</span><p><b>A mutual NDA, before the first file.</b> On every engagement, not only the largest.</p></li>
+        <li><span>During</span><p><b>Read-only, and only what the question needs.</b> Access ends at delivery.</p></li>
+        <li><span>After</span><p><b>Nothing kept but the report.</b> Every copy of your material is deleted, and the deletion is confirmed in writing.</p></li>
+        <li><span>The report</span><p><b>Yours.</b> You decide who reads it: your board, your investors, your engineers.</p></li>
+        <li><span>Always</span><p><b>Nothing published without your written consent.</b> Not the findings, not your name, not the fact that we worked together. And nothing learned in your engagement is used in another.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <section id="process">
   <div class="wrap">
     <div class="head center measure reveal">
@@ -817,7 +896,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     </div>
     <div class="tabs" role="tablist" aria-label="Proof of expertise">
       <button class="tab" role="tab" id="t-radar" aria-controls="p-radar" aria-selected="true">Radar</button>
-      <button class="tab" role="tab" id="t-wcet" aria-controls="p-wcet" aria-selected="false">dy-wcet</button>
+      <button class="tab" role="tab" id="t-wcet" aria-controls="p-wcet" aria-selected="false">DY-WCET</button>
       <button class="tab" role="tab" id="t-axon" aria-controls="p-axon" aria-selected="false">AxonOS</button>
     </div>
 
@@ -839,7 +918,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 
     <div class="panel eco" role="tabpanel" id="p-wcet" aria-labelledby="t-wcet">
       <div class="card">
-        <span class="kind">Measure · dy-wcet</span>
+        <span class="kind">Measure · DY-WCET</span>
         <h3>Timing analysis that refuses rather than rounds.</h3>
         <p>Worst-case response time for real-time systems, in integer arithmetic. When it cannot justify
           a bound, it returns a named refusal instead of a number — and it is the tool the Focused Audit
@@ -881,7 +960,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
         <p class="name">One principal. No handoffs.</p>
         <p>Every engagement is carried out by Denis Yermakou, start to finish. The person who writes
           the verdict is the person who read the code.</p>
-        <p>Author of the Radar, dy-wcet and AxonOS — the work above, all of it open.</p>
+        <p>Author of the Radar, DY-WCET and AxonOS — the work above, all of it open.</p>
         <div class="links">
           <a href="https://www.linkedin.com/in/dyresearch/" rel="noopener">LinkedIn</a>
           <a href="https://github.com/DYResearch" rel="noopener">GitHub</a>
@@ -928,8 +1007,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   <div class="wrap">
     <div class="fgrid">
       <div><p class="fbrand">DY Research</p><p>Independent technical intelligence.<br>Every claim traced to its evidence.</p></div>
-      <div><b>Engagements</b><a href="#scope" data-scope="snap">Snapshot</a><a href="#scope" data-scope="audit">Focused Audit</a><a href="#scope" data-scope="dd">Due Diligence</a><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Scope document</a></div>
-      <div><b>The work</b><a href="https://dy-proof.github.io/" rel="noopener">DY PROOF ↗</a><a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar ↗</a><a href="/wcet/">dy-wcet</a><a href="https://axonos.org" rel="noopener">AxonOS ↗</a><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The method</a></div>
+      <div><b>Engagements</b><a href="#scope" data-scope="snap">Snapshot</a><a href="#scope" data-scope="audit">Focused Audit</a><a href="#scope" data-scope="dd">Due Diligence</a><a href="https://github.com/DYResearch/dy-wcet/blob/main/AUDIT.md" rel="noopener">Scope document</a><a href="/sample/dy-research-focused-audit-sample.pdf" target="_blank" rel="noopener">Sample report</a></div>
+      <div><b>The work</b><a href="https://dy-proof.github.io/" rel="noopener">DY PROOF ↗</a><a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar ↗</a><a href="/wcet/">DY-WCET</a><a href="https://axonos.org" rel="noopener">AxonOS ↗</a><a href="https://medium.com/@AxonOS/i-audited-a-rust-real-time-system-for-determinism-heres-what-actually-matters-4181e389bac4" rel="noopener">The method</a></div>
       <div><b>Contact</b><a href="mailto:connect@axonos.org">connect@axonos.org</a><a href="https://www.linkedin.com/in/dyresearch/" rel="noopener">LinkedIn</a><a href="https://github.com/DYResearch" rel="noopener">GitHub</a></div>
     </div>
     <div class="fbase"><span>© 2026 DY Research · Denis Yermakou</span><span>The tooling is open source. The verdict is yours.</span></div>
