@@ -467,6 +467,30 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 .vows p{margin:0}
 .vows b{display:block;color:var(--text);font-weight:600;margin-bottom:2px}
 @media (prefers-reduced-motion:reduce){.sample img{transition:none}.sample:hover img{transform:none}}
+
+/* ── the hero's question: the method, before the pitch ───────────────── */
+.puzzle{max-width:600px;margin:clamp(26px,4vw,40px) auto clamp(22px,3vw,34px);text-align:left;border:1px solid var(--hair);border-radius:20px;padding:clamp(18px,3vw,28px);background:rgba(255,255,255,.025)}
+.pz-k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#2dd4ff;margin:0 0 14px}
+.pz-tasks{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:16px}
+.pz-tasks div{border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
+.pz-tasks b{display:block;font-size:15px;color:var(--text)}
+.pz-tasks span{display:block;font-family:var(--mono);font-size:13px;color:var(--text-2);margin-top:4px}
+.pz-tasks em{display:block;font-style:normal;font-size:12px;color:var(--text-3);margin-top:4px}
+.pz-q{font-size:17px;line-height:1.4;color:var(--text);margin:0 0 12px;font-weight:600}
+.pz-opts{display:flex;flex-wrap:wrap;gap:8px}
+.pz-opts button,.pz-next{font:inherit;font-size:15px;padding:10px 16px;border-radius:999px;border:1px solid var(--hair);background:transparent;color:var(--text);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+.pz-opts button:hover{border-color:rgba(255,255,255,.45)}
+.pz-opts button.on{background:#f5f5f7;color:#000;border-color:#f5f5f7}
+.pz-out{margin-top:16px;border-top:1px solid var(--hair);padding-top:14px;color:var(--text-2);font-size:15px;line-height:1.55;animation:pzin .4s var(--ease)}
+.pz-out p{margin:0 0 8px}
+.pz-out pre{font-family:var(--mono);font-size:13px;color:var(--text);background:rgba(255,255,255,.04);border-radius:10px;padding:10px 12px;margin:10px 0;white-space:pre-wrap}
+.pz-bad{color:#ff6b6b}.pz-ok{color:#34d399}
+.pz-next{margin-top:6px;border-color:rgba(45,212,255,.5);color:#2dd4ff}
+.pz-lesson{color:var(--text)!important;font-weight:600;margin-top:12px!important}
+.pz-cta{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px}
+@keyframes pzin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:520px){.pz-tasks{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){.pz-out{animation:none}}
 </style>
 </head>
 <body>
@@ -489,7 +513,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <a href="#for">Who it is for</a>
       <a href="#proof">Proof</a>
       <a href="#process">Process</a>
-      <a class="nav-cta" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
+      <a class="nav-cta" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Bring a question</a>
     </div>
   </div>
 </nav>
@@ -504,6 +528,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <p class="lead measure">Technical due diligence for investors, founders and engineering teams.
       Every claim a technology makes, traced to its code, its tests and its evidence —
       <b>and a written verdict on what holds.</b></p>
+    <div class="puzzle" id="puzzle">
+      <p class="pz-k">Can you spot the failure?</p>
+      <div class="pz-tasks"><div><b>Task A</b><span>C = 100 µs · T = 400 µs</span><em>higher priority</em></div><div><b>Task B</b><span>C = 200 µs · T = 1,000 µs</span></div></div>
+      <p class="pz-q">What is B&#8217;s worst-case response time?</p>
+      <div class="pz-opts" role="group" aria-label="Your answer"><button type="button" data-a="400">400 µs</button><button type="button" data-a="300">300 µs</button><button type="button" data-a="info">I need more information</button></div>
+      <div class="pz-out" aria-live="polite" hidden></div>
+    </div>
     <div class="actions">
       <a class="btn" href="#engagements">See the engagements</a>
       <a class="more" href="#process">How an engagement runs</a>
@@ -834,10 +865,10 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
         <span class="more">Read the sample report</span>
       </a>
       <a class="sample reveal" href="/sample/dy-research-ic-memo-sample.pdf" target="_blank" rel="noopener">
-        <img src="/sample/preview-memo.jpg" width="1394" height="997" loading="lazy" alt="The sample investment-committee memorandum: Proceed, with two conditions precedent; the five risks that matter, with their likelihood and impact.">
-        <span class="sample-k">Due Diligence · investment committee memo · 2 pages</span>
-        <b>Proceed, with two conditions precedent.</b>
-        <span class="sample-d">What a committee reads before it decides: the recommendation, what holds and what does not, the five risks that matter, and the conditions of the close.</span>
+        <img src="/sample/preview-memo.jpg" width="1394" height="997" loading="lazy" alt="The sample technical decision memo: the technology is real, and two of its claims do not hold as built; the five risks that matter, with their likelihood and impact.">
+        <span class="sample-k">Due Diligence · technical decision memo · 2 pages</span>
+        <b>The technology is real. Two of its claims are not.</b>
+        <span class="sample-d">What a committee reads before it decides: what the evidence establishes, what could invalidate the technical thesis, and what to verify before relying on it. The decision stays with the committee.</span>
         <span class="more">Read the sample memo</span>
       </a>
     </div>
@@ -1015,7 +1046,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   </div>
 </footer>
 
-<a class="dock" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit" aria-hidden="true" tabindex="-1">Request an engagement</a>
+<a class="dock" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit" aria-hidden="true" tabindex="-1">Bring a question</a>
 
 <!-- ═══ REQUEST SHEET ═══════════════════════════════════════════════════ -->
 <dialog class="sheet" id="req" aria-labelledby="req-title">
@@ -1203,6 +1234,45 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
   }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
   els.forEach(function (e) { io.observe(e); });
+})();
+</script>
+<script>
+/* The hero's question. Every figure is DY-WCET's, and /wcet/ shows the working. */
+(function () {
+  var root = document.getElementById("puzzle"); if (!root) return;
+  var out = root.querySelector(".pz-out"), stage = 1;
+  var fin = '<p class="pz-lesson">A plausible answer can be wrong in the direction that matters most.</p>' +
+    '<div class="pz-cta"><a class="btn" href="/wcet/#trap">See the proof</a>' +
+    '<a class="more" href="mailto:connect@axonos.org?subject=A%20system%20to%20investigate" data-request="audit">Give me a system to investigate</a></div>';
+  var next = '<button type="button" class="pz-next" data-a="harder">Now make it harder &#8594;</button>';
+  function show(html) { out.innerHTML = html; out.hidden = false; }
+  function harder() {
+    stage = 2;
+    root.querySelector(".pz-tasks").innerHTML = '<div><b>Task B</b><span>C = 40 µs · T = 60 µs</span><em>higher priority</em></div>' +
+      '<div><b>Task A</b><span>C = 50 µs · T = 1,000 µs</span><em>deadline 100 µs</em></div>';
+    root.querySelector(".pz-q").innerHTML = 'Utilisation is 0.717, under the 0.828 bound for two tasks. Does A meet its deadline?';
+    root.querySelector(".pz-opts").innerHTML = '<button type="button" data-a="yes">Yes, it is under the bound</button><button type="button" data-a="no">No</button>';
+    out.hidden = true; out.innerHTML = "";
+    var f = root.querySelector(".pz-opts button"); if (f) f.focus();
+  }
+  root.addEventListener("click", function (e) {
+    var req = e.target.closest ? e.target.closest("a[data-request]") : null;
+    if (req) { var nav = document.querySelector(".nav-cta[data-request]"); if (nav) { e.preventDefault(); nav.click(); } return; }
+    var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
+    var a = b.getAttribute("data-a");
+    if (a === "harder") { harder(); return; }
+    root.querySelectorAll(".pz-opts button").forEach(function (x) { x.classList.toggle("on", x === b); });
+    if (stage === 1) {
+      if (a === "400") show('<p><b class="pz-bad">Plausible. Wrong.</b> It counts A once per period of B. A interferes once for every release that falls inside B&#8217;s response.</p>' +
+        '<pre>R = 200\nR = 200 + &#8968;200/400&#8969;&#183;100 = 300\nR = 200 + &#8968;300/400&#8969;&#183;100 = 300   &#8592; fixed point</pre>' + next);
+      else if (a === "300") show('<p><b class="pz-ok">Correct: 300 &#181;s.</b> A can interfere only as often as it is released inside B&#8217;s response window.</p>' + next);
+      else show('<p><b>A fair instinct.</b> Fixed priority, preemptive, one core, A above B, deadlines equal to periods, no blocking, no jitter. Now choose.</p>');
+    } else {
+      if (a === "yes") show('<p><b class="pz-bad">Plausible. Wrong, in the direction that matters.</b> The bound assumes every deadline equals its period. A&#8217;s is 100 &#181;s, not 1,000, and its worst-case response is 170 &#181;s.</p>' +
+        '<pre>R = 50 &#8594; 90 &#8594; 130 &#8594; 170 &#8594; 170</pre>' + fin);
+      else show('<p><b class="pz-ok">Correct: 170 &#181;s against 100.</b> The utilisation bound does not apply when a deadline is shorter than its period.</p>' + fin);
+    }
+  });
 })();
 </script>
 </body>
