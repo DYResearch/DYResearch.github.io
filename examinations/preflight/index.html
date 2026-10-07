@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Neural Data Preflight — DY Research</title>
+<meta name="description" content="Drop an EEG recording and see what holds: sampling, gaps, packet loss, flat and clipped channels, line noise. A preview of the Preflight examination that runs entirely in your browser. Nothing is uploaded.">
+<link rel="canonical" href="https://dyresearch.github.io/examinations/preflight/">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DY Research">
+<meta property="og:title" content="Neural Data Preflight — drop a recording, see what holds">
+<meta property="og:description" content="A preview of the Preflight examination for EEG recordings, running entirely in your browser. Nothing is uploaded.">
+<meta property="og:url" content="https://dyresearch.github.io/examinations/preflight/">
+<meta property="og:image" content="https://dyresearch.github.io/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M5 17h5l2-6 4 12 3-9 2 3h6' fill='none' stroke='%232dd4ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#000;--panel:#0c0c0e;--panel-2:#131316;--panel-3:#1c1c20;
+  --hair:rgba(255,255,255,.08);--hair-2:rgba(255,255,255,.15);
+  --text:#f5f5f7;--text-2:#a1a1a6;--text-3:#86868b;
+  --accent:#2dd4ff;--accent-2:#9be8ff;
+  --ok:#30d158;--warn:#ffb340;--bad:#ff453a;--muted:#8e8e93;
+  --r:18px;--max:1120px;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:var(--max);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+p{margin:0}h1,h2,h3{margin:0;font-weight:700;color:var(--text)}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;background:#fff;color:#000;padding:8px 12px;border-radius:8px;z-index:99}
+
+/* family bar and navigation, as on every DY Research page */
+.family{border-bottom:1px solid var(--hair);font-size:12px}
+.family .wrap{display:flex;justify-content:center;gap:30px;height:34px;align-items:center;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.family .wrap::-webkit-scrollbar{display:none}
+.family a{color:var(--text-3);flex:none}.family a:hover{color:var(--text);text-decoration:none}.family a[aria-current]{color:var(--text)}
+.nav{position:sticky;top:0;z-index:20;height:52px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--hair)}
+.nav .wrap{height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{color:var(--text);font-weight:600;font-size:17px;letter-spacing:-.01em;white-space:nowrap}.brand:hover{text-decoration:none}
+.brand span{color:var(--text-3);font-weight:500}
+.nav-links{display:flex;gap:24px;align-items:center;font-size:13px}
+.nav-links a{color:var(--text-2);white-space:nowrap}.nav-links a:hover{color:var(--text);text-decoration:none}.nav-links a[aria-current]{color:var(--text)}
+.nav-cta{color:#000!important;background:var(--text);border-radius:980px;padding:6px 14px;font-weight:600}.nav-cta:hover{background:#fff}
+.nav-cta .s{display:none}
+@media (max-width:760px){.nav-links a:not(.nav-cta){display:none}.brand span{display:none}}
+@media (max-width:420px){.nav-cta .l{display:none}.nav-cta .s{display:inline}}
+
+/* hero */
+.hero{text-align:center;padding:clamp(64px,10vw,120px) 0 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--accent);font-size:14px;font-weight:600;letter-spacing:.01em;margin-bottom:18px}
+.badge{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#000;background:var(--accent);border-radius:980px;padding:3px 9px}
+h1{font-size:clamp(46px,8vw,96px);line-height:1;letter-spacing:-.048em}
+.grad{background:linear-gradient(95deg,#f5f5f7 5%,var(--accent-2) 55%,var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.lead{font-size:clamp(19px,2.2vw,23px);line-height:1.42;color:var(--text-2);max-width:740px;margin:22px auto 0;text-wrap:pretty}
+.lead b{color:var(--text);font-weight:600}
+
+/* drop zone */
+.drop{position:relative;margin:44px auto 0;max-width:880px;border-radius:28px;padding:44px 32px 34px;text-align:center;
+  background:radial-gradient(120% 140% at 50% 0%,rgba(45,212,255,.10),rgba(45,212,255,0) 55%),var(--panel);
+  border:1px solid var(--hair-2);transition:border-color .25s var(--ease),transform .25s var(--ease),background .25s}
+.drop.over{border-color:var(--accent);transform:scale(1.01)}
+.drop svg{width:56px;height:56px;color:var(--accent);margin-bottom:14px}
+.drop h2{font-size:clamp(24px,3vw,32px);letter-spacing:-.03em}
+.drop .formats{color:var(--text-3);font-size:14px;margin-top:8px}
+.drop .row{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:24px}
+.btn{display:inline-block;background:var(--text);color:#000;border-radius:980px;padding:13px 24px;font:600 16px/1 var(--sans);letter-spacing:-.01em;border:0;cursor:pointer;white-space:nowrap;transition:background .2s var(--ease),transform .2s var(--ease)}
+.btn:hover{background:#fff;text-decoration:none}.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--text);box-shadow:inset 0 0 0 1px var(--hair-2)}.btn.ghost:hover{background:rgba(255,255,255,.06)}
+.examples{margin-top:28px;padding-top:24px;border-top:1px solid var(--hair)}
+.examples p{font-size:13px;color:var(--text-3);margin-bottom:12px}
+.chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.chip{background:var(--panel-2);color:var(--text);border:1px solid var(--hair-2);border-radius:980px;padding:9px 16px;font:500 14px/1.2 var(--sans);cursor:pointer;transition:border-color .2s,background .2s}
+.chip:hover{border-color:var(--accent);background:var(--panel-3)}
+.chip small{display:block;color:var(--text-3);font-size:11.5px;margin-top:3px}
+.privacy{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:22px;font-size:13px;color:var(--text-3)}
+.privacy svg{width:15px;height:15px;color:var(--ok);flex:none}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* progress */
+.progress{max-width:880px;margin:22px auto 0;height:3px;border-radius:3px;background:var(--hair);overflow:hidden;display:none}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s linear}
+
+/* results */
+#result{display:none;padding:56px 0 24px}
+.verdict{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;border-radius:28px;overflow:hidden;border:1px solid var(--hair-2);background:var(--panel)}
+.v-main{padding:38px 40px}
+.v-k{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.v-word{font-size:clamp(44px,6vw,68px);font-weight:700;letter-spacing:-.045em;line-height:1;margin:12px 0 14px}
+.v-word.READY{color:var(--ok)}.v-word.DEGRADED{color:var(--warn)}.v-word.NOT-READY{color:var(--bad)}.v-word.UNKNOWN{color:var(--muted)}
+.v-sum{color:var(--text-2);font-size:17px;max-width:44ch}
+.v-file{margin-top:20px;font:13px/1.4 var(--mono);color:var(--text-3);word-break:break-all}
+.facts{display:grid;grid-template-columns:1fr 1fr;border-left:1px solid var(--hair)}
+.facts div{padding:22px 26px;border-bottom:1px solid var(--hair)}
+.facts div:nth-child(odd){border-right:1px solid var(--hair)}
+.facts div:nth-last-child(-n+2){border-bottom:0}
+.facts b{display:block;font-size:26px;font-weight:650;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.facts span{display:block;font-size:12.5px;color:var(--text-3);margin-top:4px}
+.facts em{font-style:normal;font-size:11px;color:var(--text-3);font-family:var(--mono);margin-left:6px}
+.block{margin-top:22px;border-radius:28px;border:1px solid var(--hair);background:var(--panel);padding:30px 32px}
+.block h3{font-size:21px;letter-spacing:-.02em}
+.block .sub{color:var(--text-3);font-size:14px;margin-top:4px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--text-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+canvas{display:block;width:100%}
+.signal{margin-top:18px;border-radius:14px;background:#060608;border:1px solid var(--hair)}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+th{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3);text-align:left;padding:10px 10px;border-bottom:1px solid var(--hair-2)}
+td{padding:12px 10px;border-bottom:1px solid var(--hair);vertical-align:middle}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px}
+.st{display:inline-block;font:600 11px/1 var(--sans);letter-spacing:.05em;border-radius:980px;padding:5px 9px}
+.st.VALID{background:rgba(48,209,88,.14);color:var(--ok)}.st.SUSPICIOUS{background:rgba(255,179,64,.14);color:var(--warn)}
+.st.INVALID{background:rgba(255,69,58,.15);color:var(--bad)}.st.UNKNOWN{background:rgba(142,142,147,.16);color:var(--muted)}
+.spark{width:120px;height:24px}
+.finding{display:grid;grid-template-columns:92px minmax(0,1fr);gap:18px;padding:20px 0;border-top:1px solid var(--hair)}
+.finding:first-of-type{border-top:0}
+.sev{font:600 11px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;border-radius:980px;padding:6px 10px;text-align:center;align-self:start}
+.sev.critical{background:rgba(255,69,58,.15);color:var(--bad)}.sev.major{background:rgba(255,179,64,.14);color:var(--warn)}.sev.minor{background:rgba(142,142,147,.16);color:var(--text-2)}
+.finding h4{margin:0;font-size:17px;letter-spacing:-.015em}
+.finding dl{display:grid;grid-template-columns:90px minmax(0,1fr);gap:4px 14px;margin:10px 0 0;font-size:14px}
+.finding dt{color:var(--text-3)}.finding dd{margin:0;color:var(--text-2)}
+.ev{display:inline-block;font:600 10.5px/1 var(--mono);letter-spacing:.04em;border:1px solid var(--hair-2);border-radius:6px;padding:3px 6px;color:var(--text-2);margin-left:8px;vertical-align:2px}
+.none{color:var(--text-2);padding:8px 0 0}
+.gaps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+.gaps div{border:1px solid var(--hair);border-radius:14px;padding:16px 18px;background:var(--panel-2)}
+.gaps b{display:block;font-size:15px}.gaps span{display:block;color:var(--text-3);font-size:13.5px;margin-top:4px}
+.gaps span.ev{display:inline-block;margin:12px 0 0;color:var(--text-2)}
+.next{display:grid;grid-template-columns:minmax(0,1.3fr) auto;gap:24px;align-items:center;margin-top:22px;border-radius:28px;padding:34px 36px;
+  background:linear-gradient(135deg,rgba(45,212,255,.13),rgba(45,212,255,0) 60%),var(--panel);border:1px solid rgba(45,212,255,.35)}
+.next h3{font-size:24px;letter-spacing:-.025em}.next p{color:var(--text-2);margin-top:8px;font-size:15.5px}
+.next .acts{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.scope{color:var(--text-3);font-size:13px;margin-top:22px;text-align:center}
+footer{border-top:1px solid var(--hair);margin-top:72px;padding:40px 0 calc(48px + env(safe-area-inset-bottom));font-size:13px;color:var(--text-3)}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{color:var(--text-2)}
+@media (max-width:820px){
+  .verdict{grid-template-columns:1fr}.facts{border-left:0;border-top:1px solid var(--hair)}
+  .v-main{padding:30px 26px}.block{padding:24px 20px;border-radius:22px}
+  .finding{grid-template-columns:1fr;gap:10px}.sev{justify-self:start}
+  .gaps{grid-template-columns:1fr}.next{grid-template-columns:1fr;padding:28px 24px}.next .acts{justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="family" aria-label="DY Research family">
+  <div class="wrap">
+    <a href="/">DY Research</a>
+    <a href="/examinations/" aria-current="page">Examinations</a>
+    <a href="/wcet/">DY-WCET</a>
+    <a href="https://dy-proof.github.io/" rel="noopener">DY PROOF <span aria-hidden="true">↗</span></a>
+    <a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar <span aria-hidden="true">↗</span></a>
+    <a href="https://axonos.org" rel="noopener">AxonOS <span aria-hidden="true">↗</span></a>
+  </div>
+</nav>
+<nav class="nav" aria-label="Primary">
+  <div class="wrap">
+    <a class="brand" href="/examinations/">Examinations <span>· Preflight</span></a>
+    <div class="nav-links">
+      <a href="/examinations/#catalog">Catalogue</a>
+      <a href="/examinations/#early">Early access</a>
+      <a class="nav-cta" href="mailto:connect@axonos.org?subject=Neural%20Data%20Examination%20request"><span class="l">Request an examination</span><span class="s">Request</span></a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <span class="eyebrow">Neural Data Preflight <span class="badge">Early access</span></span>
+    <h1>Drop a recording.<br><span class="grad">See what holds.</span></h1>
+    <p class="lead">A preview of the Preflight examination for EEG recordings. Sampling, gaps, packet loss, flat and clipped channels, line noise — <b>checked in your browser, in seconds. Nothing is uploaded.</b></p>
+
+    <div class="drop" id="drop">
+      <svg viewBox="0 0 56 56" fill="none" aria-hidden="true"><rect x="1" y="1" width="54" height="54" rx="16" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/><path d="M10 31h7l3-9 5 16 4-12 3 5h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h2>Drop an EEG recording here</h2>
+      <p class="formats">CSV from OpenBCI, BrainFlow or any tool that writes one column per channel · EDF · BDF</p>
+      <div class="row">
+        <label class="btn" for="file" tabindex="0" id="pick">Choose a file</label>
+        <input type="file" id="file" accept=".csv,.txt,.tsv,.edf,.bdf">
+      </div>
+      <div class="examples">
+        <p>No recording at hand? Open an example. Each is generated in your browser, with known defects planted.</p>
+        <div class="chips">
+          <button class="chip" data-example="cyton">OpenBCI Cyton over Bluetooth<small>8 channels · 250 Hz · 2 minutes</small></button>
+          <button class="chip" data-example="headband">Consumer headband<small>4 channels · 256 Hz · 90 seconds</small></button>
+          <button class="chip" data-example="clean">Clean laboratory recording<small>8 channels · 500 Hz · 1 minute</small></button>
+        </div>
+      </div>
+      <p class="privacy"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5 2.5 3.5v4c0 3.2 2.3 5.9 5.5 7 3.2-1.1 5.5-3.8 5.5-7v-4z" stroke="currentColor" stroke-width="1.4"/><path d="m5.6 8 1.7 1.7L10.6 6.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>This page has no server to send to: its security policy blocks every network request.</p>
+    </div>
+    <div class="progress" id="progress" aria-hidden="true"><i></i></div>
+  </section>
+
+  <section id="result" class="wrap" aria-live="polite">
+    <div class="verdict">
+      <div class="v-main">
+        <p class="v-k">Preflight verdict</p>
+        <p class="v-word" id="vWord">—</p>
+        <p class="v-sum" id="vSum"></p>
+        <p class="v-file" id="vFile"></p>
+      </div>
+      <div class="facts" id="facts"></div>
+    </div>
+
+    <div class="block">
+      <h3>The recording, and where it breaks</h3>
+      <p class="sub" id="sigSub">Every channel, drawn over the whole recording. Marked regions are evidence for a finding below.</p>
+      <div class="legend"><span><i style="background:#ff453a"></i>Lost samples</span><span><i style="background:#ffb340"></i>Clipping</span><span><i style="background:#8e8e93"></i>Flat signal</span><span><i style="background:#bf5af2"></i>Timing break</span></div>
+      <div class="signal"><canvas id="sig" height="360"></canvas></div>
+    </div>
+
+    <div class="block">
+      <h3>Channels</h3>
+      <p class="sub">VALID · SUSPICIOUS · INVALID · UNKNOWN — per channel, from the signal alone.</p>
+      <div class="tw"><table id="chTable"><thead><tr><th>Channel</th><th>Status</th><th class="n">RMS</th><th class="n">Flat</th><th class="n">Clipped</th><th class="n">Line noise</th><th>Shape</th></tr></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="block">
+      <h3>Findings</h3>
+      <p class="sub">What happened, where, how much, the evidence, and what it does to anything built on this recording.</p>
+      <div id="findings"></div>
+    </div>
+
+    <div class="block">
+      <h3>Not established by this preview</h3>
+      <p class="sub">A preview reads one file. These questions need more evidence, and are what a full examination answers.</p>
+      <div class="gaps" id="gaps"></div>
+    </div>
+
+    <div class="next">
+      <div>
+        <h3>Take it to a full examination.</h3>
+        <p>Every check here, and the ones a browser cannot run: events against stimuli, every stream against every clock, the chain from device to AI. A written verdict with its evidence, for early users through our API or as a report.</p>
+      </div>
+      <div class="acts">
+        <a class="btn" id="requestBtn" href="mailto:connect@axonos.org?subject=Neural%20Data%20Examination%20request">Request the examination</a>
+        <button class="btn ghost" id="jsonBtn" type="button">Download evidence</button>
+      </div>
+    </div>
+    <p class="scope" id="scopeNote"></p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© DY Research · <a href="/examinations/">Neural Data Examinations</a> · Pricing on request · <a href="mailto:connect@axonos.org">connect@axonos.org</a></p>
+    <p>The preview never modifies a recording and keeps nothing: close the tab and it is gone.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+"use strict";
+var VERSION = "preflight-preview 1.0";
+var $ = function (id) { return document.getElementById(id); };
+
+/* ───────────── synthetic examples, with known defects planted ───────────── */
+function rng(seed) { var s = seed >>> 0; return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+function gauss(r) { var u = r() || 1e-9, v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+function eegSource(r, fs, alpha) {
+  var p1 = 0, p2 = 0, p3 = 0, ph = r() * 6.28;
+  return function (i) { var w = gauss(r); p1 = 0.995 * p1 + w * 2.2; p2 = 0.9 * p2 + w * 3; p3 = 0.5 * p3 + w * 2.5;
+    return p1 + p2 + p3 + alpha * Math.sin(2 * Math.PI * 10.2 * i / fs + ph) * (0.7 + 0.3 * Math.sin(i / fs * 0.7)); };
+}
+function makeExample(kind) {
+  var r = rng(kind === "cyton" ? 7 : kind === "headband" ? 11 : 3);
+  var fs, n, names, ch = [], ts = [], counter = null, t0 = 1759000000;
+  if (kind === "cyton") {
+    fs = 250; n = fs * 120; names = ["Fp1", "Fp2", "C3", "C4", "P7", "P8", "O1", "O2"];
+    var src = names.map(function (nm, k) { return eegSource(r, fs, k >= 6 ? 22 : 6); });
+    var lost = [[38 * fs, 12 * 4], [95 * fs, 25 * 4], [61 * fs, 3]];  // BLE bursts: packets lost
+    var keep = new Uint8Array(n).fill(1);
+    lost.forEach(function (L) { for (var i = L[0]; i < L[0] + L[1]; i++) keep[i] = 0; });
+    counter = []; var c = [], t = [];
+    for (var k = 0; k < 8; k++) ch.push([]);
+    var hostClock = t0;
+    for (var i = 0; i < n; i++) {
+      var vals = src.map(function (f) { return f(i); });
+      vals[5] += 38 * Math.sin(2 * Math.PI * 50 * i / fs);                       // P8: mains
+      if (i > 70 * fs) vals[3] = 0.02 * gauss(r);                                // C4: electrode off, flat
+      if (i > 50 * fs && i < 52.5 * fs) vals[7] = vals[7] > 0 ? 187500 : -187500; // O2: railed
+      if (i % 10 === 0) hostClock = t0 + i / fs + 0.004 * r();                     // host stamps in batches
+      if (!keep[i]) continue;
+      for (k = 0; k < 8; k++) ch[k].push(vals[k] + 31000 + k * 1700);            // DC offsets, as the board writes them
+      counter.push(i % 256);
+      ts.push(hostClock + (i % 10) / fs);
+    }
+    return { name: "example — OpenBCI Cyton over Bluetooth.csv", fs: fs, declaredFs: 250, names: names, ch: ch, ts: ts, counter: counter, counterStep: 1, counterMod: 256, source: "example", tsKind: "host" };
+  }
+  if (kind === "headband") {
+    fs = 256; n = fs * 90; names = ["TP9", "AF7", "AF8", "TP10"];
+    var s2 = names.map(function () { return eegSource(r, fs, 9); });
+    for (var k2 = 0; k2 < 4; k2++) ch.push([]);
+    for (var j = 0; j < n; j++) {
+      if (j >= 41 * fs && j < 41 * fs + 300) continue;                              // a 1.2 s drop
+      var v = s2.map(function (f) { return f(j); });
+      v[0] += 60 * Math.sin(2 * Math.PI * 60 * j / fs);
+      for (k2 = 0; k2 < 4; k2++) ch[k2].push(v[k2] + 800);
+      var tt = t0 + j / fs + (r() - 0.5) * 0.006;
+      if (j % 12 === 5) tt = ts.length ? ts[ts.length - 1] : tt;                   // duplicated stamp
+      ts.push(tt);
+    }
+    for (var q = 22 * fs; q < 22 * fs + 40; q++) { var m = Math.min(q, ts.length - 1); ts[m] -= 0.03; } // a step back in time
+    return { name: "example — consumer headband.csv", fs: fs, declaredFs: 256, names: names, ch: ch, ts: ts, counter: null, source: "example", tsKind: "device" };
+  }
+  fs = 500; n = fs * 60; names = ["Fz", "Cz", "Pz", "C3", "C4", "O1", "Oz", "O2"];
+  var s3 = names.map(function (nm, k) { return eegSource(r, fs, k >= 5 ? 18 : 7); });
+  for (var k3 = 0; k3 < 8; k3++) ch.push([]);
+  for (var z = 0; z < n; z++) { for (k3 = 0; k3 < 8; k3++) ch[k3].push(s3[k3](z)); ts.push(t0 + z / fs); }
+  return { name: "example — clean laboratory recording.edf", fs: fs, declaredFs: 500, names: names, ch: ch, ts: ts, counter: null, source: "example", tsKind: "device" };
+}
+
+/* ───────────── parsing: CSV (OpenBCI, BrainFlow, generic), EDF, BDF ───────────── */
+var NONEEG = /^(sample ?index|index|counter|package|seq|time|timestamp|marker|event|trigger|accel|aux|other|analog|digital|battery|x|y|z)/i;
+function parseCSV(text, name) {
+  var lines = text.split(/\r?\n/), meta = {}, rows = [], header = null, delim = null;
+  for (var i = 0; i < lines.length; i++) {
+    var L = lines[i];
+    if (!L.trim()) continue;
+    if (L[0] === "%" || L[0] === "#") { var m = L.match(/sample rate\s*=\s*([\d.]+)/i); if (m) meta.fs = +m[1]; continue; }
+    if (!delim) delim = L.indexOf("\t") >= 0 ? "\t" : (L.split(";").length > L.split(",").length ? ";" : ",");
+    var cells = L.split(delim).map(function (c) { return c.trim(); });
+    if (!header && rows.length === 0 && cells.some(function (c) { return c && isNaN(+c); })) { header = cells; continue; }
+    rows.push(cells);
+  }
+  if (!rows.length) throw new Error("No numeric rows were found.");
+  var ncol = rows[0].length;
+  if (!header) header = Array.from({ length: ncol }, function (_, k) { return "Column " + (k + 1); });
+  var colNum = function (k) { var out = new Float64Array(rows.length); for (var i = 0; i < rows.length; i++) out[i] = parseFloat(rows[i][k]); return out; };
+  var tsCol = -1, ctrCol = -1, eeg = [];
+  header.forEach(function (h, k) {
+    var lh = h.toLowerCase();
+    if (tsCol < 0 && /timestamp|^time/.test(lh) && !/formatted/.test(lh)) tsCol = k;
+    else if (ctrCol < 0 && /sample ?index|counter|package|seq/.test(lh)) ctrCol = k;
+  });
+  if (/^column 1$/i.test(header[0])) {                       // headerless (BrainFlow): find counter and unix time by their values
+    for (var k = 0; k < ncol; k++) {
+      var v = colNum(k), first = v[0];
+      if (tsCol < 0 && first > 1e9 && first < 2e10) { tsCol = k; continue; }
+      if (ctrCol < 0 && k === 0 && v.every(function (x) { return Number.isInteger(x) && x >= 0 && x < 256; })) ctrCol = k;
+    }
+  }
+  header.forEach(function (h, k) {
+    if (k === tsCol || k === ctrCol) return;
+    if (/^column \d+$/i.test(h)) { if (eeg.length < 16 && (tsCol < 0 || k < tsCol)) eeg.push(k); return; }
+    if (!NONEEG.test(h.replace(/^\s+/, ""))) eeg.push(k);
+  });
+  eeg = eeg.filter(function (k) { var v = colNum(k); var ok = 0; for (var i = 0; i < Math.min(v.length, 500); i++) if (!isNaN(v[i])) ok++; return ok > 0; });
+  if (!eeg.length) throw new Error("No channel columns could be identified.");
+  var ts = tsCol >= 0 ? Array.from(colNum(tsCol)) : null;
+  if (ts && ts[0] > 1e12) ts = ts.map(function (x) { return x / 1000; });
+  var counter = ctrCol >= 0 ? Array.from(colNum(ctrCol)) : null;
+  return { name: name, declaredFs: meta.fs || null, names: eeg.map(function (k) { return header[k].replace(/^EXG Channel /i, "Ch "); }),
+           ch: eeg.map(function (k) { return Array.from(colNum(k)); }), ts: ts, counter: counter, counterMod: 256, source: "file", tsKind: "file", format: "CSV" };
+}
+function parseEDF(buf, name) {
+  var u8 = new Uint8Array(buf), dec = new TextDecoder("latin1");
+  var str = function (o, l) { return dec.decode(u8.subarray(o, o + l)).trim(); };
+  var bdf = u8[0] === 255;
+  var hdrBytes = +str(184, 8), reserved = str(192, 44), nrec = +str(236, 8), dur = +str(244, 8), ns = +str(252, 4);
+  if (!(ns > 0) || !(dur > 0)) throw new Error("This does not read as an EDF or BDF header.");
+  var off = 256, f = function (w) { var a = []; for (var i = 0; i < ns; i++) a.push(str(off + i * w, w)); off += ns * w; return a; };
+  var labels = f(16); f(80); var dims = f(8), pmin = f(8).map(Number), pmax = f(8).map(Number), dmin = f(8).map(Number), dmax = f(8).map(Number); f(80);
+  var spr = f(8).map(Number); f(32);
+  var bps = bdf ? 3 : 2, recSamples = spr.reduce(function (a, b) { return a + b; }, 0);
+  if (nrec < 0) nrec = Math.floor((u8.length - hdrBytes) / (recSamples * bps));
+  var sigs = [], clipCount = [];
+  for (var s = 0; s < ns; s++) { sigs.push(new Float64Array(nrec * spr[s])); clipCount.push(0); }
+  var p = hdrBytes, dv = new DataView(buf);
+  for (var r = 0; r < nrec; r++) for (s = 0; s < ns; s++) {
+    var g = (pmax[s] - pmin[s]) / (dmax[s] - dmin[s] || 1), o = pmin[s] - g * dmin[s];
+    for (var i = 0; i < spr[s]; i++) {
+      if (p + bps > u8.length) break;
+      var d = bdf ? ((u8[p] | (u8[p + 1] << 8) | (u8[p + 2] << 16)) << 8 >> 8) : dv.getInt16(p, true); p += bps;
+      if (d >= dmax[s] || d <= dmin[s]) clipCount[s]++;
+      sigs[s][r * spr[s] + i] = g * d + o;
+    }
+  }
+  var keep = []; for (s = 0; s < ns; s++) if (!/annotation|status|trigger/i.test(labels[s]) && spr[s] === Math.max.apply(null, spr)) keep.push(s);
+  var fs = spr[keep[0]] / dur;
+  var scale = keep.map(function (k) { return /^mv$/i.test(dims[k]) ? 1000 : /^v$/i.test(dims[k]) ? 1e6 : 1; });
+  return { name: name, declaredFs: fs, fs: fs, names: keep.map(function (k) { return labels[k]; }), units: keep.map(function (k) { return dims[k]; }),
+           ch: keep.map(function (k, j) { return Array.from(sigs[k], function (x) { return x * scale[j]; }); }),
+           ts: null, counter: null, source: "file", tsKind: "none", format: bdf ? "BDF" : "EDF",
+           discontinuous: /EDF\+D/.test(reserved), railHits: keep.map(function (k) { return clipCount[k]; }) };
+}
+
+/* ───────────── the checks ───────────── */
+function median(a) { var b = Float64Array.from(a).sort(); return b.length ? b[b.length >> 1] : NaN; }
+function goertzel(x, fs, f, start, len) { var w = 2 * Math.PI * f / fs, c = 2 * Math.cos(w), s0, s1 = 0, s2 = 0; for (var i = start; i < start + len; i++) { s0 = x[i] + c * s1 - s2; s2 = s1; s1 = s0; } return s1 * s1 + s2 * s2 - c * s1 * s2; }
+function fmtT(sec) { if (!isFinite(sec)) return "—"; var m = Math.floor(sec / 60), s = sec - m * 60; return (m ? m + " min " : "") + s.toFixed(sec < 10 ? 2 : 1) + " s"; }
+function fmtN(x, d) { return isFinite(x) ? x.toLocaleString("en-US", { maximumFractionDigits: d == null ? 1 : d, minimumFractionDigits: 0 }) : "—"; }
+
+function examine(rec) {
+  var F = [], n = rec.ch[0].length, nc = rec.ch.length, marks = [], fs = rec.declaredFs || rec.fs || null, obsFs = null, jitter = null, dtMed = null;
+  var lostSamples = 0, breaks = 0;
+  if (rec.ts && rec.ts.length > 10) {
+    var dts = new Float64Array(rec.ts.length - 1);
+    for (var i = 1; i < rec.ts.length; i++) dts[i - 1] = rec.ts[i] - rec.ts[i - 1];
+    dtMed = median(dts); obsFs = 1 / dtMed;
+    var span = rec.ts[rec.ts.length - 1] - rec.ts[0], meanFs = (rec.ts.length - 1) / span;
+    if (!fs) fs = Math.round(obsFs);
+    var back = 0, dup = 0, gaps = [];
+    for (i = 0; i < dts.length; i++) {
+      if (dts[i] < 0) { back++; marks.push({ kind: "time", a: i, b: i + 1 }); }
+      else if (dts[i] === 0) dup++;
+      else if (dts[i] > 1.8 / fs) { var miss = Math.round(dts[i] * fs) - 1; gaps.push({ at: i, sec: rec.ts[i] - rec.ts[0], dur: dts[i], miss: miss }); }
+    }
+    var sd = 0, cnt = 0; for (i = 0; i < dts.length; i++) if (dts[i] > 0 && dts[i] < 1.8 / fs) { sd += Math.pow(dts[i] - 1 / fs, 2); cnt++; }
+    jitter = Math.sqrt(sd / Math.max(cnt, 1));
+    if (back) { breaks += back; F.push({ sev: "critical", title: "Time runs backwards", what: back + " timestamp" + (back > 1 ? "s" : "") + " earlier than the one before", where: "first at " + fmtT(rec.ts[marks.find(function (m) { return m.kind === "time"; }).a] - rec.ts[0]), mag: back + " of " + fmtN(dts.length, 0) + " intervals", ev: "OBSERVED", evidence: "Consecutive timestamps in the file decrease.", impact: "Any epoching or alignment by time places these samples in the wrong order." }); }
+    if (dup) F.push({ sev: dup / dts.length > 0.01 ? "major" : "minor", title: "Duplicated timestamps", what: fmtN(dup, 0) + " samples share a timestamp with the sample before", where: "throughout", mag: fmtN(dup / dts.length * 100, 2) + " % of intervals", ev: "OBSERVED", evidence: "Zero-length intervals between consecutive timestamps.", impact: "Time cannot separate these samples; stamps are batched rather than per sample, so per-sample timing is not established." });
+    if (gaps.length && !rec.counter) {
+      gaps.forEach(function (g) { lostSamples += g.miss; marks.push({ kind: "lost", a: g.at, b: g.at + 1, t0: g.sec, dur: g.dur }); });
+      var big = gaps.slice().sort(function (a, b) { return b.dur - a.dur; })[0];
+      F.push({ sev: lostSamples / (n + lostSamples) > 0.001 ? "critical" : "major", title: "Gaps in time", what: gaps.length + " gap" + (gaps.length > 1 ? "s" : "") + ", about " + fmtN(lostSamples, 0) + " samples missing", where: "longest at " + fmtT(big.sec) + ", lasting " + fmtN(big.dur * 1000, 0) + " ms", mag: fmtN(lostSamples / (n + lostSamples) * 100, 2) + " % of the expected samples", ev: "OBSERVED", evidence: "Intervals longer than 1.8 sample periods between timestamps.", impact: "Filters and spectral estimates run across the gap as if the signal were continuous." });
+    }
+    if (Math.abs(meanFs - fs) / fs > 0.005 && !gaps.length) F.push({ sev: "major", title: "The rate is not what the file declares", what: "observed " + fmtN(meanFs, 2) + " Hz against " + fmtN(fs, 0) + " Hz declared", where: "whole recording", mag: fmtN((meanFs - fs) / fs * 100, 2) + " %", ev: "INFERRED", evidence: "Sample count over the timestamp span.", impact: "Every frequency and every duration computed at the declared rate is off by this much." });
+    if (jitter > 0.25 / fs && rec.tsKind !== "none") F.push({ sev: "minor", title: "Timestamp jitter", what: "intervals vary by " + fmtN(jitter * 1000, 2) + " ms around the sample period", where: "throughout", mag: fmtN(jitter * fs * 100, 0) + " % of a sample period", ev: rec.tsKind === "host" ? "INFERRED" : "OBSERVED", evidence: rec.tsKind === "host" ? "Stamps written by the receiving computer, in batches; the jitter is the link's, not the amplifier's." : "Spread of intervals between consecutive timestamps.", impact: "Sub-sample event timing cannot be read from these stamps." });
+  } else if (!fs) { fs = 250; }
+  if (rec.counter && rec.counter.length > 10) {
+    var step = 1, mod = rec.counterMod || 256, lostPk = 0, events = 0, firstAt = null, worst = { at: 0, miss: 0 };
+    var diffs = {}; for (i = 1; i < Math.min(rec.counter.length, 2000); i++) { var d = ((rec.counter[i] - rec.counter[i - 1]) % mod + mod) % mod; diffs[d] = (diffs[d] || 0) + 1; }
+    step = +Object.keys(diffs).sort(function (a, b) { return diffs[b] - diffs[a]; })[0] || 1;
+    for (i = 1; i < rec.counter.length; i++) {
+      var dd = ((rec.counter[i] - rec.counter[i - 1]) % mod + mod) % mod;
+      if (dd !== step) { var miss = Math.round((dd || mod) / step) - 1; if (miss > 0) { lostPk += miss; events++; marks.push({ kind: "lost", a: i - 1, b: i }); if (firstAt === null) firstAt = i; if (miss > worst.miss) worst = { at: i, miss: miss }; } }
+    }
+    lostSamples = lostPk;
+    if (lostPk) F.push({ sev: lostPk / (n + lostPk) > 0.001 ? "critical" : "major", title: "Packets lost in transport", what: fmtN(lostPk, 0) + " samples missing in " + events + " burst" + (events > 1 ? "s" : ""), where: "worst at " + fmtT(worst.at / fs) + " (" + worst.miss + " samples)", mag: fmtN(lostPk / (n + lostPk) * 100, 2) + " % of the expected samples", ev: "OBSERVED", evidence: "The board's sample counter skips values (step " + step + ", modulo " + mod + ").", impact: "The signal is stitched across each burst. Spectra, ERPs and classifiers see discontinuities that were never in the brain." });
+  }
+  if (rec.discontinuous) F.push({ sev: "major", title: "The file declares itself discontinuous", what: "EDF+D: records are not contiguous in time", where: "header", mag: "—", ev: "DECLARED", evidence: "The EDF+ header field reads EDF+D.", impact: "Gaps between records are real and must be honoured before any continuous analysis." });
+
+  // channels
+  var win = Math.max(8, Math.round(fs)), chans = [];
+  for (var c = 0; c < nc; c++) {
+    var x = rec.ch[c], nan = 0, sum = 0, sum2 = 0, mn = Infinity, mx = -Infinity;
+    for (i = 0; i < x.length; i++) { var v = x[i]; if (!isFinite(v)) { nan++; continue; } sum += v; sum2 += v * v; if (v < mn) mn = v; if (v > mx) mx = v; }
+    var cntv = x.length - nan, mean = sum / cntv, rms = Math.sqrt(Math.max(sum2 / cntv - mean * mean, 0));
+    var flatW = 0, totW = 0, flatMarks = [];
+    for (var w0 = 0; w0 + win <= x.length; w0 += win) {
+      var a = 0, b = 0; for (i = w0; i < w0 + win; i++) { a += x[i]; b += x[i] * x[i]; }
+      var sdw = Math.sqrt(Math.max(b / win - Math.pow(a / win, 2), 0)); totW++;
+      if (sdw < 0.5) { flatW++; flatMarks.push({ kind: "flat", a: w0, b: w0 + win, ch: c }); }
+    }
+    var range = mx - mn, rail = 0, run = 0, clipMarks = [];
+    for (i = 0; i < x.length; i++) {
+      var atEdge = range > 0 && (x[i] >= mx - range * 1e-6 || x[i] <= mn + range * 1e-6) && Math.abs(x[i] - mean) > 6 * Math.max(rms * 0.1, 1);
+      if (atEdge && i > 0 && x[i] === x[i - 1]) { run++; if (run === 2) { rail += 3; clipMarks.push({ kind: "clip", a: i - 2, b: i + 1, ch: c }); } else if (run > 2) { rail++; clipMarks[clipMarks.length - 1].b = i + 1; } }
+      else run = 0;
+    }
+    if (rec.railHits) rail = Math.max(rail, rec.railHits[c]);
+    var line = null;
+    if (fs >= 125 && x.length > fs * 4) {
+      var L = Math.min(x.length - 1, Math.round(fs * 8)), st = Math.floor(x.length / 2 - L / 2), seg = new Float64Array(L);
+      var mu = 0; for (i = 0; i < L; i++) mu += x[st + i]; mu /= L; for (i = 0; i < L; i++) seg[i] = x[st + i] - mu;
+      var p50 = goertzel(seg, fs, 50, 0, L), p60 = goertzel(seg, fs, 60, 0, L), ref = 0, rn = 0;
+      [40, 43, 46, 53, 56, 64, 67, 70].forEach(function (f) { if (f < fs / 2) { ref += goertzel(seg, fs, f, 0, L); rn++; } });
+      ref /= rn || 1; var pk = Math.max(p50, p60);
+      line = { hz: p50 >= p60 ? 50 : 60, db: 10 * Math.log10((pk + 1e-12) / (ref + 1e-12)) };
+    }
+    var flatPct = totW ? flatW / totW * 100 : 0, clipPct = rail / x.length * 100;
+    var status = "VALID", why = [];
+    if (x.length < fs * 2) { status = "UNKNOWN"; why.push("too short to judge"); }
+    if (nan / x.length > 0.01 || flatPct > 25 || clipPct > 5) status = "INVALID";
+    else if (status === "VALID" && (flatPct > 5 || clipPct > 0.2 || (line && line.db > 20))) status = "SUSPICIOUS";
+    chans.push({ name: rec.names[c], status: status, rms: rms, flatPct: flatPct, clipPct: clipPct, line: line, nan: nan });
+    if (flatPct > 5) {
+      var firstFlat = flatMarks[0].a / fs;
+      F.push({ sev: flatPct > 25 ? "critical" : "major", title: rec.names[c] + " goes flat", what: "the signal stops varying for " + fmtN(flatPct, 1) + " % of the recording", where: "from " + fmtT(firstFlat), mag: fmtN(flatW, 0) + " one-second windows below 0.5 µV", ev: "OBSERVED", evidence: "Standard deviation within one-second windows.", impact: "Typical of an electrode that lost contact. Re-referencing or averaging spreads this channel into the others." });
+      marks = marks.concat(flatMarks.length > 400 ? [{ kind: "flat", a: flatMarks[0].a, b: flatMarks[flatMarks.length - 1].b, ch: c }] : flatMarks);
+    }
+    if (clipPct > 0.05 || (rec.railHits && rec.railHits[c] > 0)) {
+      F.push({ sev: clipPct > 1 ? "critical" : "major", title: rec.names[c] + " is clipped", what: fmtN(rail, 0) + " samples held at the edge of the range", where: clipMarks.length ? "first at " + fmtT(clipMarks[0].a / fs) : "see channel", mag: fmtN(clipPct, 2) + " % of the channel", ev: "OBSERVED", evidence: rec.railHits ? "Samples at the recording's digital minimum or maximum." : "Runs of identical samples at the channel's extreme value.", impact: "The amplifier saturated. What the brain did during these samples is not in the file." });
+      marks = marks.concat(clipMarks);
+    }
+    if (line && line.db > 20) F.push({ sev: line.db > 30 ? "major" : "minor", title: rec.names[c] + " carries mains interference", what: fmtN(line.db, 0) + " dB above the neighbouring spectrum at " + line.hz + " Hz", where: "whole channel", mag: line.hz + " Hz, " + fmtN(line.db, 0) + " dB", ev: "OBSERVED", evidence: "Narrow-band power at " + line.hz + " Hz against eight reference frequencies between 40 and 70 Hz.", impact: "A notch filter removes it but not the cause: usually a poor electrode contact or ground." });
+    if (nan) F.push({ sev: "major", title: rec.names[c] + " has missing values", what: fmtN(nan, 0) + " samples are empty or not a number", where: "throughout", mag: fmtN(nan / x.length * 100, 2) + " %", ev: "OBSERVED", evidence: "Cells that do not parse as numbers.", impact: "Most pipelines either stop or silently drop these samples." });
+  }
+
+  var order = { critical: 0, major: 1, minor: 2 };
+  F.sort(function (a, b) { return order[a.sev] - order[b.sev]; });
+  var crit = F.filter(function (f) { return f.sev === "critical"; }).length, maj = F.filter(function (f) { return f.sev === "major"; }).length;
+  var verdict = n < fs * 2 ? "UNKNOWN" : crit ? "NOT READY" : (maj || F.length) ? "DEGRADED" : "READY";
+  return { verdict: verdict, findings: F, channels: chans, marks: marks, fs: fs, obsFs: obsFs, jitter: jitter, n: n, nc: nc, lostSamples: lostSamples,
+           duration: n / fs, counts: { critical: crit, major: maj, minor: F.length - crit - maj } };
+}
+
+/* ───────────── drawing ───────────── */
+var COL = { lost: "#ff453a", clip: "#ffb340", flat: "#8e8e93", time: "#bf5af2" };
+function drawSignal(rec, res) {
+  var cv = $("sig"), dpr = Math.min(window.devicePixelRatio || 1, 2), W = cv.clientWidth, nc = Math.min(rec.ch.length, 12), H = Math.max(220, nc * 40 + 40);
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px";
+  var g = cv.getContext("2d"); g.scale(dpr, dpr); g.clearRect(0, 0, W, H);
+  var left = 64, right = 16, top = 12, bottom = 28, pw = W - left - right, lane = (H - top - bottom) / nc, n = rec.ch[0].length;
+  res.marks.forEach(function (m) {
+    var x0 = left + m.a / n * pw, x1 = left + Math.max(m.b, m.a + 1) / n * pw, wpx = Math.max(x1 - x0, m.kind === "lost" || m.kind === "time" ? 2 : 1);
+    g.fillStyle = COL[m.kind]; g.globalAlpha = m.kind === "flat" ? 0.18 : 0.30;
+    if (m.ch == null) g.fillRect(x0 - (wpx > 2 ? 0 : 1), top, wpx + (wpx > 2 ? 0 : 1), H - top - bottom);
+    else if (m.ch < nc) g.fillRect(x0, top + m.ch * lane, wpx, lane);
+    g.globalAlpha = 1;
+  });
+  for (var c = 0; c < nc; c++) {
+    var x = rec.ch[c], cy = top + c * lane + lane / 2, cols = Math.floor(pw), per = n / cols, lo = [], hi = [], all = [];
+    for (var k = 0; k < cols; k++) { var a = Math.floor(k * per), b = Math.max(a + 1, Math.floor((k + 1) * per)), mn = Infinity, mx = -Infinity; for (var i = a; i < b && i < n; i++) { var v = x[i]; if (v < mn) mn = v; if (v > mx) mx = v; } lo.push(mn); hi.push(mx); }
+    var srt = Float64Array.from(x.filter ? x.slice(0, 20000) : x).sort(), p5 = srt[Math.floor(srt.length * 0.05)], p95 = srt[Math.floor(srt.length * 0.95)], med = srt[srt.length >> 1];
+    var amp = Math.max((p95 - p5) / 2, 1e-6) * 1.6, sc = (lane * 0.42) / amp;
+    g.strokeStyle = "rgba(45,212,255,.85)"; g.lineWidth = 1; g.beginPath();
+    for (k = 0; k < cols; k++) { var yl = cy - Math.max(Math.min((hi[k] - med) * sc, lane / 2), -lane / 2), yh = cy - Math.max(Math.min((lo[k] - med) * sc, lane / 2), -lane / 2); g.moveTo(left + k + .5, yl); g.lineTo(left + k + .5, Math.max(yh, yl + 0.8)); }
+    g.stroke();
+    g.fillStyle = "#86868b"; g.font = "11px ui-monospace,SFMono-Regular,Menlo,monospace"; g.textBaseline = "middle"; g.fillText(String(rec.names[c]).slice(0, 8), 8, cy);
+    g.strokeStyle = "rgba(255,255,255,.05)"; g.beginPath(); g.moveTo(left, top + (c + 1) * lane); g.lineTo(W - right, top + (c + 1) * lane); g.stroke();
+  }
+  var dur = n / res.fs, step = dur > 300 ? 60 : dur > 100 ? 20 : dur > 40 ? 10 : 5;
+  g.fillStyle = "#86868b"; g.textBaseline = "alphabetic";
+  for (var t = 0; t <= dur; t += step) { var xx = left + t / dur * pw; g.fillText(t + " s", Math.min(xx - 8, W - right - 30), H - 8); g.fillStyle = "rgba(255,255,255,.06)"; g.fillRect(xx, top, 1, H - top - bottom); g.fillStyle = "#86868b"; }
+}
+function spark(x) {
+  var cv = document.createElement("canvas"), dpr = 2, W = 120, H = 24; cv.width = W * dpr; cv.height = H * dpr; cv.className = "spark";
+  var g = cv.getContext("2d"); g.scale(dpr, dpr); var n = x.length, per = n / W, mn = Infinity, mx = -Infinity, pts = [];
+  for (var k = 0; k < W; k++) { var a = Math.floor(k * per), v = 0, c = 0; for (var i = a; i < Math.min(n, a + Math.max(1, Math.floor(per))); i++) { v += x[i]; c++; } v /= c || 1; pts.push(v); if (v < mn) mn = v; if (v > mx) mx = v; }
+  g.strokeStyle = "rgba(161,161,166,.9)"; g.lineWidth = 1.2; g.beginPath();
+  pts.forEach(function (v, k) { var y = H - 3 - (mx > mn ? (v - mn) / (mx - mn) : .5) * (H - 6); k ? g.lineTo(k, y) : g.moveTo(k, y); }); g.stroke();
+  return cv;
+}
+
+/* ───────────── rendering the report ───────────── */
+var current = null;
+function render(rec, res) {
+  current = { rec: rec, res: res };
+  var vw = $("vWord"); vw.textContent = res.verdict; vw.className = "v-word " + res.verdict.replace(" ", "-");
+  var c = res.counts;
+  $("vSum").textContent = res.verdict === "READY" ? "No technical blocker was found within the scope of this preview." :
+    res.verdict === "UNKNOWN" ? "The recording is too short or too sparse to establish its condition." :
+    (c.critical ? c.critical + " critical" + (c.major ? ", " : "") : "") + (c.major ? c.major + " major" : "") + (c.minor ? (c.critical || c.major ? " and " : "") + c.minor + " minor" : "") +
+    " finding" + (res.findings.length > 1 ? "s" : "") + (res.verdict === "NOT READY" ? " block this recording from downstream use." : " — usable within limits, with the issues below.");
+  $("vFile").textContent = rec.name + (rec.format ? " · " + rec.format : "") + " · examined " + new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC · " + VERSION;
+  var facts = [
+    [res.nc, "channels"], [fmtT(res.duration), "duration"],
+    [fmtN(res.n, 0), "samples"], [fmtN(res.fs, res.fs % 1 ? 2 : 0) + " Hz", rec.declaredFs ? "declared rate" : "rate, inferred"],
+    [res.obsFs ? fmtN(res.obsFs, 2) + " Hz" : "—", res.obsFs ? "observed rate" : "no timestamps to observe"],
+    [res.lostSamples ? fmtN(res.lostSamples, 0) : "0", res.lostSamples ? "samples lost" : "samples lost, none observed"]
+  ];
+  $("facts").innerHTML = facts.map(function (f) { return "<div><b>" + esc(String(f[0])) + "</b><span>" + esc(f[1]) + "</span></div>"; }).join("");
+  var tb = $("chTable").querySelector("tbody"); tb.textContent = "";
+  res.channels.forEach(function (ch, k) {
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + esc(ch.name) + "</td><td><span class='st " + ch.status + "'>" + ch.status + "</span></td><td class='n'>" + fmtN(ch.rms, 1) + "</td><td class='n'>" + fmtN(ch.flatPct, 1) + " %</td><td class='n'>" + fmtN(ch.clipPct, 2) + " %</td><td class='n'>" + (ch.line && ch.line.db >= 6 ? fmtN(ch.line.db, 0) + " dB @ " + ch.line.hz + " Hz" : "—") + "</td><td></td>";
+    tr.lastChild.appendChild(spark(rec.ch[k])); tb.appendChild(tr);
+  });
+  var fd = $("findings"); fd.textContent = "";
+  if (!res.findings.length) fd.innerHTML = "<p class='none'>No finding within the scope of this preview.</p>";
+  res.findings.forEach(function (f) {
+    var d = document.createElement("div"); d.className = "finding";
+    d.innerHTML = "<span class='sev " + f.sev + "'>" + f.sev + "</span><div><h4>" + esc(f.title) + "<span class='ev'>" + f.ev + "</span></h4><dl>" +
+      "<dt>What</dt><dd>" + esc(f.what) + "</dd><dt>Where</dt><dd>" + esc(f.where) + "</dd><dt>Magnitude</dt><dd>" + esc(f.mag) + "</dd><dt>Evidence</dt><dd>" + esc(f.evidence) + "</dd><dt>Impact</dt><dd>" + esc(f.impact) + "</dd></dl></div>";
+    fd.appendChild(d);
+  });
+  var gaps = [
+    ["Event integrity", "Markers and triggers against the stimulus that produced them."],
+    ["Synchronisation", "This stream against eye tracking, EMG, video or the stimulus computer's clock."],
+    ["Acquisition", "What the amplifier, firmware and electrodes did — a file alone cannot show impedance or the analog front end."],
+    ["Provenance", "Where the file came from and what touched it before it reached you."]
+  ];
+  $("gaps").innerHTML = gaps.map(function (g) { return "<div><b>" + g[0] + "</b><span>" + g[1] + "</span><span class='ev'>NOT ESTABLISHED</span></div>"; }).join("");
+  $("scopeNote").textContent = "Scope of this preview: " + res.nc + " channels and their timestamps, read from one file. The original file is not modified. Thresholds are stated in each finding's evidence.";
+  var body = "Preflight preview: " + res.verdict + "\nFile: " + rec.name + "\nChannels: " + res.nc + ", duration " + fmtT(res.duration) + ", rate " + fmtN(res.fs, 2) + " Hz\nFindings: " + res.findings.map(function (f) { return f.sev + " — " + f.title; }).join("; ") + "\n\nWhat we need to establish:\n";
+  $("requestBtn").href = "mailto:connect@axonos.org?subject=" + encodeURIComponent("Neural Data Examination request — " + res.verdict) + "&body=" + encodeURIComponent(body);
+  $("result").style.display = "block";
+  requestAnimationFrame(function () { drawSignal(rec, res); $("result").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); });
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+/* ───────────── wiring ───────────── */
+function progress(p) { var b = $("progress"); b.style.display = p < 1 ? "block" : "none"; b.firstChild.style.width = Math.round(p * 100) + "%"; }
+function run(rec) {
+  progress(0.6);
+  setTimeout(function () {
+    try { var res = examine(rec); progress(1); render(rec, res); }
+    catch (e) { progress(1); alert("This recording could not be examined: " + e.message); }
+  }, 30);
+}
+function openFile(file) {
+  if (!file) return;
+  progress(0.15);
+  var r = new FileReader(), isEdf = /\.(edf|bdf)$/i.test(file.name);
+  r.onload = function () {
+    try { run(isEdf ? parseEDF(r.result, file.name) : parseCSV(r.result, file.name)); }
+    catch (e) { progress(1); alert("This file could not be read: " + e.message); }
+  };
+  r.onerror = function () { progress(1); alert("The file could not be opened."); };
+  isEdf ? r.readAsArrayBuffer(file) : r.readAsText(file);
+}
+$("file").addEventListener("change", function (e) { openFile(e.target.files[0]); e.target.value = ""; });
+$("pick").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file").click(); } });
+var dz = $("drop");
+["dragenter", "dragover"].forEach(function (t) { dz.addEventListener(t, function (e) { e.preventDefault(); dz.classList.add("over"); }); });
+["dragleave", "drop"].forEach(function (t) { dz.addEventListener(t, function (e) { e.preventDefault(); dz.classList.remove("over"); }); });
+dz.addEventListener("drop", function (e) { if (e.dataTransfer.files[0]) openFile(e.dataTransfer.files[0]); });
+document.querySelectorAll("[data-example]").forEach(function (b) { b.addEventListener("click", function () { progress(0.2); setTimeout(function () { run(makeExample(b.getAttribute("data-example"))); }, 20); }); });
+$("jsonBtn").addEventListener("click", function () {
+  if (!current) return;
+  var r = current.res, out = { examination: "Neural Data Preflight (preview)", engine: VERSION, examined_at: new Date().toISOString(), file: current.rec.name,
+    scope: { channels: r.nc, samples: r.n, rate_hz: r.fs, observed_rate_hz: r.obsFs, duration_s: r.duration }, verdict: r.verdict,
+    findings: r.findings.map(function (f) { return { severity: f.sev, title: f.title, what: f.what, where: f.where, magnitude: f.mag, evidence_class: f.ev, evidence: f.evidence, impact: f.impact }; }),
+    channels: r.channels.map(function (c) { return { name: c.name, status: c.status, rms: +c.rms.toFixed(3), flat_pct: +c.flatPct.toFixed(2), clipped_pct: +c.clipPct.toFixed(3), line_noise_db: c.line ? +c.line.db.toFixed(1) : null, line_hz: c.line ? c.line.hz : null }; }),
+    not_established: ["event integrity", "synchronisation across streams", "acquisition hardware properties", "provenance"] };
+  var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)], { type: "application/json" }));
+  a.download = "preflight-evidence.json"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+});
+var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (current) drawSignal(current.rec, current.res); }, 150); });
+window.__preflight = { examine: examine, parseCSV: parseCSV, makeExample: makeExample };
+})();
+</script>
+</body>
+</html>

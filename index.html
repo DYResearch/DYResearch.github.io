@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DY Research — Know what is real">
 <meta name="twitter:image" content="https://dyresearch.github.io/og.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Independent technical intelligence: technical due diligence, focused audits and snapshots for investors, founders and engineering teams, each ending in a written verdict on what the evidence supports.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","jobTitle":"Principal","sameAs":["https://www.linkedin.com/in/dyresearch/","https://github.com/DYResearch"]},"knowsAbout":["Technical due diligence","Software architecture","Worst-case execution time","Real-time systems","Formal verification","Embedded Rust","Brain–computer interfaces"],"makesOffer":[{"@type":"Offer","name":"Snapshot","description":"What the technology actually does, and what its evidence supports. Five business days.","price":"5000","priceCurrency":"USD"},{"@type":"Offer","name":"Focused Audit","description":"One critical property investigated to the bottom. Two to three weeks.","price":"12000","priceCurrency":"USD"},{"@type":"Offer","name":"Due Diligence","description":"Whether the technology is what the company says it is, and what could break the investment. Three to four weeks.","price":"25000","priceCurrency":"USD"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"DY Research","url":"https://dyresearch.github.io/","description":"Independent technical intelligence: technical due diligence, focused audits and snapshots for investors, founders and engineering teams, each ending in a written verdict on what the evidence supports.","email":"connect@axonos.org","areaServed":"Worldwide","founder":{"@type":"Person","name":"Denis Yermakou","jobTitle":"Principal","sameAs":["https://www.linkedin.com/in/dyresearch/","https://github.com/DYResearch"]},"knowsAbout":["Technical due diligence","Software architecture","Worst-case execution time","Real-time systems","Formal verification","Embedded Rust","Brain–computer interfaces"],"makesOffer":[{"@type":"Offer","name":"Snapshot","description":"What the technology actually does, and what its evidence supports. Five business days."},{"@type":"Offer","name":"Focused Audit","description":"One critical property investigated to the bottom. Two to three weeks."},{"@type":"Offer","name":"Due Diligence","description":"Whether the technology is what the company says it is, and what could break the investment. Three to four weeks."}]}</script>
 <script>document.documentElement.className+=" js";setTimeout(function(){var e=document.querySelectorAll(".reveal");for(var i=0;i<e.length;i++)e[i].classList.add("in")},3000)</script>
 <style>
 /* ─────────────────────────────────────────────────────────────────────────
@@ -177,6 +177,8 @@ section.first{border-top:0}
 .plan .when{font:500 12.5px/1 var(--mono);color:var(--text-3)}
 .plan .badge{font-size:11.5px;font-weight:600;color:var(--accent);border:1px solid rgba(45,212,255,.4);border-radius:980px;padding:5px 10px;white-space:nowrap}
 .plan .name{display:block;font-size:22px;font-weight:700;letter-spacing:-.025em;height:28px}
+.plan .price.por{font-size:34px;letter-spacing:-.035em;color:var(--text-2);margin:22px 0 16px}
+.scope .price-line b.por{font-size:22px;color:var(--text-2)}
 .plan .price{display:block;font-size:54px;font-weight:700;letter-spacing:-.045em;line-height:1;margin:14px 0 14px;font-variant-numeric:tabular-nums}
 .plan .q{display:block;font-size:15.5px;line-height:1.45;color:var(--text);min-height:4.4em}
 .plan ul{list-style:none;margin:22px 0 0;padding:22px 0 0;border-top:1px solid var(--hair);align-self:start}
@@ -491,6 +493,14 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 @keyframes pzin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (max-width:520px){.pz-tasks{grid-template-columns:minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){.pz-out{animation:none}}
+.nde{padding:0!important;margin-top:clamp(40px,6vw,72px)}
+.nde-card{display:block;border-radius:28px;padding:34px 36px;background:linear-gradient(135deg,rgba(45,212,255,.14),rgba(45,212,255,0) 58%),var(--panel);border:1px solid rgba(45,212,255,.34);transition:border-color .25s var(--ease),transform .25s var(--ease)}
+.nde-card:hover{text-decoration:none;border-color:var(--accent);transform:translateY(-2px)}
+.nde-k{display:flex;align-items:center;gap:10px;color:var(--accent);font-size:14px;font-weight:600}
+.nde-b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#000;background:var(--accent);border-radius:980px;padding:3px 9px}
+.nde-t{display:block;color:var(--text);font-size:clamp(26px,3.4vw,38px);font-weight:700;letter-spacing:-.035em;margin-top:12px;line-height:1.1}
+.nde-s{display:block;color:var(--text-2);font-size:17px;margin-top:12px;max-width:62ch}
+.nde-l{display:block;color:var(--accent);font-weight:600;margin-top:18px}
 </style>
 </head>
 <body>
@@ -499,6 +509,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 <nav class="family" aria-label="DY Research family">
   <div class="wrap">
     <a href="/" aria-current="page">DY Research</a>
+    <a href="/examinations/">Examinations</a>
     <a href="/wcet/">DY-WCET</a>
     <a href="https://dy-proof.github.io/" rel="noopener">DY PROOF <span aria-hidden="true">↗</span></a>
     <a href="https://axonos-bci.github.io/axonos-community-radar/" rel="noopener">Radar <span aria-hidden="true">↗</span></a>
@@ -510,6 +521,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <a class="brand" href="#top">DY Research</a>
     <div class="nav-links">
       <a href="#engagements">Engagements</a>
+      <a href="/examinations/">Neural data</a>
       <a href="#for">Who it is for</a>
       <a href="#proof">Proof</a>
       <a href="#process">Process</a>
@@ -561,6 +573,18 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 </section>
 
 <!-- ═══ WHO IT IS FOR ═══════════════════════════════════════════════════ -->
+<!-- ═══ NEURAL DATA EXAMINATIONS ═══════════════════════════════════════ -->
+<section class="nde" aria-labelledby="nde-h">
+  <div class="wrap">
+    <a class="nde-card" href="/examinations/">
+      <span class="nde-k">New · Neural Data Examinations <span class="nde-b">Early access</span></span>
+      <span class="nde-t" id="nde-h">Where do you stop trusting the data?</span>
+      <span class="nde-s">Twelve examinations for BCI and neural-data systems, from a recording's preflight to the boundary between device and AI. Try the Preflight preview on your own EEG file — nothing is uploaded.</span>
+      <span class="nde-l">Explore the examinations ›</span>
+    </a>
+  </div>
+</section>
+
 <section id="for">
   <div class="wrap">
     <div class="head center measure reveal">
@@ -619,16 +643,16 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   <div class="wrap">
     <div class="head center measure reveal">
       <span class="eyebrow">Engagements</span>
-      <h2>Fixed price. Fixed scope.<br>A written verdict.</h2>
+      <h2>Fixed scope.<br>A written verdict.</h2>
       <p class="lead">Three engagements, each answering one kind of question.
-        The price is agreed in writing before any work begins.</p>
+        Scope and price are agreed in writing, on request, before any work begins.</p>
     </div>
 
     <div class="grid-3 reveal">
       <div class="card plan">
         <div class="row-top"><span class="when">5 business days</span></div>
         <span class="name">Snapshot</span>
-        <span class="price">$5,000</span>
+        <span class="price por">On request</span>
         <span class="q">What does this technology actually do, and what does its evidence support?</span>
         <ul>
           <li>Architecture map, as built</li>
@@ -646,7 +670,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div class="card plan">
         <div class="row-top"><span class="when">2–3 weeks</span><span class="badge">One critical property</span></div>
         <span class="name">Focused Audit</span>
-        <span class="price">$12,000</span>
+        <span class="price por">On request</span>
         <span class="q">Does this one critical property — timing, determinism, concurrency — actually hold?</span>
         <ul>
           <li class="plus">Everything in Snapshot, and:</li>
@@ -665,7 +689,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div class="card plan featured">
         <div class="row-top"><span class="when">3–4 weeks</span><span class="badge">For investment decisions</span></div>
         <span class="name">Due Diligence</span>
-        <span class="price">$25,000</span>
+        <span class="price por">On request</span>
         <span class="q">Is the technology what the company says it is — and what could break the investment?</span>
         <ul>
           <li class="plus">Everything in Focused Audit, across the whole system, and:</li>
@@ -683,7 +707,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     </div>
 
     <div class="terms">
-      <span>Fixed price, confirmed in writing</span>
+      <span>Pricing on request, confirmed in writing</span>
       <span>Invoiced in USD or EUR — half on starting, half on delivery</span>
       <span>Mutual NDA before the first file</span>
       <span>Nothing invoiced until the scope is agreed</span>
@@ -766,7 +790,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
             <tr class="group"><th colspan="4">Terms</th></tr>
             <tr><th scope="row">Written round of questions</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr><th scope="row">Mutual NDA</th><td class="t">Standard</td><td class="t">Standard</td><td class="t">Standard</td></tr>
-            <tr class="price"><th scope="row">Price</th><td>$5,000</td><td>$12,000</td><td>$25,000</td></tr>
+            <tr class="price"><th scope="row">Price</th><td>On request</td><td>On request</td><td>On request</td></tr>
           </tbody>
         </table>
       </div>
@@ -790,7 +814,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>You receive</h4><p>A one-page executive summary, the written report and the evidence matrix.</p>
           <h4>We need from you</h4><p>Access to the repository or product, the deck or technical documentation, and the question you most need answered.</p>
           <h4>Not included</h4><p>Running the build, measurement on hardware, and changes to the code.</p>
-          <div class="price-line"><b>$5,000</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request</a></div>
+          <div class="price-line"><b class="por">On request</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request</a></div>
         </div>
       </div>
     </div>
@@ -815,7 +839,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>The standard</h4><p><a href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">An RP2350 timer that stopped for minutes</a> — a complete analysis, published in full.</p>
           <h4>We need from you</h4><p>The above, plus the property in question and any logs, traces or measurements you already hold.</p>
           <h4>Not included</h4><p>Instrumentation on a bench, changes to your code, and a second property, which is quoted separately.</p>
-          <div class="price-line"><b>$12,000</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request</a></div>
+          <div class="price-line"><b class="por">On request</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request</a></div>
         </div>
       </div>
     </div>
@@ -841,7 +865,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>You receive</h4><p>A two-page memo written for an investment committee, the full report, the risk register, the evidence appendix and one written round of questions.</p>
           <h4>We need from you</h4><p>Repository access, the deck and the technical materials in the data room, and one technical contact who can answer in writing.</p>
           <h4>Not included</h4><p>Legal, financial or commercial diligence, and investment advice. The findings are technical; the decision stays yours.</p>
-          <div class="price-line"><b>$25,000</b><a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request</a></div>
+          <div class="price-line"><b class="por">On request</b><a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request</a></div>
         </div>
       </div>
     </div>
@@ -1023,7 +1047,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <div class="measure reveal">
       <span class="eyebrow">Begin</span>
       <h2>Bring the question.<br>Leave with the evidence.</h2>
-      <p class="lead">Scope and a fixed price come back in writing. Nothing is invoiced until you agree.</p>
+      <p class="lead">Scope and price come back in writing. Nothing is invoiced until you agree.</p>
       <div class="actions">
         <a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
         <a class="more" href="#scope" data-scope="cmp">Compare the engagements</a>
@@ -1052,14 +1076,14 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 <dialog class="sheet" id="req" aria-labelledby="req-title">
   <form method="dialog" id="req-form">
     <div class="sheet-h">
-      <div><h2 id="req-title">Request an engagement</h2><p>Scope and a fixed price come back in writing.</p></div>
+      <div><h2 id="req-title">Request an engagement</h2><p>Scope and price come back in writing.</p></div>
       <button class="x" type="button" data-close aria-label="Close">×</button>
     </div>
     <div class="field"><span>Engagement</span>
       <div class="seg" role="radiogroup">
-        <label><input type="radio" name="tier" value="snap"><span>Snapshot · $5,000</span></label>
-        <label><input type="radio" name="tier" value="audit" checked><span>Focused Audit · $12,000</span></label>
-        <label><input type="radio" name="tier" value="dd"><span>Due Diligence · $25,000</span></label>
+        <label><input type="radio" name="tier" value="snap"><span>Snapshot</span></label>
+        <label><input type="radio" name="tier" value="audit" checked><span>Focused Audit</span></label>
+        <label><input type="radio" name="tier" value="dd"><span>Due Diligence</span></label>
       </div></div>
     <label class="field"><span>What should be investigated?</span>
       <input name="what" type="text" autocomplete="url" placeholder="Repository, product or company"></label>
@@ -1100,7 +1124,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   // A card payment link per engagement, for the deposit. Empty means the
   // button stays hidden: a link that goes nowhere is worse than no link.
   var PAY = { snap: "", audit: "", dd: "" };
-  var TIERS = { snap: ["Snapshot", "$5,000"], audit: ["Focused Audit", "$12,000"], dd: ["Due Diligence", "$25,000"] };
+  var TIERS = { snap: ["Snapshot", "pricing on request"], audit: ["Focused Audit", "pricing on request"], dd: ["Due Diligence", "pricing on request"] };
 
   // ── tabs ─────────────────────────────────────────────────────────────
   function select(tab) {
