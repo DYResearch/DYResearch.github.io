@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Neural Data Examinations — DY Research</title>
+<title>Examinations — DY Research</title>
 <meta name="description" content="Technical examinations for BCI and neural-data systems. One question, one boundary, one verdict backed by evidence. Twelve examinations, from a recording's preflight to the boundary between device and AI. Early access; pricing on request.">
 <link rel="canonical" href="https://dyresearch.github.io/examinations/">
 <meta name="theme-color" content="#000000">
@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://dyresearch.github.io/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Cpath d='M5 17h5l2-6 4 12 3-9 2 3h6' fill='none' stroke='%232dd4ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Neural Data Examinations","provider":{"@type":"Organization","name":"DY Research","url":"https://dyresearch.github.io/"},"serviceType":"Technical examination of BCI and neural-data systems","areaServed":"Worldwide","url":"https://dyresearch.github.io/examinations/","description":"Technical examinations for BCI and neural-data systems: one question, one examination boundary, one evidence-backed verdict. Early access; pricing on request.","hasOfferCatalog":{"@type":"OfferCatalog","name":"Examinations","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Neural Data Preflight","description":"Can this recording be trusted before processing?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Recording Integrity","description":"Was anything lost, duplicated, corrupted or disrupted in time?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Channel Integrity","description":"Can the recorded channels be trusted?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Event Integrity","description":"Can the events and markers be trusted?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Synchronisation","description":"Are the neural and auxiliary streams actually synchronised?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Acquisition Validation","description":"Did the acquisition system record what it claims?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Provenance","description":"Where did this data come from, and what happened to it?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Dataset Readiness","description":"Is this dataset ready for its intended pipeline?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Reproducibility","description":"Could another team reproduce the result from the evidence?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Data Contract Validation","description":"Does the dataset conform to its declared specification?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Device-to-AI Boundary","description":"What happens to neural information between acquisition and AI?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Evidence Examination","description":"Can the technical state of this system be demonstrated to a third party?"}}]}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Neural Data Examinations","provider":{"@type":"Organization","name":"DY Research","url":"https://dyresearch.github.io/"},"serviceType":"Technical examination of BCI and neural-data systems","areaServed":"Worldwide","url":"https://dyresearch.github.io/examinations/","description":"Technical examinations for BCI and neural-data systems: one question, one examination boundary, one evidence-backed verdict. Early access; pricing on request.","hasOfferCatalog":{"@type":"OfferCatalog","name":"Examinations","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Recording Integrity","description":"Can the integrity of the recording be established?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Channel Integrity","description":"Can each channel be trusted, end to end?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Event Integrity","description":"Can the events and markers be trusted?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Synchronisation","description":"Can the timing between streams be established?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Acquisition Validation","description":"Does the acquisition system produce what its contract states?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Provenance","description":"Can the origin and history of the data be established?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Dataset Readiness","description":"Is the dataset fit for its stated downstream purpose?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Reproducibility","description":"Can the claimed result be reproduced from the evidence supplied?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Data Contract Validation","description":"Does the system behave as its data contract says?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Device → AI Boundary","description":"What happens to information between acquisition and AI?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Evidence Examination","description":"How strongly does the evidence support the claim?"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Failure Boundary","description":"Where does the evidence stop supporting the claimed behaviour?"}}]}}</script>
 <style>
 :root{
   --bg:#000;--panel:#0c0c0e;--panel-2:#131316;--panel-3:#1c1c20;
@@ -218,85 +218,89 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <h2 id="pain-h">Where it breaks today.</h2>
     <p class="lead" style="margin-top:18px">Almost every team works from recordings, after the fact. These three questions decide whether anything built on them holds.</p>
   </div>
-  <div class="feats"><article class="feat"><p class="fk">02 · Most requested</p><h3>Recording Integrity</h3><p class="fq">Was anything lost, duplicated, corrupted or disrupted in time?</p><p class="why">Wireless acquisition loses packets, and most pipelines join the signal across the gap without saying so.</p>
-      <a class="flink" href="#ex-02">What it examines <span aria-hidden="true">→</span></a></article><article class="feat"><p class="fk">05 · Most requested</p><h3>Synchronisation</h3><p class="fq">Are the neural and auxiliary streams actually synchronised?</p><p class="why">Every multimodal study rests on clocks that agree. Left to their defaults, they rarely do.</p>
-      <a class="flink" href="#ex-05">What it examines <span aria-hidden="true">→</span></a></article><article class="feat"><p class="fk">08 · Most requested</p><h3>Dataset Readiness</h3><p class="fq">Is this dataset ready for its intended pipeline?</p><p class="why">Models are trained on pooled recordings. One broken file in the pool shapes the model, and nobody sees it.</p>
-      <a class="flink" href="#ex-08">What it examines <span aria-hidden="true">→</span></a></article></div>
+  <div class="feats"><article class="feat"><p class="fk">01 · Most requested</p><h3>Recording Integrity</h3><p class="fq">Can the integrity of the recording be established?</p><p class="why">Wireless acquisition loses packets, and most pipelines join the signal across the gap without saying so.</p>
+      <a class="flink" href="#ex-01">What it examines <span aria-hidden="true">→</span></a></article><article class="feat"><p class="fk">04 · Most requested</p><h3>Synchronisation</h3><p class="fq">Can the timing between streams be established?</p><p class="why">Every multimodal study rests on clocks that agree. Left to their defaults, they rarely do.</p>
+      <a class="flink" href="#ex-04">What it examines <span aria-hidden="true">→</span></a></article><article class="feat"><p class="fk">07 · Most requested</p><h3>Dataset Readiness</h3><p class="fq">Is the dataset fit for its stated downstream purpose?</p><p class="why">Models are trained on pooled recordings. One broken file in the pool shapes the model, and nobody sees it.</p>
+      <a class="flink" href="#ex-07">What it examines <span aria-hidden="true">→</span></a></article></div>
 </section>
 
 <section class="wrap" id="catalog" aria-labelledby="cat-h">
   <div class="center measure">
     <span class="eyebrow">The catalogue</span>
     <h2 id="cat-h">Twelve examinations.<br>Each answers one question.</h2>
+    <p class="lead" style="margin-top:18px">Not sure where to start? <a href="/examinations/preflight/">Run a Preflight</a> on one recording first — in your browser, in seconds.</p>
   </div>
   
     <div class="grp" data-group="before">
-      <div class="gh"><h3>Before processing</h3><p>The recording itself: can it be used at all?</p></div>
-      <details class="ex" id="ex-01" data-stages="raw-data">
-        <summary><span class="num">01</span><span class="t"><b>Neural Data Preflight</b><span>Can this recording be trusted before processing?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Recording structure and file integrity</li><li>Sampling, duration and timing</li><li>Channels and signal condition</li><li>Metadata and basic provenance</li></ul></div>
-        <div><p class="k">You receive</p><p>A preflight assessment naming every material issue before the data enters a pipeline.</p><p class="stg">Raw data</p><a class="try" href="/examinations/preflight/">Run the preview <span aria-hidden="true">→</span></a></div></div>
+      <div class="gh"><h3>The recording</h3><p>Can it be used at all?</p></div>
+      <details class="ex" id="ex-01" data-stages="transport raw-data">
+        <summary><span class="num">01</span><span class="t"><b>Recording Integrity</b><span>Can the integrity of the recording be established?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Packet loss, gaps and truncation</li><li>Duplicated and corrupted samples</li><li>Malformed records</li><li>Timestamp continuity</li></ul></div>
+        <div><p class="k">You receive</p><p>A Recording Integrity Map: what happened, where, how much, the evidence, and its impact.</p><p class="stg">Transport · Raw data</p><a class="try" href="/examinations/preflight/">Start with a Preflight <span aria-hidden="true">→</span></a></div></div>
       </details>
-      <details class="ex" id="ex-02" data-stages="transport raw-data">
-        <summary><span class="num">02</span><span class="t"><b>Recording Integrity</b><span>Was anything lost, duplicated, corrupted or disrupted in time?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Missing and duplicated samples</li><li>Gaps and truncation</li><li>Timestamp discontinuities</li><li>Packet-level anomalies</li></ul></div>
-        <div><p class="k">You receive</p><p>A failure map: what happened, where, how much, the evidence, and its impact.</p><p class="stg">Transport · Raw data</p></div></div>
+      <details class="ex" id="ex-02" data-stages="acquisition raw-data">
+        <summary><span class="num">02</span><span class="t"><b>Channel Integrity</b><span>Can each channel be trusted, end to end?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Missing, flat and saturated channels</li><li>Abnormal ranges and dropouts</li><li>Channel consistency</li><li>Metadata against signal</li></ul></div>
+        <div><p class="k">You receive</p><p>A Channel Integrity Map: every channel VALID, SUSPICIOUS, INVALID or UNKNOWN.</p><p class="stg">Acquisition · Raw data</p><a class="try" href="/examinations/preflight/">Start with a Preflight <span aria-hidden="true">→</span></a></div></div>
       </details>
-      <details class="ex" id="ex-03" data-stages="acquisition raw-data">
-        <summary><span class="num">03</span><span class="t"><b>Channel Integrity</b><span>Can the recorded channels be trusted?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Identity, order, count and montage</li><li>Reference and units</li><li>Flat, clipped and saturated channels</li><li>Abnormal channel behaviour</li></ul></div>
-        <div><p class="k">You receive</p><p>Channel-level findings: VALID, SUSPICIOUS, INVALID or UNKNOWN.</p><p class="stg">Acquisition · Raw data</p></div></div>
-      </details>
-      <details class="ex" id="ex-04" data-stages="raw-data">
-        <summary><span class="num">04</span><span class="t"><b>Event Integrity</b><span>Can the events and markers be trusted?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Lost and duplicated events</li><li>Event order and trigger timing</li><li>Marker shifts</li><li>Annotation consistency</li></ul></div>
-        <div><p class="k">You receive</p><p>An assessment of missing, duplicated or displaced events.</p><p class="stg">Raw data</p></div></div>
+      <details class="ex" id="ex-03" data-stages="raw-data">
+        <summary><span class="num">03</span><span class="t"><b>Event Integrity</b><span>Can the events and markers be trusted?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Missing and duplicated events</li><li>Event order and timestamps</li><li>Marker against data alignment</li><li>Event consistency</li></ul></div>
+        <div><p class="k">You receive</p><p>An Event Integrity Map of missing, duplicated or displaced events.</p><p class="stg">Raw data</p></div></div>
       </details>
     </div>
     <div class="grp" data-group="streams">
-      <div class="gh"><h3>Across devices and streams</h3><p>The hardware and the clocks: did they do what they claim?</p></div>
-      <details class="ex" id="ex-05" data-stages="acquisition transport raw-data">
-        <summary><span class="num">05</span><span class="t"><b>Synchronisation</b><span>Are the neural and auxiliary streams actually synchronised?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Clock offset, drift and jitter</li><li>Latency between streams</li><li>Timestamp mismatch</li><li>EEG against IMU, EMG, ECG, eye tracking, video or stimulation</li></ul></div>
-        <div><p class="k">You receive</p><p>A synchronisation map: reference, stream, offset, drift, jitter, confidence.</p><p class="stg">Acquisition · Transport · Raw data</p></div></div>
+      <div class="gh"><h3>Devices and streams</h3><p>Did the hardware and the clocks do what they claim?</p></div>
+      <details class="ex" id="ex-04" data-stages="acquisition transport raw-data">
+        <summary><span class="num">04</span><span class="t"><b>Synchronisation</b><span>Can the timing between streams be established?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Clock relationships, offset and drift</li><li>Buffering and transport latency</li><li>Resampling</li><li>Event alignment across streams</li></ul></div>
+        <div><p class="k">You receive</p><p>A Synchronisation Map: reference, stream, offset, drift, jitter, confidence.</p><p class="stg">Acquisition · Transport · Raw data</p></div></div>
       </details>
-      <details class="ex" id="ex-06" data-stages="device acquisition transport">
-        <summary><span class="num">06</span><span class="t"><b>Acquisition Validation</b><span>Did the acquisition system record what it claims?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Configuration and sampling behaviour</li><li>Timestamping and buffering</li><li>Packet integrity and transport</li><li>Declared against observed behaviour</li></ul></div>
-        <div><p class="k">You receive</p><p>Every property marked observed, inferred or not established. A file cannot prove what was never measured.</p><p class="stg">Device · Acquisition · Transport</p></div></div>
+      <details class="ex" id="ex-05" data-stages="device acquisition transport">
+        <summary><span class="num">05</span><span class="t"><b>Acquisition Validation</b><span>Does the acquisition system produce what its contract states?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Sampling rate and channel configuration</li><li>Resolution and ranges</li><li>Acquisition parameters and metadata</li><li>Device output against documented behaviour</li></ul></div>
+        <div><p class="k">You receive</p><p>An Acquisition Validation Report. A file cannot prove what was never measured, and the report says so.</p><p class="stg">Device · Acquisition · Transport</p></div></div>
       </details>
     </div>
     <div class="grp" data-group="ai">
-      <div class="gh"><h3>Before AI</h3><p>The chain to a model: what reached it, and can it be shown?</p></div>
-      <details class="ex" id="ex-07" data-stages="device raw-data processing derived-data ai">
-        <summary><span class="num">07</span><span class="t"><b>Provenance</b><span>Where did this data come from, and what happened to it?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Device, firmware and software identity</li><li>Raw-data identity and hashes</li><li>Processing history and transformations</li><li>Dataset lineage</li></ul></div>
-        <div><p class="k">You receive</p><p>A provenance chain from device to model input, with its gaps named.</p><p class="stg">Device · Raw data · Processing · Derived data · AI</p></div></div>
+      <div class="gh"><h3>The chain to AI</h3><p>What reached the model, and can it be shown?</p></div>
+      <details class="ex" id="ex-06" data-stages="device raw-data processing derived-data ai">
+        <summary><span class="num">06</span><span class="t"><b>Provenance</b><span>Can the origin and history of the data be established?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Source and acquisition</li><li>Processing, transformation and export</li><li>Storage and versioning</li><li>Undocumented transformations</li></ul></div>
+        <div><p class="k">You receive</p><p>A Provenance Map from device to model input, with its gaps named.</p><p class="stg">Device · Raw data · Processing · Derived data · AI</p></div></div>
       </details>
-      <details class="ex" id="ex-08" data-stages="raw-data processing ai">
-        <summary><span class="num">08</span><span class="t"><b>Dataset Readiness</b><span>Is this dataset ready for its intended pipeline?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Structural, temporal and channel integrity</li><li>Event integrity and metadata</li><li>Provenance</li><li>Your stated technical requirements</li></ul></div>
-        <div><p class="k">You receive</p><p>READY, DEGRADED, NOT READY or UNKNOWN. Ready means no technical blocker within scope, not scientific validity.</p><p class="stg">Raw data · Processing · AI</p></div></div>
+      <details class="ex" id="ex-07" data-stages="raw-data processing ai">
+        <summary><span class="num">07</span><span class="t"><b>Dataset Readiness</b><span>Is the dataset fit for its stated downstream purpose?</span></span><span class="pop">Most requested</span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Completeness and integrity</li><li>Channel quality and sampling consistency</li><li>Events, artefacts and missing data</li><li>Known limitations</li></ul></div>
+        <div><p class="k">You receive</p><p>READY, DEGRADED, NOT READY or UNKNOWN. Ready means no technical blocker within scope, not scientific validity.</p><p class="stg">Raw data · Processing · AI</p><a class="try" href="/examinations/preflight/">Start with a Preflight <span aria-hidden="true">→</span></a></div></div>
       </details>
-      <details class="ex" id="ex-09" data-stages="raw-data processing derived-data">
-        <summary><span class="num">09</span><span class="t"><b>Reproducibility</b><span>Could another team reproduce the result from the evidence?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Raw data and acquisition configuration</li><li>Preprocessing history and software versions</li><li>Code and derivatives</li><li>Reported technical results</li></ul></div>
-        <div><p class="k">You receive</p><p>REPRODUCIBLE, PARTIAL or NOT REPRODUCIBLE, with the evidence gaps named.</p><p class="stg">Raw data · Processing · Derived data</p></div></div>
+      <details class="ex" id="ex-08" data-stages="raw-data processing derived-data">
+        <summary><span class="num">08</span><span class="t"><b>Reproducibility</b><span>Can the claimed result be reproduced from the evidence supplied?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Source, dataset and dependencies</li><li>Environment, versions and parameters</li><li>Configuration and execution conditions</li><li>Undocumented assumptions</li></ul></div>
+        <div><p class="k">You receive</p><p>A Reproducibility Boundary: what reproduces, what does not, and why.</p><p class="stg">Raw data · Processing · Derived data</p></div></div>
       </details>
-      <details class="ex" id="ex-10" data-stages="raw-data derived-data">
-        <summary><span class="num">10</span><span class="t"><b>Data Contract Validation</b><span>Does the dataset conform to its declared specification?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Your schema or research protocol</li><li>Device specification</li><li>BIDS-related requirements</li><li>Selected requirements of applicable standards</li></ul></div>
-        <div><p class="k">You receive</p><p>Requirement by requirement: observed condition, evidence, verdict.</p><p class="stg">Raw data · Derived data</p></div></div>
+      <details class="ex" id="ex-09" data-stages="raw-data derived-data ai">
+        <summary><span class="num">09</span><span class="t"><b>Data Contract Validation</b><span>Does the system behave as its data contract says?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Schemas, types and units</li><li>Ranges, timestamps and nullability</li><li>Versioning and API behaviour</li><li>Edge cases against documentation</li></ul></div>
+        <div><p class="k">You receive</p><p>A Data Contract Matrix: requirement, observed condition, evidence, verdict.</p><p class="stg">Raw data · Derived data · AI</p></div></div>
       </details>
-      <details class="ex" id="ex-11" data-stages="transport raw-data processing derived-data ai">
-        <summary><span class="num">11</span><span class="t"><b>Device-to-AI Boundary</b><span>What happens to neural information between acquisition and AI?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Filtering, resampling and channel selection</li><li>Compression and feature extraction</li><li>Undocumented transformations</li><li>Raw data replaced by derived data</li></ul></div>
-        <div><p class="k">You receive</p><p>Where neural information is preserved, transformed, derived, restricted — or lost.</p><p class="stg">Transport · Raw data · Processing · Derived data · AI</p></div></div>
+      <details class="ex" id="ex-10" data-stages="transport raw-data processing derived-data ai">
+        <summary><span class="num">10</span><span class="t"><b>Device → AI Boundary</b><span>What happens to information between acquisition and AI?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Preprocessing and feature extraction</li><li>Derived data, transport and storage</li><li>The API in front of the model</li><li>What is observed, measured, declared, inferred or unknown at each stage</li></ul></div>
+        <div><p class="k">You receive</p><p>A Device → AI Boundary Map: where information is preserved, transformed, restricted — or lost.</p><p class="stg">Transport · Raw data · Processing · Derived data · AI</p></div></div>
       </details>
-      <details class="ex" id="ex-12" data-stages="device acquisition transport raw-data processing derived-data ai">
-        <summary><span class="num">12</span><span class="t"><b>Evidence Examination</b><span>Can the technical state of this system be demonstrated to a third party?</span></span><span class="chev" aria-hidden="true"></span></summary>
-        <div class="body"><div><p class="k">Examines</p><ul><li>Evidence completeness and provenance</li><li>Hashes and technical records</li><li>Validation results and history</li><li>Claims against evidence</li></ul></div>
-        <div><p class="k">You receive</p><p>An evidence package that supports one defined conclusion.</p><p class="stg">Device · Acquisition · Transport · Raw data · Processing · Derived data · AI</p></div></div>
+    </div>
+    <div class="grp" data-group="claims">
+      <div class="gh"><h3>Claims</h3><p>Where does the evidence stop?</p></div>
+      <details class="ex" id="ex-11" data-stages="device acquisition transport raw-data processing derived-data ai">
+        <summary><span class="num">11</span><span class="t"><b>Evidence Examination</b><span>How strongly does the evidence support the claim?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Documentation, source code and tests</li><li>Benchmarks and measurements</li><li>Formal verification and independent reproduction</li><li>Contradictory evidence</li></ul></div>
+        <div><p class="k">You receive</p><p>A Claim → Evidence Matrix: each claim, the evidence for it, and how strong that evidence is.</p><p class="stg">Device · Acquisition · Transport · Raw data · Processing · Derived data · AI</p></div></div>
+      </details>
+      <details class="ex" id="ex-12" data-stages="device acquisition transport processing ai">
+        <summary><span class="num">12</span><span class="t"><b>Failure Boundary</b><span>Where does the evidence stop supporting the claimed behaviour?</span></span><span class="chev" aria-hidden="true"></span></summary>
+        <div class="body"><div><p class="k">Examines</p><ul><li>Stated claims and assumptions</li><li>Implementation, tests and measurements</li><li>Boundary and failure conditions</li><li>Contradictions and unknowns</li></ul></div>
+        <div><p class="k">You receive</p><p>A Failure Boundary Map: where it holds, where it degrades, where it fails, and the mechanism. The DY PROOF method.</p><p class="stg">Device · Acquisition · Transport · Processing · AI</p><a class="try" href="https://dy-proof.github.io/" rel="noopener">The DY PROOF method <span aria-hidden="true">↗</span></a></div></div>
       </details>
     </div>
 </section>
@@ -323,24 +327,26 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <h2 id="lang-h">Not everything is pass or fail.</h2>
   </div>
   <div class="lang">
-    <div class="panel"><h3>Verdicts</h3><p class="sub">What the examination concludes, within its scope.</p>
+    <div class="panel"><h3>What we conclude</h3><p class="sub">About a claim, within the agreed boundary.</p>
       <div class="terms">
-        <div><code class="c-ok">PASS</code><span>No material issue found within the defined scope.</span></div>
-        <div><code class="c-warn">DEGRADED</code><span>Usable within scope, with issues that matter.</span></div>
-        <div><code class="c-bad">FAIL</code><span>A defined requirement was violated.</span></div>
-        <div><code class="c-mut">UNKNOWN</code><span>The evidence is not enough to establish the condition.</span></div>
-        <div><code class="c-mut">NOT TESTED</code><span>Outside the scope agreed for this examination.</span></div>
-        <div><code class="c-mut">NOT ESTABLISHED</code><span>The claim cannot be supported by the evidence available.</span></div>
-      </div></div>
-    <div class="panel"><h3>Evidence</h3><p class="sub">How each material conclusion is known.</p>
+        <div><code class="c-ok">SUPPORTED</code><span>The evidence supports the claim.</span></div>
+        <div><code class="c-warn">PARTIALLY</code><span>It holds for part of the claim, or under stated conditions only.</span></div>
+        <div><code class="c-mut">NOT ESTABLISHED</code><span>It may be true; the evidence supplied does not show it.</span></div>
+        <div><code class="c-bad">FAILED</code><span>A concrete failure was found inside the boundary.</span></div>
+      </div>
+      <p class="sub" style="margin-top:18px">About data: <b style="color:var(--ok)">READY</b> · <b style="color:var(--warn)">DEGRADED</b> · <b style="color:var(--bad)">NOT READY</b> · <b style="color:var(--muted)">UNKNOWN</b></p></div>
+    <div class="panel"><h3>How we know</h3><p class="sub">Every finding carries how it is known, and these are never mixed.</p>
       <div class="terms">
-        <div><code class="c-acc">OBSERVED</code><span>Directly supported by the evidence examined.</span></div>
-        <div><code class="c-acc">INFERRED</code><span>Derived from observations, with the reasoning shown.</span></div>
-        <div><code class="c-acc">DECLARED</code><span>Stated by you, a vendor, documentation or a specification.</span></div>
+        <div><code class="c-acc">OBSERVED</code><span>Seen directly during the examination.</span></div>
+        <div><code class="c-acc">MEASURED</code><span>Quantified, with the method stated.</span></div>
+        <div><code class="c-acc">REPRODUCED</code><span>Rebuilt by us from what you supplied.</span></div>
+        <div><code class="c-acc">FORMALLY VERIFIED</code><span>Proven by a method that applies to that property — and to nothing else.</span></div>
+        <div><code class="c-acc">DECLARED</code><span>Stated by you, a vendor or the documentation.</span></div>
+        <div><code class="c-acc">INFERRED</code><span>Derived from evidence, not established directly.</span></div>
         <div><code class="c-mut">NOT ESTABLISHED</code><span>The evidence available does not reach it.</span></div>
       </div></div>
   </div>
-  <p class="maxim">Absence of evidence is not evidence of validity.</p>
+  <p class="maxim">Every examination ends where the evidence ends.</p>
 </section>
 
 <section class="wrap" id="early" aria-labelledby="early-h">
