@@ -19,7 +19,7 @@ This repository is the site, served by GitHub Pages with no build step:
 | `examinations/preflight/` | The Preflight preview — an EEG recording examined in the browser; its security policy blocks every network request, so nothing is uploaded |
 | `wcet/` | DY-WCET |
 
-Pricing for every engagement and examination is on request, agreed in writing before any work begins.
+Every engagement and examination is scoped in writing before any work begins.
 
 Every engagement is covered by a non-disclosure agreement, and its results are published only with the client's consent.
 

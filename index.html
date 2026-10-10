@@ -171,12 +171,12 @@ section.first{border-top:0}
 .who dd a{font-weight:600}
 
 /* engagements */
-.plan{display:grid;grid-template-rows:auto auto auto auto 1fr auto;padding:34px 30px 30px;position:relative}
+.plan{display:grid;grid-template-rows:auto auto auto 1fr auto;padding:34px 30px 30px;position:relative}
 .plan.featured{border-color:rgba(45,212,255,.45);background:linear-gradient(180deg,#0b1a20,var(--panel) 40%)}
 .plan .row-top{display:flex;justify-content:space-between;align-items:center;height:26px;margin-bottom:18px}
 .plan .when{font:500 12.5px/1 var(--mono);color:var(--text-3)}
 .plan .badge{font-size:11.5px;font-weight:600;color:var(--accent);border:1px solid rgba(45,212,255,.4);border-radius:980px;padding:5px 10px;white-space:nowrap}
-.plan .name{display:block;font-size:22px;font-weight:700;letter-spacing:-.025em;height:28px}
+.plan .name{display:block;font-size:22px;font-weight:700;letter-spacing:-.025em;height:28px;margin-bottom:16px}
 .plan .price.por{font-size:34px;letter-spacing:-.035em;color:var(--text-2);margin:22px 0 16px}
 .scope .price-line b.por{font-size:22px;color:var(--text-2)}
 .plan .price{display:block;font-size:54px;font-weight:700;letter-spacing:-.045em;line-height:1;margin:14px 0 14px;font-variant-numeric:tabular-nums}
@@ -656,7 +656,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
         </div>
       </div>
     </div>
-    <p class="xf-foot reveal"><a href="/examinations/">The full catalogue</a> · Pricing on request · Every examination is covered by a mutual NDA on request</p>
+    <p class="xf-foot reveal"><a href="/examinations/">The full catalogue</a> · Every examination is covered by a mutual NDA on request</p>
   </div>
   <script type="application/json" id="xf-data">[{"id": "01", "ask": "Did my recording lose or corrupt data?", "name": "Recording Integrity", "q": "Can the integrity of the recording be established?", "ex": ["Packet loss, gaps and truncation", "Duplicated and corrupted samples", "Malformed records", "Timestamp continuity"], "need": ["The recording, as exported", "The device's sample counter or timestamps, if present", "The acquisition settings you used"], "out": "A Recording Integrity Map: what happened, where, how much, the evidence, and its impact.", "dom": "Neural data", "extra": {"label": "Start with a Preflight", "href": "/examinations/preflight/"}, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Recording%20Integrity&body=Examination%3A%20Recording%20Integrity%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "02", "ask": "Can I trust every channel?", "name": "Channel Integrity", "q": "Can each channel be trusted, end to end?", "ex": ["Missing, flat and saturated channels", "Abnormal ranges and dropouts", "Channel consistency", "Metadata against signal"], "need": ["The recording", "The montage and reference you expect", "Units and gain, if known"], "out": "A Channel Integrity Map: every channel VALID, SUSPICIOUS, INVALID or UNKNOWN.", "dom": "Neural data", "extra": {"label": "Start with a Preflight", "href": "/examinations/preflight/"}, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Channel%20Integrity&body=Examination%3A%20Channel%20Integrity%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "03", "ask": "Are my events and triggers where they should be?", "name": "Event Integrity", "q": "Can the events and markers be trusted?", "ex": ["Missing and duplicated events", "Event order and timestamps", "Marker against data alignment", "Event consistency"], "need": ["The recording with its markers", "The stimulus log or script", "The expected event sequence"], "out": "An Event Integrity Map of missing, duplicated or displaced events.", "dom": "Neural data", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Event%20Integrity&body=Examination%3A%20Event%20Integrity%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "04", "ask": "Are my streams actually in sync?", "name": "Synchronisation", "q": "Can the timing between streams be established?", "ex": ["Clock relationships, offset and drift", "Buffering and transport latency", "Resampling", "Event alignment across streams"], "need": ["Every stream, as recorded", "Their timestamps or clocks", "A shared event, if one exists"], "out": "A Synchronisation Map: reference, stream, offset, drift, jitter, confidence.", "dom": "Neural data", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Synchronisation&body=Examination%3A%20Synchronisation%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "05", "ask": "Does the device record what it claims?", "name": "Acquisition Validation", "q": "Does the acquisition system produce what its contract states?", "ex": ["Sampling rate and channel configuration", "Resolution and ranges", "Acquisition parameters and metadata", "Device output against documented behaviour"], "need": ["The device specification", "Configuration and firmware version", "Representative recordings"], "out": "An Acquisition Validation Report. A file cannot prove what was never measured, and the report says so.", "dom": "Devices", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Acquisition%20Validation&body=Examination%3A%20Acquisition%20Validation%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "06", "ask": "Where did this data come from, and what touched it?", "name": "Provenance", "q": "Can the origin and history of the data be established?", "ex": ["Source and acquisition", "Processing, transformation and export", "Storage and versioning", "Undocumented transformations"], "need": ["The data and its metadata", "Processing code or logs", "Export and storage history"], "out": "A Provenance Map from device to model input, with its gaps named.", "dom": "Data", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Provenance&body=Examination%3A%20Provenance%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "07", "ask": "Is this dataset ready for training?", "name": "Dataset Readiness", "q": "Is the dataset fit for its stated downstream purpose?", "ex": ["Completeness and integrity", "Channel quality and sampling consistency", "Events, artefacts and missing data", "Known limitations"], "need": ["The dataset, or a representative sample", "Its metadata", "The downstream requirement it must meet"], "out": "READY, DEGRADED, NOT READY or UNKNOWN. Ready means no technical blocker within scope, not scientific validity.", "dom": "Data", "extra": {"label": "Start with a Preflight", "href": "/examinations/preflight/"}, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Dataset%20Readiness&body=Examination%3A%20Dataset%20Readiness%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "08", "ask": "Can this result be reproduced?", "name": "Reproducibility", "q": "Can the claimed result be reproduced from the evidence supplied?", "ex": ["Source, dataset and dependencies", "Environment, versions and parameters", "Configuration and execution conditions", "Undocumented assumptions"], "need": ["The code, data and environment", "The reported result", "Parameters and versions"], "out": "A Reproducibility Boundary: what reproduces, what does not, and why.", "dom": "Claims", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Reproducibility&body=Examination%3A%20Reproducibility%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "09", "ask": "Does the system keep its data contract?", "name": "Data Contract Validation", "q": "Does the system behave as its data contract says?", "ex": ["Schemas, types and units", "Ranges, timestamps and nullability", "Versioning and API behaviour", "Edge cases against documentation"], "need": ["The contract: schema, specification or API docs", "Access to outputs or the API", "The edge cases that matter to you"], "out": "A Data Contract Matrix: requirement, observed condition, evidence, verdict.", "dom": "Systems", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Data%20Contract%20Validation&body=Examination%3A%20Data%20Contract%20Validation%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "10", "ask": "What reaches the model, and what is lost on the way?", "name": "Device → AI Boundary", "q": "What happens to information between acquisition and AI?", "ex": ["Preprocessing and feature extraction", "Derived data, transport and storage", "The API in front of the model", "What is observed, measured, declared, inferred or unknown at each stage"], "need": ["A description of the pipeline", "Samples at each stage you can share", "What the model receives"], "out": "A Device → AI Boundary Map: where information is preserved, transformed, restricted — or lost.", "dom": "AI pipelines", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Device%20→%20AI%20Boundary&body=Examination%3A%20Device%20â%86%92%20AI%20Boundary%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "11", "ask": "Does the evidence support this claim?", "name": "Evidence Examination", "q": "How strongly does the evidence support the claim?", "ex": ["Documentation, source code and tests", "Benchmarks and measurements", "Formal verification and independent reproduction", "Contradictory evidence"], "need": ["The claims", "The evidence offered for them", "Access to code, tests or measurements"], "out": "A Claim → Evidence Matrix: each claim, the evidence for it, and how strong that evidence is.", "dom": "Claims", "extra": null, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Evidence%20Examination&body=Examination%3A%20Evidence%20Examination%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "12", "ask": "Where does it stop working under load?", "name": "Failure Boundary", "q": "Where does the evidence stop supporting the claimed behaviour?", "ex": ["Stated claims and assumptions", "Implementation, tests and measurements", "Boundary and failure conditions", "Contradictions and unknowns"], "need": ["One critical workflow or execution path", "How to run it, or its traces", "What acceptable behaviour means for you"], "out": "A Failure Boundary Map: where it holds, where it degrades, where it fails, and the mechanism. The DY PROOF method.", "dom": "Systems", "extra": {"label": "The DY PROOF method", "href": "https://dy-proof.github.io/"}, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Failure%20Boundary&body=Examination%3A%20Failure%20Boundary%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}, {"id": "13", "ask": "Will it meet its deadline, in the worst case?", "name": "Worst-case timing", "q": "Does every task meet its deadline under the worst case, not the average?", "ex": ["Task set, periods, deadlines and priorities", "Response-time analysis", "Execution-time evidence", "Interference and blocking"], "need": ["The task set", "Execution-time measurements or the code", "The target hardware"], "out": "Worst-case response times with their derivation, computed with DY-WCET, and the margin to every deadline.", "dom": "Real-time", "extra": {"label": "About DY-WCET", "href": "/wcet/"}, "mail": "mailto:connect@axonos.org?subject=Examination%20request%20—%20Worst-case%20timing&body=Examination%3A%20Worst%2Dcase%20timing%0A%0AWhat%20I%20need%20to%20know%3A%0A%0AThe%20system%20or%20data%3A%0A%0AEvidence%20I%20can%20share%3A%0A%0ATimeline%3A%0A"}]</script>
 </section>
@@ -755,7 +755,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <span class="eyebrow">Engagements</span>
       <h2>From one question<br>to a whole system.</h2>
       <p class="lead">Start with a Preflight or one examination. When the question is bigger, three engagements take it
-        further. Scope and price are agreed in writing, on request, before any work begins.</p>
+        further. Every engagement is scoped to the question, in writing, before any work begins.</p>
     </div>
     <ol class="ladder reveal" aria-label="From one question to a whole system">
       <li><a href="/examinations/preflight/"><b>Preflight</b><span>One recording, in your browser. Free, in seconds.</span></a></li>
@@ -769,7 +769,6 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div class="card plan">
         <div class="row-top"><span class="when">5 business days</span></div>
         <span class="name">Snapshot</span>
-        <span class="price por">On request</span>
         <span class="q">What does this technology actually do, and what does its evidence support?</span>
         <ul>
           <li>Architecture map, as built</li>
@@ -787,7 +786,6 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div class="card plan">
         <div class="row-top"><span class="when">2–3 weeks</span><span class="badge">One critical property</span></div>
         <span class="name">Focused Audit</span>
-        <span class="price por">On request</span>
         <span class="q">Does this one critical property — timing, determinism, concurrency — actually hold?</span>
         <ul>
           <li class="plus">Everything in Snapshot, and:</li>
@@ -806,7 +804,6 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <div class="card plan featured">
         <div class="row-top"><span class="when">3–4 weeks</span><span class="badge">For investment decisions</span></div>
         <span class="name">Due Diligence</span>
-        <span class="price por">On request</span>
         <span class="q">Is the technology what the company says it is — and what could break the investment?</span>
         <ul>
           <li class="plus">Everything in Focused Audit, across the whole system, and:</li>
@@ -824,10 +821,9 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     </div>
 
     <div class="terms">
-      <span>Pricing on request, confirmed in writing</span>
-      <span>Invoiced in USD or EUR — half on starting, half on delivery</span>
+      <span>Scoped in writing before any work begins</span>
       <span>Mutual NDA before the first file</span>
-      <span>Nothing invoiced until the scope is agreed</span>
+      <span>Carried out by the principal, start to finish</span>
     </div>
   </div>
 </section>
@@ -907,7 +903,6 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
             <tr class="group"><th colspan="4">Terms</th></tr>
             <tr><th scope="row">Written round of questions</th><td class="n">—</td><td class="y">✓</td><td class="y">✓</td></tr>
             <tr><th scope="row">Mutual NDA</th><td class="t">Standard</td><td class="t">Standard</td><td class="t">Standard</td></tr>
-            <tr class="price"><th scope="row">Price</th><td>On request</td><td>On request</td><td>On request</td></tr>
           </tbody>
         </table>
       </div>
@@ -931,7 +926,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>You receive</h4><p>A one-page executive summary, the written report and the evidence matrix.</p>
           <h4>We need from you</h4><p>Access to the repository or product, the deck or technical documentation, and the question you most need answered.</p>
           <h4>Not included</h4><p>Running the build, measurement on hardware, and changes to the code.</p>
-          <div class="price-line"><b class="por">On request</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request</a></div>
+          <div class="price-line"><b class="por">Snapshot</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Snapshot" data-request="snap">Request</a></div>
         </div>
       </div>
     </div>
@@ -956,7 +951,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>The standard</h4><p><a href="https://github.com/DYResearch/dy-wcet/blob/main/case-studies/embassy-6528.md" rel="noopener">An RP2350 timer that stopped for minutes</a> — a complete analysis, published in full.</p>
           <h4>We need from you</h4><p>The above, plus the property in question and any logs, traces or measurements you already hold.</p>
           <h4>Not included</h4><p>Instrumentation on a bench, changes to your code, and a second property, which is quoted separately.</p>
-          <div class="price-line"><b class="por">On request</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request</a></div>
+          <div class="price-line"><b class="por">Focused Audit</b><a class="btn ghost" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Focused%20Audit" data-request="audit">Request</a></div>
         </div>
       </div>
     </div>
@@ -982,7 +977,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
           <h4>You receive</h4><p>A two-page memo written for an investment committee, the full report, the risk register, the evidence appendix and one written round of questions.</p>
           <h4>We need from you</h4><p>Repository access, the deck and the technical materials in the data room, and one technical contact who can answer in writing.</p>
           <h4>Not included</h4><p>Legal, financial or commercial diligence, and investment advice. The findings are technical; the decision stays yours.</p>
-          <div class="price-line"><b class="por">On request</b><a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request</a></div>
+          <div class="price-line"><b class="por">Due Diligence</b><a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request%20%E2%80%94%20Due%20Diligence" data-request="dd">Request</a></div>
         </div>
       </div>
     </div>
@@ -1049,7 +1044,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     </div>
     <div class="steps reveal">
       <div class="step"><h3>Send the question</h3><p>What to investigate, what you need to know, and by when.</p></div>
-      <div class="step"><h3>Scope, fixed</h3><p>Scope and price come back in writing, with any conflict of interest disclosed.</p></div>
+      <div class="step"><h3>Scope, fixed</h3><p>Scope and terms come back in writing, with any conflict of interest disclosed.</p></div>
       <div class="step"><h3>The investigation</h3><p>Carried out by the principal, start to finish. Evidence kept apart from hypothesis.</p></div>
       <div class="step"><h3>The verdict</h3><p>Every claim traced to its evidence, and a stated boundary where the evidence stops.</p></div>
       <div class="step"><h3>Questions</h3><p>One written round after delivery, on anything in the report.</p></div>
@@ -1164,7 +1159,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
     <div class="measure reveal">
       <span class="eyebrow">Begin</span>
       <h2>Bring the question.<br>Leave with the evidence.</h2>
-      <p class="lead">Scope and price come back in writing. Nothing is invoiced until you agree.</p>
+      <p class="lead">The scope comes back in writing. Nothing begins until you agree.</p>
       <div class="actions">
         <a class="btn" href="mailto:connect@axonos.org?subject=Engagement%20request" data-request="audit">Request an engagement</a>
         <a class="more" href="#scope" data-scope="cmp">Compare the engagements</a>
@@ -1193,7 +1188,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
 <dialog class="sheet" id="req" aria-labelledby="req-title">
   <form method="dialog" id="req-form">
     <div class="sheet-h">
-      <div><h2 id="req-title">Request an engagement</h2><p>Scope and price come back in writing.</p></div>
+      <div><h2 id="req-title">Request an engagement</h2><p>The scope comes back in writing.</p></div>
       <button class="x" type="button" data-close aria-label="Close">×</button>
     </div>
     <div class="field"><span>Engagement</span>
@@ -1232,7 +1227,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
       <p class="sent-live" id="req-live" role="status" aria-live="polite"></p>
     </div>
     <p class="small">Opens your email with everything filled in, addressed to connect@axonos.org.
-      Nothing is charged until the scope and price are confirmed in writing.</p>
+      Nothing begins until the scope is confirmed in writing.</p>
   </form>
 </dialog>
 
@@ -1241,7 +1236,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(8
   // A card payment link per engagement, for the deposit. Empty means the
   // button stays hidden: a link that goes nowhere is worse than no link.
   var PAY = { snap: "", audit: "", dd: "" };
-  var TIERS = { snap: ["Snapshot", "pricing on request"], audit: ["Focused Audit", "pricing on request"], dd: ["Due Diligence", "pricing on request"] };
+  var TIERS = { snap: ["Snapshot", "5 business days"], audit: ["Focused Audit", "2–3 weeks"], dd: ["Due Diligence", "3–4 weeks"] };
 
   // ── tabs ─────────────────────────────────────────────────────────────
   function select(tab) {
