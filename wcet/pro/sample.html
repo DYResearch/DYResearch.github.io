@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="generator" content="DY-WCET Pro 1.0.0 (dy-wcet 4.1.6)">
+<title>Flight controller — Not schedulable</title>
+<style>
+:root{
+  --paper:#ffffff;--ink:#1d1d1f;--ink-2:#6e6e73;--rule:#d2d2d7;--track:#f2f2f5;
+  --own:#0a7aa6;--wait:#9adcf2;--meets:#1f7a35;--misses:#c81e1e;--undecided:#9a5800;
+  --late:#e5484d;--code:#f5f5f7;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media screen and (prefers-color-scheme:dark){:root{
+  --paper:#000000;--ink:#f5f5f7;--ink-2:#a1a1a6;--rule:#2c2c2e;--track:#141416;
+  --own:#2dd4ff;--wait:#155e75;--meets:#30d158;--misses:#ff453a;--undecided:#ff9f0a;
+  --late:#ff453a;--code:#0e0e10;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.5 var(--sans);
+  font-feature-settings:"kern";-webkit-font-smoothing:antialiased}
+main{max-width:880px;margin:0 auto;padding:56px 24px 72px}
+h1,h2,h3,p,dl,dd,ul,ol,pre,figure{margin:0}
+.masthead{display:flex;justify-content:space-between;gap:16px;color:var(--ink-2);font-size:13px}
+.masthead b{color:var(--ink);font-weight:600}
+h1{margin-top:28px;font-size:22px;font-weight:600;letter-spacing:-.01em}
+.verdict{margin-top:20px;font-size:64px;line-height:1.02;font-weight:700;letter-spacing:-.035em}
+.v-schedulable{color:var(--meets)}.v-not_schedulable{color:var(--misses)}.v-undecided{color:var(--undecided)}
+.lede{margin-top:14px;font-size:19px;line-height:1.45;max-width:40em}
+.facts{display:flex;flex-wrap:wrap;gap:8px 32px;margin-top:22px;font-size:14px}
+.facts div{display:flex;gap:8px;align-items:baseline}
+.facts dt{color:var(--ink-2)}
+.facts dd{font-weight:600;font-variant-numeric:tabular-nums}
+section{margin-top:56px}
+h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sub{margin-top:4px;color:var(--ink-2);font-size:14px;max-width:44em}
+
+/* The chart: every bar is drawn against its own deadline, so all the
+   deadlines stand on one line and the eye reads the margin, not the scale. */
+.chart{margin-top:24px}
+.bars{position:relative;list-style:none;padding:0;margin:0}
+.bar{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr) 9.5rem;gap:0 16px;align-items:center;
+  padding:9px 0;border-top:1px solid var(--rule)}
+.bar:last-child{border-bottom:1px solid var(--rule)}
+.who{display:flex;gap:10px;align-items:baseline;min-width:0}
+.who .n{color:var(--ink-2);font-variant-numeric:tabular-nums;font-size:13px;min-width:1.4em;text-align:right}
+.who .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.track{position:relative;height:14px;background:var(--track);border-radius:3px;overflow:hidden}
+.seg{position:absolute;top:0;bottom:0}
+.own{background:var(--own)}
+.wait{background:var(--wait)}
+.late{background:var(--late)}
+.never{background:repeating-linear-gradient(135deg,var(--late) 0 6px,transparent 6px 10px)}
+.unknown{background:repeating-linear-gradient(135deg,var(--undecided) 0 3px,transparent 3px 9px);opacity:.75}
+.dl{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--ink)}
+.clip{position:absolute;right:0;top:0;bottom:0;width:10px;
+  background:linear-gradient(90deg,transparent,var(--paper))}
+.fig{text-align:right;font-variant-numeric:tabular-nums;font-size:14px;line-height:1.3}
+.fig small{display:block;color:var(--ink-2);font-size:12.5px}
+.fig .bad{color:var(--misses)}
+.fig .unk{color:var(--undecided)}
+.axis{display:grid;grid-template-columns:minmax(0,11rem) minmax(0,1fr) 9.5rem;gap:0 16px;margin-top:8px;
+  font-size:12.5px;color:var(--ink-2)}
+.axis .scale{position:relative;height:1.4em}
+.axis .mark{position:absolute;transform:translateX(-50%);white-space:nowrap;color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:16px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{display:inline-block;width:14px;height:8px;border-radius:2px}
+
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}
+th{font-weight:500;color:var(--ink-2);font-size:13px;vertical-align:bottom}
+th:first-child,td:first-child{padding-left:0}
+th:last-child,td:last-child{padding-right:0}
+td.l,th.l{text-align:left}
+td.name{white-space:normal;font-weight:500}
+td.st{font-weight:600}
+.st-meets{color:var(--meets)}.st-misses{color:var(--misses)}.st-undecided{color:var(--undecided)}
+td.neg{color:var(--misses);font-weight:600}
+.unit{margin-top:8px;color:var(--ink-2);font-size:12.5px}
+.scroll{overflow-x:auto}
+
+.notes{margin-top:16px;padding-left:1.2em;max-width:44em}
+.notes li+li{margin-top:6px}
+.advice{margin-top:16px;max-width:44em}
+.order{margin-top:10px;padding:12px 16px;border-left:3px solid var(--own);font-weight:600}
+.order ol{display:flex;flex-wrap:wrap;gap:4px 0;list-style:none;margin:0;padding:0}
+.order li+li::before{content:"\2192";padding:0 10px;color:var(--ink-2);font-weight:400}
+.prose{margin-top:12px;max-width:44em}
+.prose li+li{margin-top:6px}
+ul.prose{padding-left:1.2em}
+
+dl.prov{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 24px;margin-top:20px;font-size:14px}
+dl.prov dt{color:var(--ink-2)}
+dl.prov dd{min-width:0;overflow-wrap:anywhere}
+code,pre{font-family:var(--mono);font-size:12.5px}
+pre.src{margin-top:16px;padding:14px 16px;background:var(--code);border-radius:6px;overflow-x:auto;line-height:1.55}
+pre.src .ln{display:inline-block;width:2.5em;margin-right:14px;text-align:right;color:var(--ink-2);user-select:none}
+.close{margin-top:56px;padding-top:16px;border-top:1px solid var(--rule);color:var(--ink-2);font-size:12.5px}
+.close span{display:block;max-width:44em}
+
+@media (max-width:640px){
+  main{padding:32px 16px 48px}
+  .verdict{font-size:44px}
+  .lede{font-size:17px}
+  .bar{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px}
+  .bar .track{grid-column:1/-1;grid-row:2}
+  .axis{grid-template-columns:minmax(0,1fr)}
+  .axis .pad{display:none}
+}
+@media print{
+  @page{size:A4;margin:16mm 15mm}
+  body{font-size:10pt}
+  main{max-width:none;padding:0}
+  .verdict{font-size:40pt}
+  section{margin-top:28pt;break-inside:auto}
+  h2{break-after:avoid}
+  .bar,tr,dl.prov div{break-inside:avoid}
+  pre.src{white-space:pre-wrap;overflow:visible}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="masthead"><span><b>DY-WCET Pro 1.0.0</b></span><span>Schedulability report</span></div>
+<h1>Flight controller</h1>
+<p class="verdict v-not_schedulable">Not schedulable</p>
+<p class="lede">2 of 4 tasks miss their deadlines. The worst, radio link, is 1,600 µs late.</p>
+<dl class="facts">
+<div><dt>Tasks</dt><dd>4</dd></div>
+<div><dt>Utilisation</dt><dd>54.0%</dd></div>
+<div><dt>Missing</dt><dd>2 of 4</dd></div>
+</dl>
+</header>
+<section>
+<h2>Response against deadline</h2>
+<p class="sub">Each bar is the task’s worst-case response, drawn to the scale of its own deadline, so every deadline stands on the same line.</p>
+<figure class="chart">
+<ol class="bars">
+<li class="bar"><span class="who"><span class="n">1</span><span class="t" title="health monitor">health monitor</span></span><span class="track" role="img" aria-label="responds within 2,000 of its 20,000 microsecond deadline, 18,000 to spare"><span class="seg own" style="left:0.00%;width:5.00%"></span><span class="dl" style="left:50.00%"></span></span><span class="fig">2,000 µs<small>18,000 µs to spare</small></span></li>
+<li class="bar"><span class="who"><span class="n">2</span><span class="t" title="attitude loop">attitude loop</span></span><span class="track" role="img" aria-label="responds in 2,300 against a 1,000 microsecond deadline, 1,300 late"><span class="seg own" style="left:0.00%;width:15.00%"></span><span class="seg wait" style="left:15.00%;width:35.00%"></span><span class="seg late" style="left:50.00%;width:50.00%"></span><span class="clip"></span><span class="dl" style="left:50.00%"></span></span><span class="fig"><span class="bad">2,300 µs</span><small class="bad">1,300 µs late</small></span></li>
+<li class="bar"><span class="who"><span class="n">3</span><span class="t" title="radio link">radio link</span></span><span class="track" role="img" aria-label="responds in 3,600 against a 2,000 microsecond deadline, 1,600 late"><span class="seg own" style="left:0.00%;width:10.00%"></span><span class="seg wait" style="left:10.00%;width:40.00%"></span><span class="seg late" style="left:50.00%;width:40.00%"></span><span class="dl" style="left:50.00%"></span></span><span class="fig"><span class="bad">3,600 µs</span><small class="bad">1,600 µs late</small></span></li>
+<li class="bar"><span class="who"><span class="n">4</span><span class="t" title="flight log">flight log</span></span><span class="track" role="img" aria-label="responds within 8,500 of its 50,000 microsecond deadline, 41,500 to spare"><span class="seg own" style="left:0.00%;width:3.00%"></span><span class="seg wait" style="left:3.00%;width:5.50%"></span><span class="dl" style="left:50.00%"></span></span><span class="fig">8,500 µs<small>41,500 µs to spare</small></span></li>
+</ol>
+<div class="axis" aria-hidden="true"><span class="pad"></span><span class="scale"><span class="mark" style="left:50.00%">deadline</span></span><span class="pad"></span></div>
+<div class="legend"><span><i class="own"></i>Its own execution</span><span><i class="wait"></i>Waiting: preemption, blocking, jitter</span><span><i class="late"></i>Past the deadline</span></div>
+</figure>
+</section>
+<section>
+<h2>What to do about it</h2>
+<p class="advice">Every deadline is met with the shortest deadline first:</p>
+<div class="order"><ol><li>attitude loop</li><li>radio link</li><li>health monitor</li><li>flight log</li></ol></div>
+<p class="sub">List the tasks in this order, highest priority first, and check again.</p>
+</section>
+<section>
+<h2>Every task</h2>
+<p class="sub">Highest priority first. Times in microseconds.</p>
+<div class="scroll"><table>
+<thead><tr><th>#</th><th class="l">Task</th><th class="l">Result</th><th>WCET</th><th>Period</th><th>Deadline</th><th>Response</th><th>Slack</th></tr></thead>
+<tbody>
+<tr><td>1</td><td class="l name">health monitor</td><td class="l st st-meets">Meets</td><td>2,000</td><td>20,000</td><td>20,000</td><td>2,000</td><td>18,000</td></tr>
+<tr><td>2</td><td class="l name">attitude loop</td><td class="l st st-misses">Misses</td><td>300</td><td>1,000</td><td>1,000</td><td>2,300</td><td class="neg">−1,300</td></tr>
+<tr><td>3</td><td class="l name">radio link</td><td class="l st st-misses">Misses</td><td>400</td><td>5,000</td><td>2,000</td><td>3,600</td><td class="neg">−1,600</td></tr>
+<tr><td>4</td><td class="l name">flight log</td><td class="l st st-meets">Meets</td><td>3,000</td><td>50,000</td><td>50,000</td><td>8,500</td><td>41,500</td></tr>
+</tbody></table></div>
+<p class="unit">Utilisation 54.0%.</p>
+</section>
+<section>
+<h2>Method and assumptions</h2>
+<p class="prose">Response-time analysis over the level-i busy period (Lehoczky, 1990), with release jitter (Tindell, Burns and Wellings, 1994), in exact integer arithmetic. Engine: dy-wcet 4.1.6, open source; its answers are checked against an independent oracle, an exhaustive search of small task sets and a simulated scheduler, and eight bounded Kani proofs gate every change to it.</p>
+<ul class="prose">
+<li>Fixed-priority preemptive scheduling on one processor core. Priority is the order of the tasks, highest first.</li>
+<li>Execution times, jitter and blocking are inputs. DY-WCET Pro does not measure them; the verdict is as good as the numbers it is given.</li>
+<li>Kernel overheads — context switches, interrupt entry, tick handling — are included in the execution times or blocking given.</li>
+<li>Blocking is the longest time a task can wait for a lower-priority task holding a shared resource, as under the priority ceiling protocol.</li>
+<li>Deadlines may be shorter or longer than periods. A response that runs past its period is analysed over the whole busy period.</li>
+<li>Values that were not whole microseconds were rounded toward the safe side: execution, jitter and blocking up; periods and deadlines down.</li>
+</ul>
+</section>
+<section>
+<h2>Reproduce this report</h2>
+<dl class="prov">
+<div style="display:contents"><dt>Input</dt><dd>tasks.toml (TOML, 444 bytes)</dd></div>
+<div style="display:contents"><dt>SHA-256</dt><dd><code>7fe467b30e38bfe6562d341218fb87b53ad5dc3909864666d40814ea18b4d75b</code></dd></div>
+<div style="display:contents"><dt>Tool</dt><dd>DY-WCET Pro 1.0.0</dd></div>
+<div style="display:contents"><dt>Engine</dt><dd>dy-wcet 4.1.6, open source</dd></div>
+<div style="display:contents"><dt>Command</dt><dd><code>dywcet report tasks.toml</code></dd></div>
+</dl>
+<p class="sub" style="margin-top:20px">The input, exactly as read. Its SHA-256 is the one above.</p>
+<pre class="src"><code><span class="ln">1</span># A flight controller listed by importance rather than by rate.
+<span class="ln">2</span># dywcet check finds the miss and the order that fixes it.
+<span class="ln">3</span>
+<span class="ln">4</span>name = &quot;Flight controller&quot;
+<span class="ln">5</span>
+<span class="ln">6</span>[[task]]
+<span class="ln">7</span>name   = &quot;health monitor&quot;
+<span class="ln">8</span>wcet   = &quot;2 ms&quot;
+<span class="ln">9</span>period = &quot;20 ms&quot;
+<span class="ln">10</span>
+<span class="ln">11</span>[[task]]
+<span class="ln">12</span>name   = &quot;attitude loop&quot;
+<span class="ln">13</span>wcet   = &quot;300 us&quot;
+<span class="ln">14</span>period = &quot;1 ms&quot;
+<span class="ln">15</span>
+<span class="ln">16</span>[[task]]
+<span class="ln">17</span>name     = &quot;radio link&quot;
+<span class="ln">18</span>wcet     = &quot;400 us&quot;
+<span class="ln">19</span>period   = &quot;5 ms&quot;
+<span class="ln">20</span>deadline = &quot;2 ms&quot;
+<span class="ln">21</span>
+<span class="ln">22</span>[[task]]
+<span class="ln">23</span>name   = &quot;flight log&quot;
+<span class="ln">24</span>wcet   = &quot;3 ms&quot;
+<span class="ln">25</span>period = &quot;50 ms&quot;
+</code></pre>
+</section>
+<p class="close"><span>The same input gives this report byte for byte: it carries no date and nothing random. The verdict is exactly as good as the execution times, periods and deadlines it was given.</span></p>
+</main>
+</body>
+</html>

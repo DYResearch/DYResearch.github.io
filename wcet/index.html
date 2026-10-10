@@ -278,6 +278,9 @@ section.first{border-top:0}
   border:1px solid var(--hair);border-radius:var(--radius);padding:32px;
 }
 .card .tag{font-size:13px;color:var(--text-3);font-weight:500;margin-bottom:14px}
+.pro-shot{display:block;max-width:880px;margin:clamp(48px,6vw,72px) auto 0;border-radius:18px;overflow:hidden;
+  border:1px solid var(--hair-2);background:#fff}
+.pro-shot img{display:block;width:100%;height:auto}
 .grid-3 a.card h3{min-height:2.5em}
 .card h3{margin-bottom:12px}
 .card p{color:var(--text-2);font-size:16px;line-height:1.55}
@@ -433,6 +436,7 @@ footer a{color:var(--text-2)}
       <a href="#try">Try it</a>
       <a href="#for">Who it is for</a>
       <a href="#evidence">Evidence</a>
+      <a href="#pro">Pro</a>
       <a href="https://github.com/DYResearch/dy-wcet" rel="noopener">Source</a>
       <a class="nav-cta" href="/#engagements">Commission an audit</a>
     </div>
@@ -639,6 +643,25 @@ footer a{color:var(--text-2)}
         <span class="foot">See the derivation</span>
       </a>
     </div>
+  </div>
+</section>
+
+<!-- ═══ DY-WCET PRO ═══════════════════════════════════════════════════════ -->
+<section id="pro">
+  <div class="wrap center">
+    <div class="narrow reveal">
+      <span class="eyebrow">DY-WCET Pro · Early access</span>
+      <h2>The engine is open.<br>The instrument is coming.</h2>
+      <p class="lead">Three commands from a task list to a filed report: whether every deadline
+        holds, by how much, and the priority order that fixes it when one does not. Built on
+        this engine; <b>not open source.</b></p>
+      <div class="actions">
+        <a class="btn" href="/wcet/pro/">See DY-WCET Pro</a>
+        <a class="more" href="/wcet/pro/sample.html">Read a real report</a>
+      </div>
+    </div>
+    <a class="pro-shot reveal" href="/wcet/pro/sample.html"><img src="/wcet/pro/report.jpg" width="2000" height="1554" loading="lazy"
+      alt="A DY-WCET Pro report for a flight controller: Not schedulable, with each task's worst-case response drawn against its own deadline."></a>
   </div>
 </section>
 
